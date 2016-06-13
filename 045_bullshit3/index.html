@@ -1,0 +1,74 @@
+<html>
+<head>
+	<title>bullshit 2</title>
+	<link rel="stylesheet" type="text/css" href="../css/styles.css"/>
+</head>
+<body>
+	<script type="text/javascript" src="../libs/tools.js"></script>
+	<script type="text/javascript">
+		var stage = new tools.Stage(700, 700);
+		
+		var out = stage.out;
+		out.translate(0.5, 0.5 + 0.7 * stage.height);
+		
+		
+		out.strokeStyle = "black";
+		out.beginPath();
+		out.moveTo(0, 0);
+		out.lineTo(stage.width, 0);
+		out.stroke();
+		
+		var n = 10;
+		var i;
+		
+		var positions = [0];
+		var total = 0;
+		for(i = 1; i < n; i++)
+		{
+			var ran = Math.random();
+			total += ran;
+			positions[i] = ran;
+		}
+		
+		var ratio = stage.width / total;
+		
+		var pos = 0;
+		for(i = 0; i < n; i++)
+		{
+			pos += positions[i] * ratio;
+			positions[i] 	= pos;
+		}
+		console.log(positions);
+		out.beginPath();
+		for(i = 0; i < n; i++)
+		{
+			var pos = positions[i];
+			for(var j = 0; j < i; j++)
+			{
+				if(Math.random() < Math.random()) continue;
+				var pos2 = positions[j];
+				out.fillStyle = "hsla(0, 0%, " + Math.floor(Math.random() * 100) + "%, 0.3)";
+				out.beginPath();
+				out.moveTo(Math.min(pos, pos2), 0);
+				out.arc(0.5 * (pos + pos2), 0, Math.abs(0.5 * (pos2 - pos)), -Math.PI, 0);
+				out.lineTo(Math.min(pos, pos2), 0);
+				out.fill();
+			}
+			positions[i] = pos;
+		}
+		out.stroke();
+	</script>
+	
+	<script type="text/javascript">
+	  var _gaq = _gaq || [];
+	  _gaq.push(['_setAccount', 'UA-6101672-1']);
+	  _gaq.push(['_trackPageview']);
+
+	  (function() {
+		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	  })();
+	</script>
+</body>
+</html>

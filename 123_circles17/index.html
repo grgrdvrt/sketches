@@ -1,0 +1,77 @@
+<html>
+<head>
+	<title>RGB</title>
+	<link rel="stylesheet" type="text/css" href="../css/styles.css"/>
+</head>
+<body>
+	<script type="text/javascript" src="../libs/tools.js"></script>
+	<script type="text/javascript">
+		tools.mixin(tools, this);
+		
+		var w = 700;
+		var h = 700;
+		
+		var stage = new Stage(w, h);
+		var out = stage.out;
+		
+		
+		function Circle()
+		{
+			this.x;
+			this.y;
+			this.radius;
+		}
+		
+		Circle.prototype = {
+			draw : function(out)
+			{
+				for(var i = 0; i < 500; i++)
+				{
+					var r = Math.random() * this.radius;
+					var r2 = Math.random() * 0.09 * this.radius;
+					var posX = Math.random() * 2 - 1;
+					var posY = Math.random() * 2 - 1;
+					r2 = r2 / Math.sqrt(posX * posX + posY * posY)
+					posX = this.x + r2 * posX;
+					posY = this.y + r2 * posY;
+		
+		
+					out.beginPath();
+					//out.strokeStyle = Math.random() < 0.1 ? "white" : "black";
+					var l = Math.round(80 * Math.pow(Math.random(), 4));
+					out.strokeStyle = "hsl(0, 0%, " + l + "%)";
+					out.moveTo(posX + r, posY);
+					out.arc(posX, posY, r, 0, 2 * Math.PI);
+					out.stroke();
+				}
+			}
+		}
+		
+		var nCircles = 50;
+		var circles = [];
+		
+		out.strokeStyle = "black";
+		
+		for(var i = 0; i < nCircles; i++)
+		{
+			var c = new Circle();
+			c.x = Math.random() * w;
+			c.y = Math.random() * h;
+			c.radius = Math.random() * 100 + 25;
+			c.draw(out);
+			circles[i] = c;
+		}</script>
+	
+	<script type="text/javascript">
+	  var _gaq = _gaq || [];
+	  _gaq.push(['_setAccount', 'UA-6101672-1']);
+	  _gaq.push(['_trackPageview']);
+
+	  (function() {
+		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	  })();
+	</script>
+</body>
+</html>

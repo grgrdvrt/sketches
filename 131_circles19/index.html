@@ -1,0 +1,92 @@
+<html>
+<head>
+	<title>Circles</title>
+	<link rel="stylesheet" type="text/css" href="../css/styles.css"/>
+</head>
+<body>
+	<script type="text/javascript" src="../libs/tools.js"></script>
+	<script type="text/javascript">
+		tools.mixin(tools, this);
+		
+		var w = 700;
+		var h = 700;
+		var stage = new Stage(w, h);
+		var out = stage.out;
+		
+		
+		var radius = 0.3 * Math.sqrt(w * w + h * h);
+		
+		var nSides = 15;
+		var radiusRatio = 0.69;
+		
+		var nSides = 10;
+		var radiusRatio = 0.575;
+		
+		var nSides = 7;
+		var radiusRatio = 0.445;
+		
+		var nSides = 4;
+		//var radiusRatio = 0.385;
+		var radiusRatio = 0.332;
+		
+		//var nSides = 5;
+		//var radiusRatio = 0.31;
+		
+		//var nSides = 4;
+		//var radiusRatio = 0.215;
+		
+		//var nSides = 3;
+		//var radiusRatio = 0.10;
+		
+		var angle = Math.PI / nSides;
+		console.log(Math.sin(angle), Math.cos(angle));
+		
+		out.translate(0.5 * w, 0.5 * h);
+		
+		
+		for(var j = 0; j < 2; j++)
+		{	
+			var circleRadius = radius * Math.sin(angle);
+			out.beginPath();
+			for(var i = 0; i < nSides; i++)
+			{
+				var a = 2 * Math.PI * i / nSides;
+				var x = radius * Math.cos(a);
+				var y = radius * Math.sin(a);
+		
+				out.lineTo(x, y);
+				out.moveTo(x + circleRadius, y);
+				out.arc(x, y, circleRadius, 0, 2 * Math.PI);
+		
+				out.moveTo(x, y);
+			}
+			out.lineTo(radius, 0);
+		
+			out.stroke();
+		
+			//radius *= radiusRatio;
+		
+			var circle2 = radius - circleRadius;
+		
+			var tempRadius = circle2 / (1 + Math.sin(angle));
+		
+		
+			//radius = 2 * Math.cos(angle) * (radius - circleRadius) / (1 + Math.sin(angle));
+			radius = 0.88 * tempRadius / Math.cos(angle);
+			//radius = tempRadius;
+			out.rotate(angle);
+		}</script>
+	
+	<script type="text/javascript">
+	  var _gaq = _gaq || [];
+	  _gaq.push(['_setAccount', 'UA-6101672-1']);
+	  _gaq.push(['_trackPageview']);
+
+	  (function() {
+		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	  })();
+	</script>
+</body>
+</html>

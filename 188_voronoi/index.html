@@ -1,0 +1,120 @@
+<html>
+<head>
+	<title>Vorono&iuml;</title>
+	<link rel="stylesheet" type="text/css" href="../css/styles.css"/>
+</head>
+<body>
+	<script type="text/javascript" src="../libs/tools.js"></script>
+	<script type="text/javascript" src="../libs/rhill-voronoi-core.js"></script>
+	<script type="text/javascript">
+		tools.mixin(tools, this);
+		
+		var w = 700;
+		var h = 700;
+		
+		var stage = new Stage(w, h);
+		var out = stage.out;
+    out.strokeStyle = "black";
+    out.fillStyle = "black";
+		
+		var bbox = {xl:0, xr:w, yt:0, yb:h};
+		
+		var nSites = 40;
+		
+		var sites = [];
+    for(var i = 0; i < nSites; i++) {
+      sites[i] = {
+        x : Math.random() * w,
+        y : Math.random() * h,
+        vx:0, vy:0
+      };
+    }
+
+    sites[0].x = 0.5 * w;
+    sites[0].y = 0.5 * h;
+		
+		var diagram;
+		
+		var time = 0;
+		var maxTime = 50;
+    var fr = 0.995;
+    var randomness = 0.25;
+		
+			var voronoi = new Voronoi();
+		new Loop(function(){
+      out.clearRect(0, 0, w, h);
+      sites.forEach(function(site, i) {
+        if(i === 0) return;
+        site.vx = site.vx * fr + randomness * (Math.random() * 2 - 1); 
+        site.vy = site.vy * fr + randomness * (Math.random() * 2 - 1); 
+        site.x += site.vx;
+        site.y += site.vy;
+        if(site.x < 0)
+        {
+          site.x = 0;
+          site.vx *= -1;
+        }
+        else if(site.x > w)
+        {
+          site.x = w;
+          site.vx *= -1;
+        }
+        if(site.y < 0)
+        {
+          site.y = 0;
+          site.vy *= -1;
+        }
+        else if(site.y > w)
+        {
+          site.y = w;
+          site.vy *= -1;
+        }
+        out.fillRect(site.x - 1, site.y - 1, 2, 2);
+      });
+      sites[0].x = 0.5 * w;
+      sites[0].y = 0.5 * h;
+			diagram = voronoi.compute(sites, bbox);
+      var cell = diagram.cells.filter(function(cell){
+        return cell.site.voronoiId == sites[0].voronoiId;
+      })[0];
+			drawCell(cell, out);
+		
+		});
+		
+		
+		
+		
+		function drawCell(cell, out)
+		{
+			out.beginPath();
+			var x = cell.site.x;
+			var y = cell.site.y;
+		
+			var n = cell.halfedges.length;
+			var he = cell.halfedges[0];
+			var p = he.getStartpoint();
+			out.moveTo(p.x, p.y);
+			for(var i = 0; i < n; i++)
+			{
+				he = cell.halfedges[i];
+				p = he.getEndpoint();
+        out.lineTo(p.x, p.y);
+			}
+			out.closePath();
+			out.stroke();
+		}
+		
+	</script>
+	<script type="text/javascript">
+	  var _gaq = _gaq || [];
+	  _gaq.push(['_setAccount', 'UA-6101672-1']);
+	  _gaq.push(['_trackPageview']);
+
+	  (function() {
+		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	  })();
+	</script>
+</body>
+</html>

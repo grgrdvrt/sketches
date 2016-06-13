@@ -1,0 +1,60 @@
+<html>
+<head>
+	<title>Stars</title>
+	<link rel="stylesheet" type="text/css" href="../css/styles.css"/>
+</head>
+<body>
+	<script type="text/javascript" src="../libs/tools.js"></script>
+	<script type="text/javascript">
+		tools.mixin(tools, this);
+		
+		var w = 700;
+		var h = 700;
+		var stage = new tools.Stage(w, h);
+		var out = stage.out;
+		
+		
+		var pts = [];
+		var n = 1000;
+		for(var i = 0; i < n; i++)
+		{
+			var pt = {x:Math.random() * w, y:Math.random() * h};
+			out.fillStyle = "hsl(0, 0%, " + (Math.round(Math.random() * 100)) + "%)";
+			pt.color = out.fillStyle;
+			pt.size = Math.pow(Math.random(), 2) * 5;
+			pt.isOn = Math.random() < 0.3;
+			pt.time = 0;
+			pts[i] = pt;
+		}
+		
+		new Loop(function(){
+		
+			out.fillStyle = "black";
+			out.fillRect(0, 0, w , h);
+			for(var i = 0; i < n; i++)
+			{
+				pt = pts[i];
+				if(--pt.time < 0)
+				{
+					pt.isOn = !pt.isOn;
+					pt.time = Math.random() * 20 + 3;
+				}
+				if(!pt.isOn) continue;
+				out.fillStyle = pt.color;
+				out.fillRect(pt.x, pt.y, pt.size, pt.size);
+			}
+		})</script>
+	
+	<script type="text/javascript">
+	  var _gaq = _gaq || [];
+	  _gaq.push(['_setAccount', 'UA-6101672-1']);
+	  _gaq.push(['_trackPageview']);
+
+	  (function() {
+		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	  })();
+	</script>
+</body>
+</html>

@@ -1,0 +1,59 @@
+<html>
+<head>
+	<title>Stripes</title>
+	<link rel="stylesheet" type="text/css" href="../css/styles.css"/>
+</head>
+<body>
+	<script type="text/javascript" src="../libs/tools.js"></script>
+	<script type="text/javascript">
+		tools.mixin(tools, this);
+		
+		var w = 700;
+		var h = 700;
+		var stage = new tools.Stage(w, h);
+		var out = stage.out;
+		var n = 50;
+		
+		new Loop(function()
+		{
+			var weights = [];
+			var total = 0;
+			var time = 2 * Math.sin(Date.now() * 0.002);
+			for(var i = 0; i < n; i++)
+			{
+				weights[i] = 1.5 + Math.cos(15 * i / n + time);
+				total += weights[i];
+			}
+		
+			var ratio = w / total;
+		
+			for(var i = 0; i < n; i++)
+				weights[i] *= ratio;
+		
+			var posX = 0;
+			out.clearRect(0, 0, w, h);
+			out.beginPath();
+			out.lineWidth = 2;
+			for(var i = 0; i < n; i++)
+			{
+				out.moveTo(posX, 0);
+				out.lineTo(posX, h);
+				posX += weights[i];
+			}
+		
+			out.stroke();
+		})</script>
+	
+	<script type="text/javascript">
+	  var _gaq = _gaq || [];
+	  _gaq.push(['_setAccount', 'UA-6101672-1']);
+	  _gaq.push(['_trackPageview']);
+
+	  (function() {
+		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	  })();
+	</script>
+</body>
+</html>

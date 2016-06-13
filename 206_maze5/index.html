@@ -1,0 +1,136 @@
+
+<head>
+	<title>maze</title>
+	<link rel="stylesheet" type="text/css" href="../css/styles.css"/>
+</head>
+<body>
+	<script type="text/javascript" src="../libs/tools.js"></script>
+  <script type="text/javascript">
+
+
+    var w = 700;
+    var h = 700;
+
+    tools.mixin(tools, this);
+    var stage = new Stage(w, h);
+    var out = stage.out;
+    out.globalCompositeOperation = "destination-over";
+
+
+    var grid = [];
+    var walls = [];
+    var nx = 700;
+    var ny = 700;
+    var border = 0;
+    var cellSize = w / nx;
+    var cells = [];
+    for(var i = 0 ; i < nx; i++){
+      for(var j = 0; j < ny; j++){
+        cells[i] = false;
+      }
+    }
+    var usedCells = 0;
+    
+
+    function addCell(cell){
+      usedCells++;
+      cells[nx * cell[0] + cell[1]] = true;
+      addWall(cell, [cell[0] - 1, cell[1]]);
+      addWall(cell, [cell[0] + 1, cell[1]]);
+      addWall(cell, [cell[0], cell[1] + 1]);
+      addWall(cell, [cell[0], cell[1] - 1]);
+    }
+
+    var add = 0;
+    var discard = 0;
+    
+    function addWall(cellBegin, cellEnd)
+    {
+      if(isCellAvailable(cellEnd)){
+        walls.push([cellBegin, cellEnd]);
+      }
+    }
+    
+    /*out.fillStyle = "black";
+    out.fillRect(0, 0, w, h);*/
+
+    var time = Math.random() * 360;
+    var hBegin = Math.random() * 280;
+    function drawCell(cell)
+    {
+      time += 0.0003;
+      var size = 3 * cellSize
+      out.fillStyle = "hsl(" + Math.floor(time % 80 + hBegin) + ", " + 100 + "%, " + Math.floor(2 * time % 100) + "%)";
+      out.fillRect(
+          Math.floor(cellSize * cell[0] + border - 0.5 * size),
+          Math.floor(cellSize * cell[1] + border - 0.5 * size),
+          size - 2 * border,
+          size - 2 * border
+      );
+    }
+    
+    function drawWall(wall)
+    {
+      drawCell(
+        [0.5 * (wall[0][0] + wall[1][0]),
+         0.5 * (wall[0][1] + wall[1][1])]
+      );
+    }
+    
+    function isCellAvailable(cell)
+    {
+      var available = !cells[nx * cell[0] + cell[1]];
+      available = available && cell[0] >= 0;
+      available = available && cell[0] < nx;
+      available = available && cell[1] >= 0;
+      available = available && cell[1] < nx;
+      return available;
+    }
+
+    var posX = Math.floor(0.5 * nx);
+    var posY = Math.floor(0.5 * ny);
+
+    var c = [posX, posY];
+    out.fillStyle = "red";
+    addCell(c);
+    drawCell(c);
+    out.fillStyle = "white";
+
+    function update()
+    {
+      for(var i = 0; i < 400 && walls.length > 0; i++){
+        //var wallId = Math.floor(((0.75 + 0.25 * Math.pow(Math.random(), 2)) % 1) * walls.length);
+        var wallId = Math.floor(Math.pow(Math.random(), 0.01) * walls.length);
+        //var wallId = Math.floor((0.99 + Math.random() * 0.01) * walls.length);
+        //var wallId = walls.length - Math.ceil(Math.random() * 3);
+        var wall = walls.splice(wallId, 1)[0];
+        if(isCellAvailable(wall[1])){
+        //if(Math.random() < 0.5 && isCellAvailable(wall[1])){
+          drawWall(wall);
+          drawCell(wall[1]);
+          addCell(wall[1]);
+        }
+      }
+
+      if(walls.length > 0){
+        requestAnimationFrame(update);
+      }
+    }
+    update();
+
+    
+  </script>
+	
+	<script type="text/javascript">
+	  var _gaq = _gaq || [];
+	  _gaq.push(['_setAccount', 'UA-6101672-1']);
+	  _gaq.push(['_trackPageview']);
+
+	  (function() {
+		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	  })();
+	</script>
+</body>
+</html>

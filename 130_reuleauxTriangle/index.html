@@ -1,0 +1,132 @@
+<html>
+<head>
+	<title>Reuleaux Triangle</title>
+	<link rel="stylesheet" type="text/css" href="../css/styles.css"/>
+</head>
+<body>
+	<script type="text/javascript" src="../libs/tools.js"></script>
+	<script type="text/javascript">
+		tools.mixin(tools, this);
+		
+		var w = 700;
+		var h = 700;
+		var stage = new Stage(w, h);
+		var out = stage.out;
+		
+		function Point(x, y)
+		{
+			this.x = x || 0;
+			this.y = y || 0;
+		}
+		
+		var PI = Math.PI;
+		
+		out.translate(0.5 * w, 0.5 * h);
+		out.rotate(-0.5 * Math.PI);
+		
+		var radius = 0.4 * w;
+		var pts = generatePoints(3, radius);
+		
+		
+		out.strokeStyle = "hsl(0, 0%, 75%)";
+		out.beginPath();
+		//drawTriangle(out, pts);
+		out.stroke();
+		
+		out.beginPath();
+		//drawCircle(out, 0, 0, radius);
+		out.stroke();
+		
+		
+		out.beginPath();
+		var radius2 = radius * 2 * Math.sin(Math.PI / 3);
+		drawCircle(out, 0, 0, radius2 - radius);
+		out.stroke();
+		
+		
+		out.beginPath();
+		//drawCircle(out, 0, 0, 0.5 * radius);
+		out.stroke();
+		
+		
+		out.beginPath();
+		//drawRadiuses(out, pts)
+		out.stroke();
+		
+		out.strokeStyle = "black";
+		out.beginPath();
+		drawReuleaux(out, pts, radius);
+		out.stroke();
+		
+		function generatePoints(n, radius)
+		{
+			var a = 2 * PI / n;
+		
+			var angle = 0;
+			var pts = [];
+			for(var i = 0; i < n; i++)
+			{
+				var pt = new Point();
+				pt.x = radius * Math.cos(angle);
+				pt.y = radius * Math.sin(angle);
+				pts[i] = pt;
+				angle += a;
+			}
+			return pts;
+		}
+		
+		function drawTriangle(out, pts)
+		{
+			var n = pts.length;
+			out.moveTo(pts[0].x, pts[0].y);
+			for(var i = 0; i < n; i++)
+				out.lineTo(pts[i].x, pts[i].y);
+			out.lineTo(pts[0].x, pts[0].y);
+		}
+		
+		function drawReuleaux(out, pts, radius)
+		{
+			var radius2 = radius * 2 * Math.sin(Math.PI / 3);
+		
+			var a2 = 0.5 * Math.PI / 3;
+			var b = 0.02 * Math.PI;
+			out.beginPath();
+			out.arc(pts[0].x, pts[0].y, radius2, Math.PI - a2 - b, -Math.PI + a2 + b);
+			out.stroke();
+			out.beginPath();
+			out.arc(pts[1].x, pts[1].y, radius2, -0.5 * Math.PI - b, -a2 + b);
+			out.stroke();
+			out.beginPath();
+			out.arc(pts[2].x, pts[2].y, radius2, a2 - b, 0.5 * Math.PI + b);
+			out.stroke();
+		}
+		
+		function drawCircle(out, x, y, r)
+		{
+			out.moveTo(x + r, y);
+			out.arc(x, y, r, 0, 2 * Math.PI);
+		}
+		
+		function drawRadiuses(out, pts)
+		{
+			var n = pts.length;
+			for(var i = 0; i < n; i++)
+			{
+				out.moveTo(0, 0);
+				out.lineTo(pts[i].x, pts[i].y);
+			}
+		}</script>
+	
+	<script type="text/javascript">
+	  var _gaq = _gaq || [];
+	  _gaq.push(['_setAccount', 'UA-6101672-1']);
+	  _gaq.push(['_trackPageview']);
+
+	  (function() {
+		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	  })();
+	</script>
+</body>
+</html>

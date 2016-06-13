@@ -1,0 +1,135 @@
+<html>
+<head>
+	<title>rain</title>
+	<link rel="stylesheet" type="text/css" href="../css/styles.css"/>
+</head>
+<body>
+	<script type="text/javascript" src="../libs/tools.js"></script>
+	<script type="text/javascript">
+		var stage = new tools.Stage(700, 700);
+		var out = stage.out;
+		
+		var mouse = new tools.Mouse(stage.canvas);
+		
+		var particles = [];
+		
+		var length = 3;
+		
+		var rainSound;
+		var time = 0;
+		
+		function Particle()
+		{
+			this.x = this.y = 0;
+			this.vx = this.vy = 0;
+		}
+		
+		var nParticles = 10000;
+		
+		for(var i = 0; i < nParticles; i++)
+		{
+			var p = new Particle();
+			p.x = Math.random() * stage.width;
+			p.y = Math.random() * stage.height;
+			p.vx = -(Math.random() * 0.5);
+			p.vy = Math.random() * 8 + 4;
+			particles[i] = p;
+		}
+		
+		function update()
+		{
+			stage.clear();
+		
+			var mouseRatio = 1 - mouse.y / stage.height;
+		
+			var mouseRatio2 = 0.5  + 0.5 * mouseRatio;
+			var lengthRatio = length * mouseRatio2;
+			var velRatio = 0.5 * mouseRatio2 + 0.5;
+			out.strokeStyle = "rgba(0, 0, 0, 0.2)";
+			out.beginPath();
+			var n = nParticles * mouseRatio2;
+			for(var i = 0; i < n; i++)
+			{
+				var p = particles[i];
+				p.x += velRatio * p.vx;
+				p.y += velRatio * p.vy;
+				out.moveTo(p.x - lengthRatio * p.vx, p.y - lengthRatio * p.vy);
+				out.lineTo(p.x, p.y);
+				if(p.x < 0) p.x = stage.width;
+				if(p.y < 0) p.y = stage.height;
+				if(p.x > stage.width) p.x = 0;
+				if(p.y > stage.height) p.y = 0;
+			}
+			out.stroke();
+		
+		
+			if(rainSound)
+				rainSound.setIntensity(0.9 * mouseRatio + 0.1 * Math.cos(0.02 * ++time));
+		}
+		
+		
+		
+		
+		function RainSound()
+		{
+			var bufferSize = 2048;
+		
+			this.audioContext = new window.webkitAudioContext();
+			this.processor = this.audioContext.createJavaScriptNode(bufferSize, 0, 1);
+			this.gain = this.audioContext.createGainNode();
+		
+			this.gain.gain.setValueAtTime(0.2, this.audioContext.currentTime);
+		
+			this.lowPass = this.audioContext.createBiquadFilter();
+			this.lowPass.type = 0;
+			this.minValue = 2000;
+			this.maxValue = 6000;
+		
+			this.processor.connect(this.gain);
+			this.gain.connect(this.lowPass);
+			this.lowPass.connect(this.audioContext.destination, 0);
+		
+			this.processor.onaudioprocess = this.onAudioProcess.bind(this);
+		
+		}
+		
+		RainSound.prototype = {
+			onAudioProcess : function(e)
+			{
+				var l = e.outputBuffer.getChannelData(0);
+				var n = e.outputBuffer.length;
+				for(var i = 0; i < n; i++)
+					l[i] = Math.random() * 2 - 1;
+			},
+			mute : function()
+			{
+				this.gain.disconnect(this.audioContext.destination);
+			},
+			setIntensity : function(value)
+			{
+				this.lowPass.frequency.value = this.minValue + value * (this.maxValue - this.minValue);
+			}
+		}
+		
+		if(window.webkitAudioContext)
+		{
+			rainSound = new RainSound();
+			window.onblur = rainSound.mute.bind(rainSound);
+		}
+		
+		
+		new tools.Loop(update, this);</script>
+	
+	<script type="text/javascript">
+	  var _gaq = _gaq || [];
+	  _gaq.push(['_setAccount', 'UA-6101672-1']);
+	  _gaq.push(['_trackPageview']);
+
+	  (function() {
+		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	  })();
+	</script>
+</body>
+</html>

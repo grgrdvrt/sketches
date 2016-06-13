@@ -1,0 +1,204 @@
+<html>
+<head>
+	<title>bullshit 1</title>
+	<link rel="stylesheet" type="text/css" href="../css/styles.css"/>
+</head>
+<body>
+	<script type="text/javascript" src="../libs/tools.js"></script>
+	<script type="text/javascript">
+		var stage = new tools.Stage(700, 700);
+		
+		
+		function StatsGenerator(){}
+		StatsGenerator.prototype.getNext = function(){return Math.random();}
+		
+		
+		function DataGenerator(n)
+		{
+			this.onDataGenerated = new tools.Signal();
+			this.dataCount = n;
+			this.data = [];
+			this.generateData();
+			
+			setInterval(tools.delegate(this.generateData, this), 3000);
+		}
+		
+		DataGenerator.prototype = {
+			generateData : function()
+			{
+				var total = 0;
+				var generator = new StatsGenerator();
+				for(var i = 0; i < this.dataCount; i++)
+				{
+					var ran = Math.random() < 0.3 ? 0 : generator.getNext();
+					total += ran;
+					this.data[i] = ran;
+				}
+				var scale = 1 / total;
+				for(i = 0; i < this.dataCount; i++)	
+					this.data[i] *= scale;
+					
+				this.onDataGenerated.dispatch();
+			}
+		}
+		
+		
+		function DataView(stage, dataGenerator)
+		{
+			this.stage = stage;
+			this.radius = 0.35 * Math.min(this.stage.width, this.stage.height);
+			this.dataGenerator = dataGenerator;
+			
+			this.parts = [];
+			for(var i = 0; i < this.dataGenerator.dataCount; i++)
+				this.parts[i] = new ViewPart();
+				
+			this.tween = new tools.Tween(0);
+			this.angleBegin = 0;
+			this.angleEnd = 0;
+			
+			this.dataGenerator.onDataGenerated.add(this.onDataUpdated, this);
+			this.onDataUpdated();
+			
+			this.tween.init(0);
+			this.draw();
+		}
+		
+		DataView.prototype = {
+		
+			onDataUpdated : function()
+			{
+				for(var i = 0; i < this.dataGenerator.dataCount; i++)
+					this.parts[i].update(this.dataGenerator.data[i]);
+					
+				this.angleBegin = this.angleEnd;
+				this.angleEnd = -Math.random() * Math.PI;
+				
+				this.tween.init(1.2);
+				
+				this.draw();
+			},
+			
+			draw : function()
+			{
+				var out = this.stage.out;
+				var angle = this.angleBegin + this.tween * (this.angleEnd - this.angleBegin);
+				out.setTransform(1, 0, 0, 1, 0, 0);
+				out.clearRect(0, 0, this.stage.width, this.stage.height);
+				out.translate(0.5 * this.stage.width, 0.5 * this.stage.height);
+				out.scale(1, 0.7);
+				var offset = 100;
+				var n = this.dataGenerator.dataCount;
+				for(i = 0; i < n; i++)
+				{
+					var angleBegin = angle - 0.01;
+					var part = this.parts[i];
+					part.interpolate(this.tween);
+					if(part.currentData.value == 0) continue;
+					angle += 2 * Math.PI * part.currentData.value;
+			
+					var cos1 = this.radius * Math.cos(angleBegin);
+					var sin1 = this.radius * Math.sin(angleBegin);
+					var cos2 = this.radius * Math.cos(angle);
+					var sin2 = this.radius * Math.sin(angle);
+			
+					var l = Math.floor(100 * part.currentData.color);
+					out.fillStyle = "hsl(0, 0%, " + l + "%)";
+					out.beginPath();
+					out.lineTo(cos1, sin1);
+					out.arc(0, 0, this.radius, angleBegin, angle);
+					out.lineTo(0, 0);
+					out.fill();
+					out.closePath();
+			
+					if(angle < 0 || angleBegin > Math.PI)continue;
+			
+					var a1 = angleBegin, a2 = angle;
+					if(a1 < 0)
+					{
+						cos1 = this.radius;
+						sin1 = 0;
+						a1 = 0;
+					}
+					if(a2 > Math.PI)
+					{
+						cos2 = -this.radius;
+						sin2 = 0;
+						a2 = Math.PI;
+					}
+			
+					out.fillStyle = "hsl(0, 0%, " + Math.max(0, l - 10) + "%)";
+			
+					out.beginPath();
+					out.lineTo(cos1, sin1 + offset);
+					out.arc(0, offset, this.radius, a1, a2);
+					out.lineTo(cos2, sin2);
+					out.arc(0, -2, this.radius, a2, a1, true);
+					out.fill();
+					out.closePath();
+				}
+			}
+		}
+		
+		
+		function ViewPart()
+		{
+			this.beginData = new ViewPartValue();
+			this.endData = new ViewPartValue();
+			this.currentData = new ViewPartValue();
+		}
+		
+		ViewPart.prototype = {
+			interpolate : function(ratio)
+			{
+				var a = this.beginData;
+				var b = this.endData;
+				var c = this.currentData;
+				
+				c.color = a.color + ratio * (b.color - a.color);
+				c.value = a.value + ratio * (b.value - a.value);
+			},
+			
+			update : function(value)
+			{
+				this.beginData.setData(this.endData);
+				
+				this.endData.value = value;
+				this.endData.color = Math.random();
+			}
+		}
+		
+		
+		function ViewPartValue()
+		{
+			this.value = 0;
+			this.color = 0;
+		}
+		
+		ViewPartValue.prototype = {
+			setData : function(data)
+			{
+				this.value = data.value;
+				this.color = data.color;
+			}
+		}
+		
+		var dataGenerator = new DataGenerator(9);
+		var dataView = new DataView(stage, dataGenerator);
+		
+		new tools.Loop(dataView.draw, dataView);
+	</script>
+	
+	<script type="text/javascript">
+	  var _gaq = _gaq || [];
+	  _gaq.push(['_setAccount', 'UA-6101672-1']);
+	  _gaq.push(['_trackPageview']);
+
+	  (function() {
+		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	  })();
+	</script>
+</body>
+</html>

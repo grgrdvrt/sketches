@@ -1,0 +1,146 @@
+<html>
+<head>
+	<title>dla 2</title>
+	<link rel="stylesheet" type="text/css" href="../css/styles.css"/>
+</head>
+<body>
+	<script type="text/javascript" src="../libs/tools.js"></script>
+	<script type="text/javascript" src="../libs/threeDimensions.js"></script>
+	<script type="text/javascript">
+		
+		
+		function DotsRenderer(ctx, w, h)
+		{
+			this.ctx = ctx;
+			this.w = w;
+			this.h = h;
+		}
+		
+		DotsRenderer.prototype.render = function(vertices)
+		{
+			var n = vertices.length;
+			this.ctx.fillStyle = "black";
+			for(var i = 0; i < n; i++)
+			{
+				var v = vertices[i];
+				this.ctx.fillRect(v.px + 0.5 * this.w - 1, v.py + 0.5 * this.h - 1, 2, 2);
+			}
+		}
+		
+		var stage = new tools.Stage(700, 700);
+		var mouse = new tools.Mouse(stage.canvas);
+		mouse.onUp.add(reset, this);
+		
+		var engine = new threeDimensions.Engine();
+		var renderer = new threeDimensions.EdgesRenderer(stage.out, stage.width, stage.height, engine.focal);
+		
+		engine.scale(600, -600, 600);
+		engine.translate(-300, 300, 0);
+		
+		var vertices = [];
+		var edges = [];
+		var grid = [];
+		
+		var size = 100;
+		var threshold = 1 / size;
+		var hMax = 0;
+		
+		function reset()
+		{
+			vertices.length = 0;
+			edges.length = 0;
+			grid.length = 0;
+			hMax = 0;
+		}
+		
+		
+		
+		var time = 0;
+		function update()
+		{
+			if(hMax < 1.5)
+				for(var i = 0; i < 100; i++)
+					addVertex();
+			stage.out.clearRect(0, 0, stage.width, stage.height);
+			//engine.rotationX += 0.02;
+			//engine.rotationY += 0.02;
+			engine.rotationY = 0.5 * Math.PI + 0.5 * Math.PI * (Math.sin(++time * 0.01) - 1);
+			engine.computeProjections(vertices);
+			renderer.render(edges);
+		
+		}
+		
+		function addVertex()
+		{
+			var vertex = new threeDimensions.Vertex(getVertexPos(), 0, getVertexPos());
+			var parent = {vertex:vertex};
+			var t = threshold;
+			compare(vertex, -t, -t, parent);
+			compare(vertex, t, -t, parent);
+			compare(vertex, -t, t, parent);
+			compare(vertex, t, t, parent);
+		
+			compare(vertex, 0, -t, parent);
+			compare(vertex, -t, 0, parent);
+			compare(vertex, t, 0, parent);
+			compare(vertex, 0, t, parent);
+		
+			compare(vertex, 0, 0, parent);
+		
+			vertices.push(vertex);
+			if(parent.vertex != vertex)
+			{
+				vertex.y = parent.vertex.y + threshold;
+				if(hMax < vertex.y)hMax = vertex.y
+				edges.push(new threeDimensions.Edge(parent.vertex, vertex));
+			}
+			setGridElement(vertex);
+		}
+		
+		function getVertexPos()
+		{
+			return round(Math.pow(Math.random(), 0.7) * (Math.random() - 0.5) + 0.5);
+		}
+		
+		function round(value)
+		{
+			return Math.floor(value / threshold) * threshold;
+		}
+		
+		function compare(vertex, dx, dz, out)
+		{
+			var v = getGridElement(vertex.x + dx, vertex.z + dz);
+			if(!v) return;
+			if(v.y >= out.vertex.y) out.vertex = v;
+		
+		}
+		
+		function getGridElement(x, z)
+		{
+			if(x < 0 || x >= 1 || z < 0 || z >= 1) return undefined;
+			return grid[getGridOffset(x, z)];
+		}
+		
+		function setGridElement(element)
+		{
+			grid[getGridOffset(element.x, element.z)] = element;
+		}
+		
+		function getGridOffset(x, z){ return Math.floor(size * x) + size * Math.floor(size * z); }
+		
+		new tools.Loop(update, this);
+	</script>
+	
+	<script type="text/javascript">
+	  var _gaq = _gaq || [];
+	  _gaq.push(['_setAccount', 'UA-6101672-1']);
+	  _gaq.push(['_trackPageview']);
+
+	  (function() {
+		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	  })();
+	</script>
+</body>
+</html>

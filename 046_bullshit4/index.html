@@ -1,0 +1,278 @@
+<html>
+<head>
+	<title>bullshit 4</title>
+	<link rel="stylesheet" type="text/css" href="../css/styles.css"/>
+</head>
+<body>
+	<script type="text/javascript" src="../libs/tools.js"></script>
+	<script type="text/javascript">
+		function Axis(divisions, angle)
+		{
+			this.divisions = divisions;
+			this.angle = angle;
+		}
+		
+		Axis.prototype = {
+			draw : function(out, length)
+			{
+				out.save();
+				out.rotate(this.angle);
+				out.beginPath();
+				out.moveTo(0, 0);
+				out.lineTo(length, 0);
+			
+				if(this.divisions)
+				{
+					var divisionRatio = length / this.divisions;
+					for(var i = 1; i < this.divisions; i++)
+					{
+						var posX = i * divisionRatio;
+						out.moveTo(posX, -3);
+						out.lineTo(posX, 3);
+					}
+				}
+				out.moveTo(length - 5, -5);
+				out.lineTo(length, 0);
+				out.lineTo(length - 5, 5);
+				out.stroke();
+				out.restore();
+			}
+		}
+		
+		
+		
+		function DataView(stage, dataGenerator)
+		{
+			this.stage = stage;
+			this.dataGenerator = dataGenerator;
+			this.dataGenerator.onDataUpdated.add(this.onDataUpdated, this);
+			
+			
+			this.margin = 50;
+			this.space = 20;
+			this.width = stage.width - 2 * this.margin;
+			this.height = stage.height - 2 * this.margin;
+			
+			this.xAxis = new Axis(0, 0);
+			this.yAxis = new Axis(10, -0.5 * Math.PI);
+			
+			this.blocks = [];
+			var n = this.dataGenerator.dataCount;
+			for(var i = 0; i < n; i++)
+				this.blocks[i] = new Block();
+			
+			this.ratios = [2/5, 3/5];
+			this.tween = new tools.Tween(0);
+			
+			this.onDataUpdated();
+		}
+		
+		DataView.prototype = {
+		
+			draw : function()
+			{
+				var out = this.stage.out;
+				out.setTransform(1, 0, 0, 1, 0, 0);
+				out.clearRect(0, 0, this.stage.width, this.stage.height);
+				out.translate(this.margin, this.height + this.margin + 0.5);
+				
+				out.strokeStyle = "black";
+				this.xAxis.draw(out, this.width);
+				
+				this.yAxis.draw(out, this.height);
+				
+				if(this.tween < this.ratios[0] * this.tween.duration)
+				{
+					this.layout1();
+					this.layout2(0);	
+					this.layout3(0);
+				}
+				else if(this.tween < this.ratios[1] * this.tween.duration)
+				{
+					this.layout1(1);
+					this.layout2();
+					this.layout3(0);
+				}
+				else 
+				{
+					this.layout1(1);
+					this.layout2(1);
+					this.layout3();
+				}
+				
+				var n = this.blocks.length;
+				for(var i = 0; i < n; i++)
+				{
+					var block = this.blocks[i];
+					var data = block.currentData;
+					
+					if(!block.endData.height && this.tween > this.ratios[0])continue;
+					if(!block.beginData.height && this.tween < this.ratios[1])continue;
+					
+					//console.log(data.posX, data.width, -data.height);
+					block.interpolate(this.tween, "color");
+					out.fillStyle = "hsl(0, 0%, " + Math.floor(100 * data.color) + "%)";
+					out.fillRect(data.posX, 0, data.width, -data.height * this.height);
+				}
+			},
+			
+			layout1 : function(ratio)
+			{
+				//changer les hauteurs des anciens blocs
+				var n = this.blocks.length;
+				if(ratio == undefined) ratio = this.tween / (this.tween.duration * this.ratios[0]);
+				for(var i = 0; i < n; i++)
+				{
+					var block = this.blocks[i];
+					if(block.beginData.height == 0) continue;
+					block.interpolate(ratio, "height");
+				}
+			},
+			
+			layout2 : function(ratio)
+			{
+				//déplacer les blocs restants
+				var n = this.blocks.length;
+				if(ratio == undefined) ratio = (this.tween - this.ratios[0]) / (this.tween.duration * (this.ratios[1] - this.ratios[0]));
+				for(var i = 0; i < n; i++)
+				{
+					var block = this.blocks[i];
+					if(block.endData.height == 0) continue;
+					block.interpolate(ratio, "posX");
+					block.interpolate(ratio, "width");
+				}
+			},
+			
+			layout3 : function(ratio)
+			{
+				//changer la hauteur des nouveaux blocs
+				var n = this.blocks.length;
+				if(ratio == undefined) ratio = (this.tween - this.ratios[1]) / (this.tween.duration * (1 - this.ratios[1]));
+				for(var i = 0; i < n; i++)
+				{
+					var block = this.blocks[i];
+					if(block.beginData.height != 0) continue;
+					block.interpolate(ratio, "height");
+				}
+			},
+			
+			onDataUpdated : function()
+			{
+				this.tween.init(1);
+				
+				var data = this.dataGenerator.data;
+				var i, n = data.length;
+				
+				var nComplete = 0;
+				for(i = 0; i < n; i++) if(data[i]) nComplete++;
+				
+				
+				var blockWidth = (this.width - this.space) / nComplete - this.space;
+				var posID = 0;
+				for(i = 0; i < n; i++)
+				{
+					var block = this.blocks[i];
+					block.update(blockWidth, data[i]);
+					if(block.endData.height == 0) continue;
+					block.endData.posX = posID * (blockWidth + this.space) + this.space;
+					posID++;
+				}
+			}
+		}
+		
+		
+		
+		function Block()
+		{
+			this.beginData = new BlockData();
+			this.endData = new BlockData();
+			this.currentData = new BlockData();
+		}
+		
+		Block.prototype = {
+		
+			update : function(width, height)
+			{
+				var a = this.beginData;
+				var b = this.endData;
+				
+				a.setData(b);
+				
+				b.color = Math.random();
+				b.width = width;
+				b.height = height;
+			},
+			
+			interpolate : function(ratio, paramName)
+			{
+				if(!ratio || ratio < 0) ratio = 0;
+				else if(ratio > 1) ratio = 1;
+				var a = this.beginData, b = this.endData, c = this.currentData;
+				c[paramName] = a[paramName] + ratio * (b[paramName] - a[paramName]);
+			},
+		}
+		
+		
+		
+		function BlockData()
+		{
+			this.color = 0;
+			this.posX = 0;
+			this.width = 0;
+			this.height = 0;
+		}
+		
+		BlockData.prototype = {
+		
+			setData : function(data)
+			{
+				this.color = data.color;
+				this.posX = data.posX;
+				this.width = data.width;
+				this.height = data.height;
+			}
+		}
+		
+		
+		
+		function DataGenerator(n)
+		{
+			this.onDataUpdated = new tools.Signal();
+			this.dataCount = n;
+			this.data = [];
+			setInterval(tools.delegate(this.generateData, this), 3000);
+			this.generateData();
+		}
+		
+		DataGenerator.prototype = {
+			generateData : function()
+			{
+				var n = this.dataCount;
+				for(var i = 0; i < n; i++)
+					this.data[i] = Math.random() < 0.3 ? 0 : Math.random() * 0.8 + 0.2;
+				this.onDataUpdated.dispatch();
+			}
+		}
+		
+		
+		
+		var stage = new tools.Stage(700, 700);
+		var dataGenerator = new DataGenerator(7);
+		var dataView = new DataView(stage, dataGenerator);
+		
+		new tools.Loop(dataView.draw, dataView);
+	</script>
+	
+	<script type="text/javascript">
+	  var _gaq = _gaq || [];
+	  _gaq.push(['_setAccount', 'UA-6101672-1']);
+	  _gaq.push(['_trackPageview']);
+
+	  (function() {
+		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	  })();
+	</script>
+</body>
+</html>

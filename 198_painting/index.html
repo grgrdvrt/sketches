@@ -1,0 +1,232 @@
+<html>
+<head>
+	<title>Painting</title>
+	<link rel="stylesheet" type="text/css" href="../css/styles.css"/>
+</head>
+<body>
+	<script type="text/javascript" src="../libs/tools.js"></script>
+	<script type="text/javascript">
+		tools.mixin(tools, this);
+		
+		
+		function Point()
+		{
+			this.x = 0;
+			this.y = 0;
+			this.vx = 0;
+			this.vy = 0;
+			this.ox = 0;
+			this.oy = 0;
+			this.fr = 0.98;
+		}
+		
+		Point.prototype = {
+		
+			update : function(randomness)
+			{
+				this.ox = this.x;
+				this.oy = this.y;
+				this.vx = this.fr * this.vx + randomness * (Math.random() * 2 - 1);
+				this.vy = this.fr * this.vy + randomness * (Math.random() * 2 - 1);
+				this.x += this.vx;
+				this.y += this.vy;
+			}
+		
+		}
+		
+		
+		
+		function Line(nPts)
+		{
+			this.pts = [];
+      for(var i = 0; i < nPts; i++) {
+				this.pts[i] = new Point();
+      }
+		
+		}
+		
+		Line.prototype = {
+			
+			init : function(x, y)
+			{
+				var n = this.pts.length;
+				for(var i = 0; i < n; i++)
+				{
+					var pt = this.pts[i];
+					pt.x = x;
+					pt.y = y;
+				}
+			},
+		
+			update : function()
+			{
+				var n = this.pts.length;
+				for(var i = 1; i < n; i++)
+				{
+					var pt = this.pts[i];
+					var oPt = this.pts[i - 1];
+					pt.update(0.2);
+		
+					var dx = oPt.x - pt.x;
+					var dy = oPt.y - pt.y;
+					var r = 20 / Math.sqrt(dx * dx + dy * dy);
+					pt.x = oPt.x - r * dx;
+					pt.y = oPt.y - r * dy;
+				}
+			},
+		
+			draw : function(out)
+			{
+				out.beginPath();
+				out.strokeStyle = this.color;
+				out.lineWidth = this.lineWidth;
+				out.lineCap = "round";
+				var pt = this.pts[0];
+				out.moveTo(pt.x, pt.y);
+				var n = this.pts.length;
+				for(var i = 2; i < n; i++)
+				{
+					var oPt = this.pts[i - 1];
+					pt = this.pts[i];
+					out.quadraticCurveTo(oPt.x, oPt.y, 0.5 * (pt.x + oPt.x), 0.5 * (pt.y + oPt.y));
+				}
+				out.stroke();
+			}
+		}
+		
+		function Lines(isBlack)
+		{
+			this.lines = [];
+			this.vel = 1;
+			this.fr = 0.98;
+			this.x = this.y = 0;
+			this.vx = this.vy = 0;
+		
+			this.nLines = 50;
+			this.positions = [];
+		
+			for(var i = 0; i < this.nLines; i++)
+			{
+				this.positions[i] = {x:0, y:0}
+        var line = new Line(8 * i / this.nLines + 2, isBlack);
+        var ratio = 1 - (i + 1) / this.nLines;
+        var lig;
+        if(isBlack) {
+          lig = Math.sqrt(Math.random()) * 20;
+        }
+        else {
+          lig = Math.sqrt(Math.random()) * 20 + 80;
+        }
+        line.color = "hsl(0, 0%, " + lig + "%)";
+        line.lineWidth = Math.pow(Math.random() * Math.random(), 3) * 100 + 1;
+
+				this.lines[i] = line;
+      }
+			this.it = 0;
+		}
+		
+		Lines.prototype = {
+		
+			init : function(x, y)
+			{
+				this.x = x;
+				this.y = y;
+				var n = this.lines.length;
+				for(var i = 0; i < n; i++)
+				{
+					this.positions[i] = {x:this.x, y:this.y};
+					this.lines[i].init(this.x, this.y);
+				}
+			},
+		
+			update : function()
+			{
+				this.vx = this.fr * this.vx + this.vel * (Math.random() * 2 - 1);
+				this.vy = this.fr * this.vy + this.vel * (Math.random() * 2 - 1);
+				this.x += this.vx;
+				this.y += this.vy;
+		
+				var pos = this.positions.pop();
+				pos.x = this.x;
+				pos.y = this.y;
+				this.positions.unshift(pos);
+		
+				var n = this.lines.length;
+				for(var i = 0; i < n; i++)
+				{
+					var line = this.lines[i];
+					var pt = line.pts[0];
+					var spring = 0.005 * (1 - i / n) + 0.0005;
+					pt.vx += spring * (this.positions[0].x - pt.x);
+					pt.vy += spring * (this.positions[0].y - pt.y);
+					pt.update(0.1);
+					line.update();
+				}
+			},
+		
+			draw : function(out)
+			{
+				var n = this.lines.length;
+				for(var i = 0; i < n; i++)
+				{
+					this.lines[i].draw(out);
+				}
+			}
+		}
+
+    function updateLines(lines)
+    {
+			lines.update();
+			if(lines.x < 0)
+			{
+				lines.x = 0;
+				lines.vx *= -1;
+			}
+			else if(lines.x > w)
+			{
+				lines.x = w;
+				lines.vx *= -1;
+			}
+			if(lines.y < 0)
+			{
+				lines.y = 0;
+				lines.vy *= -1;
+			}
+			else if(lines.y > h)
+			{
+				lines.y = h;
+				lines.vy *= -1;
+			}
+			lines.draw(out);
+    }
+		
+		var w = 700;
+		var h = 700;
+		var stage = new tools.Stage(w, h);
+		var out = stage.out;
+		
+		
+		var lines1 = new Lines(true);
+		var lines2 = new Lines(false);
+		lines1.init(Math.random() * w, Math.random() * h);
+		lines2.init(Math.random() * w, Math.random() * h);
+		
+		new Loop(function(){
+      updateLines(lines1);
+      updateLines(lines2);
+		});
+  </script>
+	
+	<script type="text/javascript">
+	  var _gaq = _gaq || [];
+	  _gaq.push(['_setAccount', 'UA-6101672-1']);
+	  _gaq.push(['_trackPageview']);
+
+	  (function() {
+		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	  })();
+	</script>
+</body>
+</html>

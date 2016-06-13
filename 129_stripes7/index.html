@@ -1,0 +1,139 @@
+<html>
+<head>
+	<title>Stripes</title>
+	<link rel="stylesheet" type="text/css" href="../css/styles.css"/>
+</head>
+<body>
+	<script type="text/javascript" src="../libs/tools.js"></script>
+	<script type="text/javascript" src="../libs/rhill-voronoi-core.js"></script>
+	<script type="text/javascript">
+		tools.mixin(tools, this);
+		
+		var w = 700;
+		var h = 700;
+		
+		var stage = new Stage(w, h);
+		var out = stage.out;
+		
+		
+		var stage2 = new Stage(w, h, false);
+		var out2 = stage2.out;
+		
+		
+		var bbox = {xl:0, xr:w, yt:0, yb:h};
+		
+		
+		var nSites = 100;
+		
+		var sites = [];
+		
+		
+		
+		for(var i = 0; i < nSites; i++)
+		{
+			sites[i] = { x : Math.random() * w,
+					y : Math.random() * h};
+		}
+		
+		
+		var voronoi = new Voronoi();
+		var diagram = voronoi.compute(sites, bbox);
+		var n = diagram.cells.length;
+		
+		for(var i = 0 ; i < n; i++)
+		{
+			var t = diagram.cells[i];
+			if(!t)continue;
+			t.color = "hsl(0, 0%, " + Math.round(Math.random() * 100) + "%)";;
+		}
+		
+		var time = 50;
+		var maxTime = 50;
+		
+		
+		drawCells(diagram.cells, out, 1 - time / maxTime);
+		
+		
+		
+		
+		function drawCells(cells, out, t)
+		{
+			var n = cells.length;
+			for(var i = 0; i < n; i++)
+			{
+				var c = cells[i];
+				if(!c) continue;
+		
+				drawCell(c, out, out2);
+			}
+		}
+		
+		
+		function drawCell(cell, out, out2)
+		{
+			out2.clearRect(0, 0, w, h);
+		
+			out2.save();
+			out2.globalCompositeOperation = "source-over";
+			out2.translate(0.5 * w, 0.5 * h);
+		
+			var x = cell.site.x;
+			var y = cell.site.y;
+		
+			var dx = 0.5 * w - x;
+			var dy = 0.5 * h - y;
+			var angle = Math.atan2(dy, dx) + 0.5 * Math.PI;
+			angle = Math.random() < 0.5 ? 0 : 0.5 * Math.PI;
+			out2.rotate(angle);
+		
+			var w2 = Math.sqrt(w * w + h * h);
+			out2.translate(-0.5 * w2, -0.5 * w2);
+		
+			out2.beginPath();
+			var step = Math.random() * 2 + 3;
+			var step = Math.random() * 5 + 5;
+			step = 5;
+			for(var i = 0; i < w2; i += step)
+			{
+				out2.moveTo(i, 0);
+				out2.lineTo(i, w2);
+			}
+			//out2.lineWidth = (Math.random() * 0.5 + 0.25) * step;
+			out2.lineWidth = 2;
+			out2.stroke();
+			out2.restore();
+		
+			out2.beginPath();
+		
+			var n = cell.halfedges.length;
+			var he = cell.halfedges[0];
+			var p = he.getStartpoint();
+			out2.moveTo(p.x, p.y);
+			for(var i = 0; i < n; i++)
+			{
+				he = cell.halfedges[i];
+				p = he.getEndpoint();
+				out2.lineTo(p.x, p.y);
+			}
+			out2.closePath();
+			out2.fillStyle = "#" + Math.round(Math.random() * 0xffffff).toString(16);
+			out2.globalCompositeOperation = "destination-in";
+			out2.fill();
+		
+		
+			out.drawImage(out2.canvas, 0, 0, w, h);
+		}</script>
+	
+	<script type="text/javascript">
+	  var _gaq = _gaq || [];
+	  _gaq.push(['_setAccount', 'UA-6101672-1']);
+	  _gaq.push(['_trackPageview']);
+
+	  (function() {
+		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	  })();
+	</script>
+</body>
+</html>

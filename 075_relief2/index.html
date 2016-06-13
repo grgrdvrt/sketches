@@ -1,0 +1,121 @@
+<html>
+<head>
+	<title>relief</title>
+	<link rel="stylesheet" type="text/css" href="../css/styles.css"/>
+</head>
+<body>
+	<script type="text/javascript" src="../libs/tools.js"></script>
+	<script type="text/javascript">
+		tools.mixin(tools, this);
+		var stage = new Stage(700, 700);
+		var out = stage.out;
+		
+		var center = {x:0.5 * stage.width, y:0.5 * stage.height};
+		var radius = 0.4 * stage.width;
+		var offset = -50;
+		var vel = 1;
+		
+		function drawLine(out, p0, p1)
+		{
+			var n = 100;
+			var dx = p1.x - p0.x;
+			var dy = p1.y - p0.y;
+			var sx = dx / n;
+			var sy = dy / n;
+			out.moveTo(p0.x, p0.y + getOffset(p0.x, p0.y));
+			for(var i = 0; i < n; i++)
+			{
+				var posX = i * sx + p0.x;
+				var posY = i * sy + p0.y;
+				out.lineTo(posX, posY + getOffset(posX, posY));
+			}
+		}
+		
+		var points = [];
+		var nPoints = 500;
+		var segment = 300;
+		for(var i = 0; i < nPoints; i++)
+		{
+			points[2 * i] = createPoint();
+			points[2 * i + 1] = createPoint();
+		}
+		
+		function update()
+		{
+			stage.clear();
+			out.beginPath();
+			for(var i = 0; i < nPoints; i++)
+			{
+				var p0 = points[2 * i];
+				var p1 = points[2 * i + 1];
+				updatePoint(p0);
+				updatePoint(p1);
+				drawLine(out, p0, p1);
+			}
+			out.strokeStyle = "black";
+			out.stroke();
+		}
+		
+		function createPoint()
+		{
+			var p = {};
+			p.x = Math.random() * stage.width;
+			p.y = Math.random() * stage.height;
+			p.vx = vel * (Math.random() * 2 - 1);
+			p.vy = vel * (Math.random() * 2 - 1);
+			return p;
+		}
+		
+		function updatePoint(p)
+		{
+			p.x += p.vx;
+			p.y += p.vy;
+			if(p.x < 0)
+			{
+				p.x = 0;
+				p.vx *= -1;
+			}
+			else if(p.x > stage.width)
+			{
+				p.x = stage.width;
+				p.vx *= -1;
+			}
+			if(p.y < 0)
+			{
+				p.y = 0;
+				p.vy *= -1;
+			}
+			else if(p.y > stage.height)
+			{
+				p.y = stage.height;
+				p.vy *= -1;
+			}
+		}
+		
+		function getOffset(x, y)
+		{
+			var dx = center.x - x;
+			var dy = center.y - y;
+			var r = Math.sqrt(dx * dx + dy * dy);
+			var w = 0.5 * stage.width;
+			var h = 0.5 * stage.height;
+			var max = Math.sqrt(w * w + h * h);
+		
+			return 20 * Math.cos(0.1 * r) * (1 - Math.sqrt(r / h));
+		}
+		
+		new Loop(update, this);</script>
+	
+	<script type="text/javascript">
+	  var _gaq = _gaq || [];
+	  _gaq.push(['_setAccount', 'UA-6101672-1']);
+	  _gaq.push(['_trackPageview']);
+
+	  (function() {
+		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	  })();
+	</script>
+</body>
+</html>

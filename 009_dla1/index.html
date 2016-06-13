@@ -1,0 +1,55 @@
+<html>
+<head>
+	<title>dla 1</title>
+	<link rel="stylesheet" type="text/css" href="../css/styles.css"/>
+</head>
+<body>
+	<script type="text/javascript" src="../libs/tools.js"></script>
+	<script type="text/javascript">
+		var stage = new tools.Stage(700, 700);
+		var mouse = new tools.Mouse(stage.canvas);
+		
+		stage.out.fillStyle = "black";
+		var heights = [];
+		for(var i = 0; i < stage.width; i++)
+			heights[i] = 0;
+		var maxHeight = 0;
+		var loop;
+		
+		function update()
+		{
+			for(var i = 0; i < 100; i++) addPixel();
+			if(maxHeight > stage.height) loop.pause();
+		}
+		
+		function addPixel()
+		{
+			var ratio = mouse.x / stage.width;
+			var posX = Math.floor(Math.pow(Math.random(), ratio) * (Math.random() - 0.5 ) * stage.width) + 0.5 * stage.width;
+			var posY = -1;
+			if(posX > 0 && heights[posX - 1] > posY) posY = heights[posX - 1];
+			if(heights[posX] > posY) posY = heights[posX];
+			if(posX < stage.width - 1 && heights[posX + 1] > posY) posY = heights[posX + 1];
+		
+			heights[posX] = posY + 1;
+			if(maxHeight < posY + 1) maxHeight = posY + 1;
+		
+			stage.out.fillRect(posX, stage.height - posY, 1, 1);
+		}
+		
+		loop = new tools.Loop(update, this);
+	</script>
+	
+	<script type="text/javascript">
+	  var _gaq = _gaq || [];
+	  _gaq.push(['_setAccount', 'UA-6101672-1']);
+	  _gaq.push(['_trackPageview']);
+
+	  (function() {
+		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	  })();
+	</script>
+</body>
+</html>

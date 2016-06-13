@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+  <style>
+    body { margin: 0; overflow:hidden; }
+    canvas { width: 100%; height: 100% }
+  </style>
+</head>
+<body>
+	<script type="text/javascript" src="../libs/three.min.js"></script>
+	<script type="text/javascript" src="../libs/OrbitControls.js"></script>
+	<script type="text/javascript" src="../libs/Env.js"></script>
+  <script>
+    var env = new Env();
+
+    var geometry = new THREE.SphereGeometry(1, 20, 20);
+    var material = new THREE.MeshPhongMaterial({color:0xdddddd});
+
+
+    var toRotate = [];
+
+    function createSystem(level)
+    {
+      var rotGroup = new THREE.Group();
+      var core = new THREE.Mesh(geometry, material);
+      core.scale.multiplyScalar(0.3);
+      var group = new THREE.Group();
+      group.add(core);
+      var n = level;
+      for(var i = 0; i < n; i++)
+      {
+        var child = createSystem(level - 1);
+        child.position.x = 2;
+        group.add(child);
+      }
+      rotGroup.add(group);
+      rotGroup.quaternion.setFromAxisAngle(
+          (new THREE.Vector3(
+             Math.random() * 2 - 1,
+             Math.random() * 2 - 1,
+             Math.random() * 2 - 1
+          )).normalize(),
+          Math.random() * 2 * Math.PI
+      );
+      rotGroup.scale.multiplyScalar(0.8);
+      toRotate.push(rotGroup);
+      return rotGroup;
+    }
+
+    env.scene.add(createSystem(5));
+
+    env.start(function(){
+        toRotate.forEach(function(item){
+          item.rotation.x += 0.01;
+        });
+    });
+  </script>
+</body>
+</html>

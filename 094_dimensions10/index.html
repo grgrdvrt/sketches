@@ -1,0 +1,173 @@
+<html>
+<head>
+	<title>Dimensions</title>
+	<link rel="stylesheet" type="text/css" href="../css/styles.css"/>
+</head>
+<body>
+	<script type="text/javascript" src="../libs/tools.js"></script>
+	<script type="text/javascript" src="threeDimensions.js"></script>
+	<script type="text/javascript">
+		tools.mixin(tools, this);
+		tools.mixin(threeDimensions, this);
+		
+		
+		function Line()
+		{
+			this.vel = new Vector4();
+			this.pos = [];
+			this.proj = [];
+			this.length = 0.15;
+			this.length2 = this.length * this.length;
+			this.nPos = 10;
+			for(var i = 0; i < this.nPos; i++)
+			{
+				this.pos[i] = new Vector4();
+				this.proj[i] = new Vector4();
+			}
+		}
+		
+		Line.prototype = {
+		
+			update : function(vel, fr)
+			{
+				this.vel.scale(fr);
+				this.vel.x += vel * (Math.random() * 2 - 1);
+				this.vel.y += vel * (Math.random() * 2 - 1);
+				this.vel.z += vel * (Math.random() * 2 - 1);
+		
+				var head = this.pos[0];
+		
+				head.x += this.vel.x;
+				head.y += this.vel.y;
+				head.z += this.vel.z;
+		
+				for(var i = 1; i < this.nPos; i++)
+				{
+					var p1 = this.pos[i - 1];
+					var p2 = this.pos[i];
+					var dx = p1.x - p2.x;
+					var dy = p1.y - p2.y;
+					var dz = p1.z - p2.z;
+					var d = dx * dx + dy * dy + dz * dz;
+					if(d > this.length2)
+					{
+						d = Math.sqrt(d);
+						var r = (d - this.length) / d;
+						p2.x += r * dx;
+						p2.y += r * dy;
+						p2.z += r * dz;
+					}
+				}
+		
+			},
+		
+			setPosition : function(x, y, z)
+			{
+				for(var i = 0; i < this.nPos; i++)
+				{
+					var v = this.pos[i];
+					v.x = x;
+					v.y = y;
+					v.z = z;
+				}
+			},
+		
+			project : function(transform)
+			{
+				for(var i = 0; i < this.nPos; i++)
+				{
+					var pos = this.pos[i];
+					var proj = this.proj[i];
+					pos.normalize();
+					transform.transformVector(pos, proj);
+					proj.reciprocalDivide();
+				}
+			},
+		
+			draw : function(out)
+			{
+				var x = this.proj[0].x;
+				var y = this.proj[0].y;
+				for(var i = 1; i < this.nPos; i++)
+				{
+					var p1 = this.proj[i - 1];
+					var p2 = this.proj[i];
+					out.beginPath();
+					out.moveTo(x, y);
+					v = this.proj[i];
+					x = 0.5 * (p1.x + p2.x);
+					y = 0.5 * (p1.y + p2.y);
+					out.quadraticCurveTo(p1.x, p1.y, x, y);
+					out.lineWidth = 5 * (1 - i / this.nPos) * (1 - v.z);
+					out.stroke();
+				}
+			}
+		}
+		
+		var w = 700;
+		var h = 700;
+		var stage = new Stage(w, h);
+		var out = stage.out;
+		
+		var vel = 0.005;
+		var fr = 0.99;
+		
+		var scale = 0.4;
+		
+		var renderer = new Matrix4();
+		renderer.scale(scale, scale, scale);
+		renderer.translate(0, 0, 1);
+		renderer.appendTransform(Matrix4.projection(70, w / h, 1, 1000));
+		renderer.appendTransform(Matrix4.getToScreen(w, h, 0, 0));
+		
+		var rotation = new Matrix4();
+		var transform = new Matrix4();
+		var lines = [];
+		var nLines = 70;
+		
+		for(var i = 0; i < nLines; i++)
+		{
+			var l = new Line();
+			l.setPosition(Math.random() * 2 - 1, 
+						  Math.random() * 2 - 1, 
+						  Math.random() * 2 - 1);
+			lines[i] = l;
+		}
+		
+		
+		new Loop(function()
+		{
+			stage.clear();
+		
+			rotation.rotate(1, 1, 1, 0.005);
+		
+			transform.identity();
+			transform.appendTransform(rotation);
+			transform.appendTransform(renderer);
+		
+			//out.beginPath();
+		
+			for(var i = 0; i < nLines; i++)
+			{
+				var l = lines[i];
+				l.update(vel, fr);
+				l.project(transform);
+				l.draw(out);
+			}
+			//out.stroke();
+		});
+	</script>
+	
+	<script type="text/javascript">
+	  var _gaq = _gaq || [];
+	  _gaq.push(['_setAccount', 'UA-6101672-1']);
+	  _gaq.push(['_trackPageview']);
+
+	  (function() {
+		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	  })();
+	</script>
+</body>
+</html>

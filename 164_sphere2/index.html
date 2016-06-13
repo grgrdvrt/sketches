@@ -1,0 +1,67 @@
+<html>
+<head>
+	<title>Sphere</title>
+	<link rel="stylesheet" type="text/css" href="../css/styles.css"/>
+</head>
+<body>
+	<script type="text/javascript" src="../libs/tools.js"></script>
+	<script type="text/javascript">
+
+
+		tools.mixin(tools, this);
+		
+		var w = 700;
+		var h = 700;
+		var stage = new Stage(w, h);
+		var out = stage.out;
+
+		out.translate(0.5 * w, 0.5 * h);
+		var r = 0.4 * w;
+
+		out.strokeStyle = "black";
+
+		var ang = 0.25 * Math.PI;
+		var n = 500;
+
+		var dMax = rand(0.3, 0.8) * Math.PI;
+
+
+		for(var i = 0; i < n; i++)
+		{
+			out.beginPath();
+			var dist1 = dMax * (2 * Math.random() - 1);
+			var dist2 = dMax * (2 * Math.random() - 1);
+
+			var angBegin = ang - dist1;
+			var angEnd = ang + dist2;
+
+			var diff = Math.abs(angEnd - angBegin);
+			diff = Math.max(Math.abs(dist1), Math.abs(dist2));
+			out.globalAlpha = 1 - diff / (dMax);
+
+			out.moveTo(r * Math.cos(angBegin), r * Math.sin(angBegin));
+			out.lineTo(r * Math.cos(angEnd), r * Math.sin(angEnd));
+
+			out.stroke();
+		}
+
+		function rand(min, max)
+		{
+			return min + Math.random() * (max - min);
+		}
+
+		</script>
+	
+	<script type="text/javascript">
+	  var _gaq = _gaq || [];
+	  _gaq.push(['_setAccount', 'UA-6101672-1']);
+	  _gaq.push(['_trackPageview']);
+
+	  (function() {
+		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	  })();
+	</script>
+</body>
+</html>

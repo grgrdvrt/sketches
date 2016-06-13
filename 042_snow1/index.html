@@ -1,0 +1,96 @@
+<html>
+<head>
+	<title>snow 1</title>
+	<link rel="stylesheet" type="text/css" href="../css/styles.css"/>
+</head>
+<body>
+	<script type="text/javascript" src="../libs/tools.js"></script>
+	<script type="text/javascript">
+		function Particle(x, y, z)
+		{
+			this.x = x || 0;
+			this.y = y || 0;
+			this.a = 0;
+			this.va = 0;
+			this.vx = this.vy = 0;
+			this.positions = [];
+		}
+		
+		var stage = new tools.Stage(700, 700);
+		
+		var n = 100;
+		var n2 = 10;
+		var v = 0.2	;
+		var fr = 0.95;
+		var wind = -0.1;
+		var gravity = 0.2;
+		var radius = 10;
+		
+		var out = stage.out;
+		
+		var ran = Math.random;
+		
+		function ran2(){return ran() * 2 - 1;}
+		
+		var particles = [];
+		
+		for(var i = 0; i < n; i++)
+		{
+			var p = new Particle();
+			p.x = ran() * stage.width;
+			p.y = ran() * stage.height;
+			particles[i] = p;
+			var r = (1 - i / n) * radius;
+			for(var j = 0; j < n2; j++)p.positions.push(ran2() * r, ran2() * r);
+		}
+		
+		
+		out.strokeStyle = "hsl(0, 0%, 10%)";
+		function update()
+		{
+			out.clearRect(0, 0, stage.width, stage.height);
+			out.beginPath();
+			for(var i = 0; i < n; i++)
+			{
+				var ratio = i / n;
+				var p = particles[i];
+				p.vx = fr * p.vx + v * ran2() + wind - 0.1 * p.y / stage.height;
+				p.vy = fr * p.vy + v * ran2() + gravity;
+				p.va = fr * p.va + 0.01 * ran2();
+				p.x += p.vx;
+				p.y += (1 - ratio) * p.vy;
+				p.a += p.va;
+				if(p.x < 0) p.x = stage.width;
+				else if(p.x > stage.width) p.x = 0;
+				if(p.y > stage.height) {p.y = -radius; p.vx = p.vy = 0;};
+				
+				out.save();
+				out.translate(p.x, p.y);
+				out.rotate(p.a);
+				var pos = p.positions;
+				out.moveTo(pos[0], pos[1]);
+				for(var j = 2; j < 2 * n2; j+=2)
+				{
+					out.lineTo(pos[j], pos[j + 1]);
+				}
+				out.restore();
+			}
+			out.stroke();
+		}
+		
+		new tools.Loop(update, this);
+	</script>
+	
+	<script type="text/javascript">
+	  var _gaq = _gaq || [];
+	  _gaq.push(['_setAccount', 'UA-6101672-1']);
+	  _gaq.push(['_trackPageview']);
+
+	  (function() {
+		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	  })();
+	</script>
+</body>
+</html>

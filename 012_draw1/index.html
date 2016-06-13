@@ -1,0 +1,101 @@
+<html>
+<head>
+	<title>draw 1</title>
+	<link rel="stylesheet" type="text/css" href="../css/styles.css"/>
+</head>
+<body>
+	<script type="text/javascript" src="../libs/tools.js"></script>
+	<script type="text/javascript">
+		var stage = new tools.Stage(700, 700);
+		
+		var mouse = new tools.Mouse(stage.canvas);
+		mouse.onDown.add(_onDown, this);
+		
+		var keyboard = new tools.Keyboard();
+		
+		keyboard.onUp.add(_onGUp, this, 71);
+		
+		function _onGUp(key)
+		{
+			console.log(key);
+		}
+		
+		var currentLine = [];
+		var lines = [];
+		var fr = 0.95;
+		var spr = 0.005;
+		
+		function _onDown()
+		{
+			currentLine = [];
+			lines.push(currentLine);
+		}
+		
+		function update()
+		{
+			if(mouse.isDown)
+			{
+				currentLine.push(new Pt(mouse.x, mouse.y, mouse.x - mouse.oldX, mouse.y - mouse.oldY));
+				mouse.savePos();
+			}
+		
+			var n = currentLine.length;
+			for(var i = 0; i < n; i++)
+			{
+				var pt = currentLine[i];
+				pt.vx = pt.vx * fr + (pt.tx - pt.x) * spr;
+				pt.vy = pt.vy * fr + (pt.ty - pt.y) * spr;
+				pt.x += pt.vx;
+				pt.y += pt.vy;
+			}
+		
+			drawLines();
+		}
+		
+		function drawLines()
+		{
+			var out = stage.out;
+			var nLines = lines.length;
+			out.clearRect(0, 0, stage.width, stage.height);
+			out.strokeStyle = "black";
+			out.beginPath();
+			for(var j = 0; j < nLines; j++)
+			{
+				var line = lines[j];
+				var nPts = line.length;
+				out.moveTo(line[0].x, line[0].y);
+				for(var i = 2; i < nPts; i++)
+				{
+					var pt1 = line[i - 1];
+					var pt2 = line[i];
+					out.quadraticCurveTo(pt1.x, pt1.y, 0.5 * (pt1.x + pt2.x), 0.5 * (pt1.y + pt2.y));
+				}
+			}
+			out.stroke();
+		}
+		
+		
+		function Pt(x, y, vx, vy)
+		{
+			this.tx = this.x = x;
+			this.ty = this.y = y;
+			this.vx = vx;
+			this.vy = vy;
+		}
+		
+		new tools.Loop(update, this);
+	</script>
+	
+	<script type="text/javascript">
+	  var _gaq = _gaq || [];
+	  _gaq.push(['_setAccount', 'UA-6101672-1']);
+	  _gaq.push(['_trackPageview']);
+
+	  (function() {
+		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	  })();
+	</script>
+</body>
+</html>

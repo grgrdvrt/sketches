@@ -1,0 +1,216 @@
+<html>
+<head>
+	<title>bullshit 5</title>
+	<link rel="stylesheet" type="text/css" href="../css/styles.css"/>
+</head>
+<body>
+	<script type="text/javascript" src="../libs/tools.js"></script>
+	<script type="text/javascript">
+		var stage = new tools.Stage(700, 700);
+		
+		var out = stage.out;
+		
+		
+		function DataGenerator(count)
+		{
+			this.dataCount = count;
+			this.actualDataCount = count;
+			this.data = [];
+			this.onDataGenerated = new tools.Signal();
+			this.generateData();
+			
+			setInterval(tools.delegate(this.generateData, this), 3000);
+		}
+		DataGenerator.prototype = {
+			generateData : function()
+			{
+				this.actualDataCount = 0;
+				for(var i = 0; i < this.dataCount; i++)
+				{
+					if(i && i < this.dataCount - 2 && Math.random() < 0.3)
+					{
+						this.data[i] = 0;
+						continue;
+					}
+					this.actualDataCount++;
+					this.data[i] = Math.random() * 0.8 + 0.2;
+				}
+				this.onDataGenerated.dispatch();
+			}
+		}
+		
+		function Axis(divisions, angle)
+		{
+			this.divisions = divisions;
+			this.angle = angle;
+		}
+		
+		Axis.prototype = {
+			draw : function(out, length)
+			{
+				out.save();
+				out.rotate(this.angle);
+				out.beginPath();
+				out.moveTo(0, 0);
+				out.lineTo(length, 0);
+			
+				if(this.divisions)
+				{
+					var divisionRatio = length / this.divisions;
+					for(var i = 1; i < this.divisions; i++)
+					{
+						var posX = i * divisionRatio;
+						out.moveTo(posX, -3);
+						out.lineTo(posX, 3);
+					}
+				}
+				out.moveTo(length - 5, -5);
+				out.lineTo(length, 0);
+				out.lineTo(length - 5, 5);
+				out.stroke();
+				out.restore();
+			}
+		}
+		
+		function DataView(stage, dataGenerator)
+		{
+			this.stage = stage;
+			this.dataGenerator = dataGenerator;
+			
+			this.margin = 50;
+			this.width = this.stage.width - 2 * this.margin;
+			this.height = this.stage.height - 2 * this.margin;
+			this.nDivisions = 10;
+			this.space = 20;
+		
+		
+			out.strokeStyle = "black";
+			this.xAxis = new Axis(0, 0);
+			this.yAxis = new Axis(this.nDivisions, -0.5 * Math.PI);
+			
+			this.points = [];
+			for(var i = 0; i < this.dataGenerator.dataCount; i++)
+				this.points[i] = new Point();
+			
+			this.tweenRatio = 0.2;
+			
+			this.tween = new tools.Tween(0);
+			this.dataGenerator.onDataGenerated.add(this.onDataGenerated, this);
+			this.onDataGenerated();
+		}
+		
+		DataView.prototype = {
+			
+			onDataGenerated : function()
+			{
+				var step = (this.width - this.space) / (this.dataGenerator.actualDataCount - 1);
+				var data = this.dataGenerator.data;
+				var posX = 0, posY = 0;
+				var count = 0;
+				var n = this.points.length;
+				for(var i = 0; i < this.dataGenerator.dataCount; i++)
+				{
+					var value = data[i];
+					if(value)
+					{
+						posX = count * step;
+						posY = -value * (this.height - this.space);
+						count++;
+					}
+					this.points[i].updateData(posX, posY);
+				}
+				this.tween.init(1);
+				this.draw();
+			},
+			
+			draw : function ()
+			{
+			
+				var out = this.stage.out;
+				out.setTransform(1, 0, 0, 1, 0, 0);
+				out.clearRect(0, 0, this.stage.width, this.stage.height);
+				out.translate(this.margin, this.height + this.margin + 0.5);
+				
+				this.xAxis.draw(out, this.width);
+				this.yAxis.draw(out, this.height);
+				
+				var n = this.dataGenerator.dataCount;
+				var ox = 0, oy = 0;
+				out.beginPath();
+				
+				
+				var stepRatio = this.tween.duration * (1 - this.tweenRatio) / (n - 1);
+				
+				for(var i = 0; i < n; i++)
+				{
+					var pt = this.points[i];
+					var ratio;
+					var begin = i * stepRatio;
+					var diff = this.tween.duration * this.tweenRatio;
+					if(this.tween < begin) ratio = 0;
+					else if(this.tween > begin + diff)ratio = 1;
+					else ratio = (this.tween - begin) / diff;
+					pt.interpolate(ratio);
+					if(i == 0) out.moveTo(pt.x, pt.y);
+					else out.lineTo(pt.x, pt.y);
+					
+					if(i == n - 2)
+					{
+						ox = pt.x;
+						oy = pt.y;
+					}
+				}
+				var dx = pt.x - ox;
+				var dy = pt.y - oy;
+				var r = 5 / Math.sqrt(dx * dx + dy * dy);
+				var ox = pt.x - r * dx;
+				var oy = pt.y - r * dy;
+				out.moveTo(ox + r * dy, oy - r * dx);
+				out.lineTo(pt.x, pt.y);
+				out.lineTo(ox - r * dy, oy + r * dx);
+				out.stroke();
+			}
+		}
+		
+		function Point()
+		{
+			this.beginX = this.beginY = 0;
+			this.endX = this.endY = 0;
+			this.x = this.y = 0;
+		}
+		
+		Point.prototype = {
+			interpolate : function(ratio)
+			{
+				this.x = this.beginX + ratio * (this.endX - this.beginX);
+				this.y = this.beginY + ratio * (this.endY - this.beginY);
+			},
+			
+			updateData : function(x, y)
+			{
+				this.beginX = this.endX;
+				this.beginY = this.endY;
+				this.endX = x;
+				this.endY = y;
+			}
+		}
+		
+		var dataGenerator = new DataGenerator(15);
+		var dataView = new DataView(stage, dataGenerator);
+		
+		new tools.Loop(dataView.draw, dataView);
+	</script>
+	
+	<script type="text/javascript">
+	  var _gaq = _gaq || [];
+	  _gaq.push(['_setAccount', 'UA-6101672-1']);
+	  _gaq.push(['_trackPageview']);
+
+	  (function() {
+		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	  })();
+	</script>
+</body>
+</html>

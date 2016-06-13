@@ -1,0 +1,73 @@
+<html>
+<head>
+	<title>Moire</title>
+	<link rel="stylesheet" type="text/css" href="../css/styles.css"/>
+</head>
+<body>
+	<script type="text/javascript" src="../libs/tools.js"></script>
+	<script type="text/javascript">
+		tools.mixin(tools, this);
+		
+		var w = 700;
+		var h = 700;
+		var stage = new Stage(w, h);
+		var out = stage.out;
+		var ran = Math.random;
+		var radius = Math.sqrt(w * w + h * h);
+		
+		
+		var vel = 2;
+		var nCenters = 3;
+		var centers = [];
+		for(var i = 0; i < nCenters; i++)
+			centers[i] = {x:ran() * w, 
+						y : ran() * h, 
+						vx : vel * (ran() * 2 - 1),
+						vy : vel * (ran() * 2 - 1),
+						step:ran() * 0.01 + 0.005};
+		
+		function drawPattern(step)
+		{
+			out.beginPath();
+			for(var i = 0.5 * step; i < 2 * Math.PI; i += step)
+			{
+				out.moveTo(0, 0);
+				out.lineTo(radius * Math.cos(i), radius * Math.sin(i));
+			}
+			out.stroke();
+		}
+		
+		
+		new Loop(function(){
+			stage.clear();
+			for(var i = 0; i < nCenters; i++)
+			{
+				var c = centers[i];
+				out.save();
+				c.x += c.vx;
+				c.y += c.vy;
+				if(c.x < 0 || c.x > w)c.vx *= -1;
+				if(c.y < 0 || c.y > h)c.vy *= -1;
+				if(c.x < 0) c.x = 0;
+				else if(c.x > w) c.x = w;
+				if(c.y < 0) c.y = 0;
+				else if(c.y > h) c.y = h;
+				out.translate(c.x, c.y);
+				drawPattern(c.step);
+				out.restore();
+			}
+		});</script>
+	
+	<script type="text/javascript">
+	  var _gaq = _gaq || [];
+	  _gaq.push(['_setAccount', 'UA-6101672-1']);
+	  _gaq.push(['_trackPageview']);
+
+	  (function() {
+		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	  })();
+	</script>
+</body>
+</html>

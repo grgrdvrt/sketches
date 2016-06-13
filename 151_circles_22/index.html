@@ -1,0 +1,101 @@
+<html>
+<head>
+	<title>Circles</title>
+	<link rel="stylesheet" type="text/css" href="../css/styles.css"/>
+</head>
+<body>
+	<script type="text/javascript" src="../libs/tools.js"></script>
+	<script type="text/javascript">
+		tools.mixin(tools, this);
+		
+		var w = 700;
+		var h = 700;
+		var stage = new Stage(w, h);
+		var out = stage.out;
+		
+		var friction = 0.99;
+		var vel = 2;
+		
+		var a = Math.random() * 2 * Math.PI;
+		var va = 0;
+		
+		function Circle()
+		{
+			this.x = this.y = 0;
+			this.vx = this.vy = 0;
+			this.scale = 0;
+			this.vs = 0;
+		
+			this.color = "black";
+		}
+		
+		Circle.prototype = {
+			update:function()
+			{
+				//this.vx = friction * this.vx + (Math.random() * 2 - 1) * vel;
+				//this.vy = friction * this.vy + (Math.random() * 2 - 1) * vel;
+				this.vx = (Math.random() * 2 - 1) * vel;
+				this.vy = (Math.random() * 2 - 1) * vel;
+				this.x += this.vx;
+				this.y += this.vy;
+				this.scale += this.vs;
+			},
+		
+			draw:function(out)
+			{
+				out.beginPath();
+				out.arc(this.x, this.y, this.scale, 0, 2 * Math.PI);
+				out.fillStyle = this.color;
+				out.fill();
+			}
+		}
+		
+		var circles = [];
+		new Loop(function(){
+		
+			//stage.clear();
+		
+			va = va * friction + 0.1 * (Math.random() * 2 - 1);
+			a = (a + va) % Math.PI;
+			if(Math.random() < 0.2) addCircle();
+		
+			var n = circles.length;
+			for(var i = 0; i < n; i++)
+			{
+				var c = circles[i];
+				c.update();
+				c.draw(out);
+			}
+		});
+		
+		
+		function addCircle()
+		{
+			var c;
+			c = new Circle();
+			c.x = 0.5 * w;
+			c.y = 0.5 * h;
+			c.vx = 5 * Math.cos(a);
+			c.vy = 5 * Math.sin(a);
+			c.vs = 0.1;
+			c.scale = 10;
+			var l = 0.5 * a / Math.PI + 0.5;
+			out.fillStyle = "hsl(0, 0%, " + Math.floor(l * 100) + "%)";
+			c.color = out.fillStyle;
+			if(circles.length < 500)
+				circles.push(c);
+		}</script>
+	
+	<script type="text/javascript">
+	  var _gaq = _gaq || [];
+	  _gaq.push(['_setAccount', 'UA-6101672-1']);
+	  _gaq.push(['_trackPageview']);
+
+	  (function() {
+		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	  })();
+	</script>
+</body>
+</html>

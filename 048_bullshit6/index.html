@@ -1,0 +1,100 @@
+<html>
+<head>
+	<title>bullshit 6</title>
+	<link rel="stylesheet" type="text/css" href="../css/styles.css"/>
+</head>
+<body>
+	<script type="text/javascript" src="../libs/tools.js"></script>
+	<script type="text/javascript">
+		var stage = new tools.Stage(700, 700);
+		
+		var out = stage.out;
+		
+		
+		function StatsGenerator(){}
+		StatsGenerator.prototype.getNext = function(){return 0.25 + 0.75 * Math.random() * Math.random();}
+		
+		
+		function drawAxis(out, length, nDivisions)
+		{
+			out.beginPath();
+			out.moveTo(0, 0);
+			out.lineTo(length, 0);
+			
+			if(nDivisions)
+			{
+				var divisionRatio = length / nDivisions;
+				for(var i = 1; i < nDivisions; i++)
+				{
+					var posX = i * divisionRatio;
+					out.moveTo(posX, -3);
+					out.lineTo(posX, 3);
+				}
+			}
+			out.moveTo(length - 5, -5);
+			out.lineTo(length, 0);
+			out.lineTo(length - 5, 5);
+			out.stroke();
+		}
+		
+		/*
+		*	width, height : basis size
+		*/
+		function drawLine(out, nValues, radius)
+		{
+			var angleRatio = 2 * Math.PI / nValues;
+			var generator = new StatsGenerator();
+			out.beginPath();
+			var l = Math.floor(Math.random() * 40) + 60;
+			out.fillStyle = "hsl(0, 0%, " + l + "%)";
+			for(var i = 0; i < nValues; i++)
+			{
+				var value = radius * generator.getNext();
+				var angle = i * angleRatio;
+				var posX = value * Math.cos(angle);
+				var posY = value * Math.sin(angle);
+				if(i == 0) out.moveTo(posX, posY);
+				else out.lineTo(posX, posY);
+			}
+			out.closePath();
+			out.fill();
+			out.stroke();
+		}
+		
+		
+		var margin = 50;
+		var radius = 0.5 * Math.min(stage.width, stage.height) - margin;
+		var nDivisions = Math.random() * 5 + 5;
+		var nValues = Math.floor(Math.random() * 4 + 5);
+		var angleBegin = Math.random() * 2 * Math.PI;
+		
+		out.translate(0.5 * stage.width, 0.5 * stage.height);
+		out.rotate(angleBegin);
+		
+		drawLine(out, nValues, radius - radius / nDivisions);
+		out.save();
+		out.strokeStyle = "black";
+		drawAxis(out, radius, nDivisions);
+		var angle = 2 * Math.PI / nValues;
+		for(var i = 1; i < nValues; i++)
+		{
+			out.rotate(angle);
+			drawAxis(out, radius, nDivisions);
+		}
+		out.restore();
+		
+	</script>
+	
+	<script type="text/javascript">
+	  var _gaq = _gaq || [];
+	  _gaq.push(['_setAccount', 'UA-6101672-1']);
+	  _gaq.push(['_trackPageview']);
+
+	  (function() {
+		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	  })();
+	</script>
+</body>
+</html>

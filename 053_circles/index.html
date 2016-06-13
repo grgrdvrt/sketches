@@ -1,0 +1,93 @@
+<html>
+<head>
+	<title>circles</title>
+	<link rel="stylesheet" type="text/css" href="../css/styles.css"/>
+</head>
+<body>
+	<script type="text/javascript" src="../libs/tools.js"></script>
+	<script type="text/javascript">
+		var stage = new tools.Stage(700, 700);
+		
+		var out = stage.out;
+		
+		var n = 7;
+		var begin = [];
+		var end = [];
+		
+		
+		for(var i = 0; i < n; i++)
+			begin[i] = end[i] = 0;
+		
+		function setRatios(end)
+		{
+			var i, total = 0;
+			var count = Math.floor((0.3 * Math.random() * Math.random() + 0.7) * n);
+			console.log(count);
+			for(i = 0; i < n; i++)
+			{
+				var ran = Math.random();
+				if(i > count) ran = 0;
+				total += ran;
+				end[i] = ran;
+			}
+			
+			for(i = 0; i < n; i++) end[i] *= 1 / total;
+		}
+		
+		function swapArrays()
+		{
+			var tmp = begin;
+			begin = end;
+			end = tmp;
+		}
+		
+		function reset()
+		{
+			swapArrays();
+			setRatios(end);
+			tween.init(2);
+		}
+		
+		function drawCircles(begin, end, ratio)
+		{
+			out.beginPath();
+			out.fillStyle = "black";
+			var pos = 0;
+			for(var i = 0; i < n; i++)
+			{
+				var radius1 = 0.5 * begin[i];
+				var radius2 = 0.5 * end[i];
+				var radius = stage.width * Math.abs(radius1 + ratio * (radius2 - radius1));
+				out.moveTo(stage.width * pos, 0.5 * stage.height);
+				out.arc(pos + radius, 0.5 * stage.height, radius, 0, 2 * Math.PI);
+				pos += 2 * radius;
+			}
+			out.fill();
+		}
+		
+		function update()
+		{
+			out.clearRect(0, 0, stage.width, stage.height);
+			drawCircles(begin, end, tween);
+			if(tween == 1) reset();
+		}
+		
+		var tween = new tools.Tween(0);
+		reset();
+		
+		new tools.Loop(update, this);
+	</script>
+	
+	<script type="text/javascript">
+	  var _gaq = _gaq || [];
+	  _gaq.push(['_setAccount', 'UA-6101672-1']);
+	  _gaq.push(['_trackPageview']);
+
+	  (function() {
+		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	  })();
+	</script>
+</body>
+</html>

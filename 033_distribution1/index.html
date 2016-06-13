@@ -1,0 +1,46 @@
+<html>
+<head>
+	<title>distribution 1</title>
+	<link rel="stylesheet" type="text/css" href="../css/styles.css"/>
+</head>
+<body>
+	<script type="text/javascript" src="../libs/tools.js"></script>
+	<script type="text/javascript">
+		var stage = new tools.Stage(700, 700);
+		
+		var cx = 0.5 * stage.width;
+		var cy = 0.5 * stage.height;
+		var dist = 20;
+		var angle = 0;
+		var radius = 0;
+		
+		var out = stage.out;
+		out.fillStyle = "black";
+		
+		function update()
+		{
+			out.beginPath();
+			out.arc(cx + radius * Math.cos(angle), cy + radius * Math.sin(angle), 2, 0, 2 * Math.PI);
+			out.fill();
+			out.closePath();
+			
+			angle+= 0.001 * Math.PI * radius;
+			radius+= 0.1;
+		}
+		
+		new tools.Loop(update, this);
+	</script>
+	
+	<script type="text/javascript">
+	  var _gaq = _gaq || [];
+	  _gaq.push(['_setAccount', 'UA-6101672-1']);
+	  _gaq.push(['_trackPageview']);
+
+	  (function() {
+		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	  })();
+	</script>
+</body>
+</html>

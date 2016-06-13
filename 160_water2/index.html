@@ -1,0 +1,62 @@
+<html>
+<head>
+	<title>Water</title>
+	<link rel="stylesheet" type="text/css" href="../css/styles.css"/>
+</head>
+<body>
+	<script type="text/javascript" src="../libs/tools.js"></script>
+	<script type="text/javascript">
+		tools.mixin(tools, this);
+		
+		var w = 700;
+		var h = 700;
+		var stage = new Stage(w, h);
+		var out = stage.out;
+		var n = 50;
+		out.fillStyle = "black";
+		
+		var sines = [];
+		var nSines = 15;
+		var t0 = Date.now();
+		
+		for(var i = 0; i < nSines; i++)
+		{
+			sines[i] = {scale:Math.random() * 10,
+						frequ:12 * (Math.random() * 2 - 1),
+						speed:Math.random() * 0.01};
+		}
+		new Loop(function()
+		{
+			out.clearRect(0, 0, w, h);
+			out.beginPath();
+			out.moveTo(0, h);
+			var time = Date.now() - t0;
+			for(var i = 0; i < n; i++)
+			{
+				var value = h - (0.05 * time % h);
+				var ratio = i / (n - 1);
+				for(var j = 0; j < nSines; j++)
+				{
+					var sine = sines[j];
+					value += sine.scale * Math.sin(time * sine.speed + sine.frequ * ratio);
+				}
+				out.lineTo(w * ratio, value);
+			}
+			out.lineTo(w, h);
+			out.lineTo(0, h);
+			out.fill();
+		});</script>
+	
+	<script type="text/javascript">
+	  var _gaq = _gaq || [];
+	  _gaq.push(['_setAccount', 'UA-6101672-1']);
+	  _gaq.push(['_trackPageview']);
+
+	  (function() {
+		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	  })();
+	</script>
+</body>
+</html>

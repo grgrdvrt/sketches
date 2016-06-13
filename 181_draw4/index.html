@@ -1,0 +1,151 @@
+<html>
+<head>
+	<title>draw</title>
+	<link rel="stylesheet" type="text/css" href="../css/styles.css"/>
+</head>
+<body>
+	<script type="text/javascript" src="../libs/tools.js"></script>
+	<script type="text/javascript">
+    var w = 700;
+    var h = 700;
+		var stage = new tools.Stage(700, 700);
+		var mouse = new tools.Mouse(stage.canvas);
+		
+		var out = stage.out;
+    out.strokeStyle = "black";
+
+
+    var paths = [];
+
+    var currentPath;
+
+    mouse.onDown.add(onMouseDown, this);
+    mouse.onUp.add(onMouseUp, this);
+
+    function onMouseDown()
+    {
+      currentPath = {
+        points:[],
+        timeBegin:Date.now(),
+        timeBeginDraw:0
+      };
+      addPointToPath();
+    }
+
+
+    function onMouseUp()
+    {
+      var time = Date.now();
+      currentPath.duration = time - currentPath.timeBegin;
+      currentPath.timeBeginDraw = time;
+      paths.push(currentPath);
+      currentPath = null;
+    }
+
+
+    function update()
+    {
+      out.clearRect(0, 0, w, h);
+
+      if(currentPath)
+        addPointToPath();
+
+      var nPaths = paths.length;
+      var time = Date.now();
+      for(var i = 0; i < nPaths; i++)
+      {
+        var path = paths[i];
+        if(time - path.timeBeginDraw < path.duration)
+          drawPath(path);
+        else erasePath(path);
+      }
+
+      if(currentPath)
+        drawCurrentPath();
+
+    }
+
+    function drawCurrentPath()
+    {
+      out.beginPath();
+      var nPts = currentPath.points.length;
+      var pt = currentPath.points[0];
+      for(var i = 0; i < nPts; i++)
+      {
+        pt = currentPath.points[i];
+        out.lineTo(pt.x, pt.y);
+      }
+      out.stroke();
+    }
+
+
+    function drawPath(path)
+    {
+      var pt = path.points[0];
+      out.moveTo(pt.x, pt.y);
+      var pathTimeDraw = Date.now() - path.timeBeginDraw;
+      out.beginPath();
+      var nPts = path.points.length;
+      for(var i = 0; i < nPts; i++)
+      {
+        var pt = path.points[i];
+        if(pathTimeDraw > pt.time)
+          out.lineTo(pt.x, pt.y);
+      }
+      out.stroke();
+    }
+
+
+    function erasePath(path)
+    {
+      var i, pt;
+      var nPts = path.points.length;
+      var time = Date.now();
+      var pathTimeDraw = time - path.timeBeginDraw - path.duration;
+      for(i = 0; i < nPts; i++)
+      {
+        pt = path.points[i];
+        if(pt.time > pathTimeDraw) break;
+      }
+
+      if(pt.time < pathTimeDraw)
+      {
+        path.timeBeginDraw = time;
+        return;
+      }
+
+      out.beginPath();
+      out.moveTo(pt.x, pt.y);
+      for(; i < nPts; i++)
+      {
+        var pt = path.points[i];
+        out.lineTo(pt.x, pt.y);
+      }
+      out.stroke();
+    }
+
+    function addPointToPath()
+    {
+      currentPath.points.push({time:Date.now() - currentPath.timeBegin,
+                               x:mouse.x,
+                               y:mouse.y});
+    }
+		
+		
+		new tools.Loop(update, this);
+	</script>
+	
+	<script type="text/javascript">
+	  var _gaq = _gaq || [];
+	  _gaq.push(['_setAccount', 'UA-6101672-1']);
+	  _gaq.push(['_trackPageview']);
+
+	  (function() {
+		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	  })();
+	</script>
+</body>
+</html>
+

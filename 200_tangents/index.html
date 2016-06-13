@@ -1,0 +1,173 @@
+<html>
+<head>
+	<title>Tangents</title>
+	<link rel="stylesheet" type="text/css" href="../css/styles.css"/>
+</head>
+<body>
+	<script type="text/javascript" src="../libs/tools.js"></script>
+	<script type="text/javascript">
+		tools.mixin(tools, this);
+		
+		var w = 700;
+		var h = 700;
+		var stage = new Stage(w, h);
+		var out = stage.out;
+
+
+    var fr = 0.99;
+    var rMin = 0.05 * w;
+    var rMax = 0.2 * w;
+
+    function getPts(c0, c1)
+    {
+      var dx = c1.x - c0.x;
+      var dy = c1.y - c0.y;
+      var dist = Math.sqrt(dx * dx + dy * dy);
+
+      var angC = Math.atan2(dy, dx);
+      var ang0 = Math.acos((c0.r - c1.r) / dist);
+      var cos0 = Math.cos(angC - ang0);
+      var cos1 = Math.cos(angC + ang0);
+      var sin0 = Math.sin(angC - ang0);
+      var sin1 = Math.sin(angC + ang0);
+
+      return [
+        {
+          x:c0.x + c0.r * cos0,
+          y:c0.y + c0.r * sin0
+        },
+        {
+          x:c0.x + c0.r * cos1,
+          y:c0.y + c0.r * sin1
+        },
+        {
+          x:c1.x + c1.r * cos0,
+          y:c1.y + c1.r * sin0
+        },
+        {
+          x:c1.x + c1.r * cos1,
+          y:c1.y + c1.r * sin1
+        }
+      ]
+    }
+
+    function drawCircle(c, color)
+    {
+      out.strokeStyle = color || "black";
+      out.beginPath();
+      out.moveTo(c.x + c.r, c.y);
+      out.arc(c.x, c.y, c.r, 0, 2 * Math.PI);
+      out.stroke();
+    }
+
+
+    function line(p0, p1, color)
+    {
+      out.strokeStyle = color || "black";
+      out.beginPath();
+      out.moveTo(p0.x, p0.y);
+      out.lineTo(p1.x, p1.y);
+      out.stroke();
+    }
+
+    function checkBounds(c) {
+      if(c.x < c.r){
+        c.x = c.r;
+        c.vx *= -1;
+      }
+      else if(c.x > w - c.r){
+        c.x = w - c.r;
+        c.vx *= -1;
+      }
+      if(c.y < c.r){
+        c.y = c.r;
+        c.vy *= -1;
+      }
+      else if(c.y > h - c.r){
+        c.y = h - c.r;
+        c.vy *= -1;
+      }
+    }
+
+
+    function checkRadius(c) {
+      if(c.r < rMin) {
+        c.r = rMin;
+        c.vr *= -1;
+      }
+      else if(c.r > rMax) {
+        c.r = rMax;
+        c.vr *= -1;
+      }
+    }
+
+    var c0 = {
+      x:Math.random() * w,
+      y:Math.random() * h,
+      vx:0, vy:0, vr:0,
+      r:Math.random() * rMax
+    };
+
+    var c1 = {
+      x:Math.random() * w,
+      y:Math.random() * h,
+      vx:0, vy:0, vr:0,
+      r:Math.random() * rMax
+    };
+
+    new Loop(function() {
+      out.clearRect(0, 0, w, h);
+
+      c0.vx = fr * c0.vx + 0.5 * (Math.random() * 2 - 1);
+      c0.vy = fr * c0.vy + 0.5 * (Math.random() * 2 - 1);
+      c0.vr = fr * c0.vr + 0.3 * (Math.random() * 2 - 1);
+      c1.vx = fr * c1.vx + 0.5 * (Math.random() * 2 - 1);
+      c1.vy = fr * c1.vy + 0.5 * (Math.random() * 2 - 1);
+      c1.vr = fr * c1.vr + 0.3 * (Math.random() * 2 - 1);
+
+      c0.x += c0.vx;
+      c0.y += c0.vy;
+      c0.r += c0.vr;
+      c1.x += c1.vx;
+      c1.y += c1.vy;
+      c1.r += c1.vr;
+
+      checkBounds(c0);
+      checkBounds(c1);
+      checkRadius(c0);
+      checkRadius(c1);
+
+
+      var pts = getPts(c0, c1);
+      
+      drawCircle(c0, "red");
+      drawCircle(c1);
+      line(c0, c1);
+
+      line(c0, pts[0]);
+      line(c0, pts[1]);
+      line(c1, pts[2]);
+      line(c1, pts[3]);
+      line(pts[0], pts[2]);
+      line(pts[1], pts[3]);
+    });
+
+    
+
+		
+		
+  </script>
+	
+	<script type="text/javascript">
+	  var _gaq = _gaq || [];
+	  _gaq.push(['_setAccount', 'UA-6101672-1']);
+	  _gaq.push(['_trackPageview']);
+
+	  (function() {
+		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	  })();
+	</script>
+</body>
+</html>

@@ -1,0 +1,212 @@
+<html>
+<head>
+	<title>verlet 1</title>
+	<link rel="stylesheet" type="text/css" href="../css/styles.css"/>
+</head>
+<body>
+	<script type="text/javascript" src="../libs/tools.js"></script>
+  <script type="text/javascript">
+    tools.mixin(tools, this);
+
+    var w = 700;
+    var h = 700;
+
+    var stage = new Stage(w, h);
+
+    var ctx = stage.out;
+
+
+    function v2(x, y)
+    {
+      this.set(x, y);
+    }
+
+
+    v2.prototype = {
+      set : function(x, y){
+        this.x = x;
+        this.y = y;
+        return this;
+      },
+
+      copy : function(v){
+        this.x = v.x;
+        this.y = v.y;
+        return this;
+      },
+
+      add : function(v){
+        this.x += v.x;
+        this.y += v.y;
+        return this;
+      },
+
+      sub : function(v){
+        this.x -= v.x;
+        this.y -= v.y;
+        return this;
+      },
+
+      scale : function(s){
+        this.x *= s;
+        this.y *= s;
+        return this;
+      },
+
+      norm : function(){
+        this.setLength(1);
+        return this;
+      },
+
+      getLength2 : function(){
+        return this.x * this.x + this.y * this.y;
+      },
+
+      getLength : function(value){
+        return Math.sqrt(this.getLength2);
+      },
+
+      setLength : function(value){
+        var r = value / this.getLength();
+        this.x *= r;
+        this.y *= r;
+        return this;
+      },
+
+      clone : function(){
+        return (new v2()).copy(this);
+      }
+    };
+
+
+    function Particle(x, y)
+    {
+      this.pos = new v2(x, y);
+      this.oPos = this.pos.clone();
+      this.force = new v2();
+      this.mass = 1;
+    }
+
+
+    var nParticles = 800 + Math.random() * 700;
+    var minDist = 20;
+
+    var particles = [];
+
+    for(var i = 0; i < nParticles; i++){
+      var p = new Particle(
+        Math.random() * w,
+        Math.random() * h
+      );
+      particles[i] = p;
+    }
+
+
+    function initParticles()
+    {
+      for(var i = 0; i < nParticles; i++){
+        particles[i].force.set(0, 0);
+      }
+    }
+
+    function separateParticles()
+    {
+      var diff = new v2();
+      for(var i = 0; i < nParticles; i++){
+        var p0 = particles[i];
+        for(var j = i + 1; j < nParticles; j++){
+          var p1 = particles[j];
+          diff.copy(p1.pos).sub(p0.pos);
+          var d2 = diff.getLength2();
+          if(d2 < minDist * minDist){
+            var dist = Math.sqrt(d2);
+            var separation = diff.scale(0.5 * (minDist - dist) / dist);
+            p0.force.sub(separation);
+            p1.force.add(separation);
+          }
+        }
+      }
+    }
+
+
+    function constraintFrame()
+    {
+      for(var i = 0; i < nParticles; i++){
+        var p = particles[i];
+        if(p.pos.x < 0) p.pos.x = 0;
+        else if(p.pos.x > w) p.pos.x = w;
+        if(p.pos.y < 0) p.pos.y = 0;
+        else if(p.pos.y > h) p.pos.y = h;
+      }
+    }
+
+
+    function applyFriction()
+    {
+      var temp = new v2();
+      for(var i = 0; i < nParticles; i++){
+        var p = particles[i];
+        temp.copy(p.pos).sub(p.oPos).scale(0.9);
+        p.pos.copy(p.oPos).add(temp);
+      }
+    }
+
+
+    function updateParticles()
+    {
+      var dt = 1;
+      var temp = new v2();
+      for(var i = 0; i < nParticles; i++){
+        var p = particles[i];
+        temp.copy(p.pos);
+        p.pos.scale(2).sub(p.oPos).add(p.force.scale(dt * dt / p.mass));
+        p.oPos.copy(temp);
+      }
+    }
+
+
+    function drawParticles()
+    {
+      ctx.clearRect(0, 0, w, h);
+      ctx.fillStyle = "black";
+      for(var i = 0; i < nParticles; i++){
+        var p = particles[i];
+        ctx.beginPath();
+        ctx.arc(p.pos.x, p.pos.y, 5, 0, 2 * Math.PI);
+        ctx.fill();
+      }
+    }
+
+
+    function update(){
+
+      initParticles();
+      separateParticles();
+      applyFriction();
+      constraintFrame();
+      updateParticles();
+      drawParticles();
+
+      requestAnimationFrame(update);
+    }
+
+
+
+
+    update();
+
+
+  </script>
+	<script type="text/javascript">
+	  var _gaq = _gaq || [];
+	  _gaq.push(['_setAccount', 'UA-6101672-1']);
+	  _gaq.push(['_trackPageview']);
+
+	  (function() {
+		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	  })();
+	</script>
+</body>
+</html>

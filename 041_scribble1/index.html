@@ -1,0 +1,77 @@
+<html>
+<head>
+	<title>scribble 1</title>
+	<link rel="stylesheet" type="text/css" href="../css/styles.css"/>
+</head>
+<body>
+	<script type="text/javascript" src="../libs/tools.js"></script>
+	<script type="text/javascript">
+		function Point(x, y)
+		{
+			this.x = x || 0;
+			this.y = y || 0;
+		}
+		
+		var stage = new tools.Stage(700, 700);
+		
+		var pts = [];
+		var n = Math.floor(Math.random() * 50) + 3;
+		var lines = 500;
+		var i;
+		var out = stage.out;
+		var pt;
+		
+		var radius = 0.4 * stage.width;
+		var center = new Point(0.5 * stage.width, 0.5 * stage.height);
+		
+		out.strokeStyle = "black";
+		out.beginPath();
+		for(i = 0; i < n; i++)
+		{
+			var a = 2 * Math.PI * i / n;
+			pt = new Point(center.x + radius * Math.cos(a), center.y + radius * Math.sin(a));
+			pt.x += 10 * (Math.random() * 2 - 1);
+			pt.y += 10 * (Math.random() * 2 - 1);
+			if(i == 0) out.moveTo(pt.x, pt.y);
+			else out.lineTo(pt.x, pt.y);
+			pts[i] = pt;
+		}
+		out.lineTo(pts[0].x, pts[0].y);
+		out.stroke();
+		
+		out.beginPath();
+		pt = new Point();
+		out.fillStyle = "black";
+		for(i = 0; i < lines; i++)
+		{
+			var t = 0;
+			pt.x = pt.y = 0;
+			for(var j = 0; j < 3; j++)
+			{
+				var ran = Math.random();
+				t += ran;
+				var pt2 = pts[Math.floor(Math.random() * n)];
+				pt.x += ran * pt2.x;
+				pt.y += ran * pt2.y;
+			}
+			pt.x /= t;
+			pt.y /= t;
+			if(i == 0) out.moveTo(pt.x, pt.y);
+			else out.lineTo(pt.x, pt.y);
+		}
+		out.stroke();
+	</script>
+	
+	<script type="text/javascript">
+	  var _gaq = _gaq || [];
+	  _gaq.push(['_setAccount', 'UA-6101672-1']);
+	  _gaq.push(['_trackPageview']);
+
+	  (function() {
+		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	  })();
+	</script>
+</body>
+</html>

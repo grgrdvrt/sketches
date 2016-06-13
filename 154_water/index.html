@@ -1,0 +1,50 @@
+<html>
+<head>
+	<title>Water</title>
+	<link rel="stylesheet" type="text/css" href="../css/styles.css"/>
+</head>
+<body>
+	<script type="text/javascript" src="../libs/tools.js"></script>
+	<script type="text/javascript">
+		tools.mixin(tools, this);
+		
+		var w = 700;
+		var h = 700;
+		var stage = new tools.Stage(w, h);
+		var out = stage.out;
+		
+		
+		var y0 = 0.5 * h;
+		var y1 = 0.5 * h;
+		
+		new Loop(function(){
+		
+			var t = 0.005 * Date.now();
+			y0 += 2 * Math.cos(t);
+			y1 += 2 * Math.sin(t);
+		
+			out.clearRect(0, 0, w, h);
+		
+			out.beginPath();
+			out.moveTo(0, y0);
+			out.lineTo(w, y1);
+			out.lineTo(w, h);
+			out.lineTo(0, h);
+			out.closePath();
+			out.fillStyle = "black";
+			out.fill();
+		});</script>
+	
+	<script type="text/javascript">
+	  var _gaq = _gaq || [];
+	  _gaq.push(['_setAccount', 'UA-6101672-1']);
+	  _gaq.push(['_trackPageview']);
+
+	  (function() {
+		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	  })();
+	</script>
+</body>
+</html>

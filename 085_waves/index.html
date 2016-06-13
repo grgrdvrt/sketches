@@ -1,0 +1,112 @@
+<html>
+<head>
+	<title>Waves</title>
+	<link rel="stylesheet" type="text/css" href="../css/styles.css"/>
+</head>
+<body>
+	<script type="text/javascript" src="../libs/tools.js"></script>
+	<script type="text/javascript">
+		tools.mixin(tools, this);
+		var stage = new Stage(700, 700);
+		var out = stage.out;
+		//out.globalCompositeOperation = "destination-over";
+		
+		function Wave(amp, r1, r2, delay)
+		{
+			this.amp = amp;
+			this.r1 = r1;
+			this.r2 = r2;
+			this.delay = delay;
+		}
+		
+		Wave.prototype.getValue = function(x, time)
+		{
+			return this.amp * Math.cos(this.r1 * x + this.r2 * time + this.delay);
+		}
+		
+		function getRanWave()
+		{
+			var amp = 200 * (Math.random() * 2 - 1);
+			var r1 = (Math.random() * 2 - 1) * 0.01;
+      if(r1 < 0) {
+        r1 -= 0.001;
+      }
+      else {
+        r1 += 0.001;
+      }
+			var r2 = (Math.random() * 2 - 1) * 0.01;
+      if(r2 < 0) {
+        r2 -= 0.001;
+      }
+      else {
+        r2 += 0.001;
+      }
+			var delay = Math.random() * 2 * Math.PI;
+			return new Wave(amp, r1, r2, delay);
+		}
+		
+		var steps = 200;
+		var time = 0;
+		var nWaves = 5;
+		var waves = [];
+		var amp = 0;
+		for(var i = 0; i < nWaves; i++) {
+			waves[i] = getRanWave();
+			amp += Math.abs(waves[i].amp);
+		}
+		
+		var vl = 0;
+		var ranVl = 1;
+		var frl = 0.95;
+		var l = 0;
+		var loop = new Loop(function() {
+			out.beginPath();
+			for(var i = 0; i < steps; i++) {
+				var x = stage.width * i / (steps - 1);
+				var wave = 0;
+        for(var j = 0; j < nWaves; j++) {
+					wave += waves[j].getValue(x, time);
+        }
+				var y = time + wave - amp;
+				//var y = stage.height - (time + wave - amp);
+        if(i) {
+          out.lineTo(x, y);
+        }
+        else {
+          out.moveTo(x, y);
+        }
+			}
+			out.lineTo(stage.width, stage.height);
+			out.lineTo(0, stage.height);
+			out.closePath();
+			vl = frl * vl + ranVl * (Math.random() * 2 - 1);
+			l += vl;
+			if(l > 100) {
+				l = 100;
+				vl *= -1;
+			}
+			else if(l < 0) {
+				l = 0;
+				vl *= -1;
+			}
+			out.fillStyle = "hsl(0, 0%, " + l + "%)";
+			out.fill();
+      if(++time > stage.height + 2 * amp) {
+        loop.pause();
+      }
+		
+		});</script>
+	
+	<script type="text/javascript">
+	  var _gaq = _gaq || [];
+	  _gaq.push(['_setAccount', 'UA-6101672-1']);
+	  _gaq.push(['_trackPageview']);
+
+	  (function() {
+		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	  })();
+	</script>
+</body>
+</html>

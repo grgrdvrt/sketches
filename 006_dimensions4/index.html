@@ -1,0 +1,126 @@
+<html>
+<head>
+	<title>dimensions 4</title>
+	<link rel="stylesheet" type="text/css" href="../css/styles.css"/>
+</head>
+<body>
+	<script type="text/javascript" src="../libs/tools.js"></script>
+	<script type="text/javascript" src="../libs/threeDimensions.js"></script>
+	<script type="text/javascript">
+		
+		
+		
+		
+		
+		function LinesRenderer(ctx, w, h)
+		{
+			this.ctx = ctx;
+			this.w = w;
+			this.h = h;
+		}
+		
+		LinesRenderer.prototype.render = function(v)
+		{
+			this.ctx.strokeStyle = "black";
+			var n = v.length;
+			this.ctx.beginPath();
+			var ox = 0.5 * this.w;
+			var oy = 0.5 * this.h;
+			var p1, p2
+			for(var i = 0; i < n - 1; i += 2)
+			{
+				this.ctx.moveTo(v[i].px + ox, v[i].py + oy);
+				this.ctx.lineTo(v[i +  1].px + ox, v[i + 1].py + oy);
+			}
+			this.ctx.stroke();
+			this.ctx.closePath();
+		}
+		
+		function DotsRenderer(ctx, w, h)
+		{
+			this.ctx = ctx;
+			this.w = w;
+			this.h = h;
+		}
+		
+		DotsRenderer.prototype.render = function(v)
+		{
+			this.ctx.fillStyle = "black";
+			var n = v.length;
+			this.ctx.beginPath();
+			var ox = 0.5 * this.w;
+			var oy = 0.5 * this.h;
+			for(var i = 0; i < n-1; i++)
+			{
+				this.ctx.rect(v[i].px + ox, v[i].py + oy, 2, 2);
+			}
+			this.ctx.fill();
+			this.ctx.closePath();
+		}
+		
+		var stage = new tools.Stage(700, 700);
+		
+		var engine = new threeDimensions.Engine();
+		engine.translate(0, 0, 300);
+		var lineRenderer = new LinesRenderer(stage.out, stage.width, stage.height);
+		var dotsRenderer = new DotsRenderer(stage.out, stage.width, stage.height);
+		
+		var scale = 300;
+		
+		var vertices1 = [];
+		var n = 400;
+		var ang = 0.5;
+		for(var i = 0; i < n; i ++)
+		{
+			var v = new threeDimensions.Vertex(scale * (Math.random() * 2 - 1),
+												scale * (Math.random() * 2 - 1),
+												scale * (Math.random() * 2 - 1));
+			vertices1.push(v);
+			normalizeVertex(v, scale);
+		}
+		
+		var vertices2 = [];
+		n = 400;
+		for(var i = 0; i < n; i ++)
+		{
+			var v = new threeDimensions.Vertex(scale * (Math.random() * 2 - 1),
+												scale * (Math.random() * 2 - 1),
+												scale * (Math.random() * 2 - 1));
+			vertices2.push(v);
+		}
+		
+		function normalizeVertex(v, l)
+		{
+			var r = l / Math.sqrt(v.x * v.x + v.y * v.y + v.z * v.z);
+			v.x *= r;
+			v.y *= r;
+			v.z *= r;
+		}
+		
+		function update()
+		{
+			stage.out.clearRect(0, 0, stage.width, stage.height);
+			engine.rotationX += 0.01;
+			engine.rotationY += 0.01;
+			engine.computeProjections(vertices1);
+			lineRenderer.render(vertices1);
+			engine.computeProjections(vertices2);
+			dotsRenderer.render(vertices2);
+		}
+		
+		new tools.Loop(update, this);
+	</script>
+	
+	<script type="text/javascript">
+	  var _gaq = _gaq || [];
+	  _gaq.push(['_setAccount', 'UA-6101672-1']);
+	  _gaq.push(['_trackPageview']);
+
+	  (function() {
+		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	  })();
+	</script>
+</body>
+</html>

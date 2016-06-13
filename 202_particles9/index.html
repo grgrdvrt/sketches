@@ -1,0 +1,185 @@
+<html>
+<head>
+	<title>particles 9</title>
+	<link rel="stylesheet" type="text/css" href="../css/styles.css"/>
+  <style type="text/css">
+		p
+		{
+			font-family: sans-serif;
+			font-size: 12px;
+			color:#ccc;
+			width:700px;
+			margin:auto;
+		}
+		a, a:hover, a:visited
+		{
+			color:#ccc;
+		}
+	</style>
+</head>
+<body>
+	<script type="text/javascript" src="../libs/tools.js"></script>
+	<script type="text/javascript">
+
+  var w = 700;
+  var h = 700;
+  var fr = 0.96;
+
+  var stage = new tools.Stage(w, h);
+  var out = stage.out;
+
+  function Particle()
+  {
+    this.x = 0;
+    this.y = 0;
+    this.vx = 0;
+    this.vy = 0;
+    this.color = "white";
+    this.length = 0;
+
+    this.length = 0;
+    this.maxLength = 0;
+
+    this.time = 0;
+    this.maxTime = 0;
+
+    this.thickness = 0;
+
+    this.r = 0;
+    this.vr = 0;
+  }
+
+
+  Particle.prototype = {
+    reset : function()
+    {
+      this.time = 0;
+      this.maxTime = 40 + Math.random() * 40;
+      this.thickness = Math.pow(Math.random(), 2) * 15;
+      this.maxLength = 10 + Math.random() * 100;
+      this.r = 0;
+      this.vr = 0.3 * (Math.random() * 2 - 1);
+    },
+
+    update : function()
+    {
+      this.time++;
+      var timeRatio = 1 - Math.cos(2 * Math.PI * this.time / this.maxTime);
+      if(timeRatio > 1) timeRatio = 1;
+      var iTimeRatio = 0.5 + 0.5 * (1 - timeRatio);
+      this.vx = fr * this.vx;
+      this.vy = fr * this.vy;
+      this.x += iTimeRatio * this.vx;
+      this.y += iTimeRatio * this.vy;
+      this.length = timeRatio * this.maxLength;
+      this.r += 0.1 * iTimeRatio * this.vr;
+    },
+    
+    draw : function(out)
+    {
+      var r = this.length / Math.sqrt(this.vx * this.vx  + this.vy * this.vy);
+      out.save();
+      out.translate(this.x - 0.5 * r * this.vx, this.y - 0.5 * r * this.vy);
+      out.rotate(this.r);
+      out.translate(-(this.x - 0.5 * r * this.vx), -(this.y - 0.5 * r * this.vy));
+      out.beginPath();
+      out.lineWidth = this.thickness;
+      out.strokeStyle = this.color;
+      out.moveTo(this.x, this.y);
+      out.lineTo(
+        this.x - r * this.vx,
+        this.y - r * this.vy
+      );
+      out.stroke();
+      out.restore();
+    }
+  }
+
+  var particles = [];
+
+  var time = 0;
+  var r = 0.35 * w;
+  var center = {
+    x:r + 0.5 * w,
+    y:r
+  }
+
+  var n = Math.random() + 1;
+  var phi = Math.random() * Math.PI / 2;
+  new tools.Loop(function() {
+
+    time++;
+    out.fillStyle = "black";
+    out.fillRect(0, 0, w, h);
+
+    var t = 0.05 * time;
+    center.x = 0.5 * w + r * Math.sin(t);
+    center.y = 0.5 * h + r * Math.sin(n * t + phi);
+
+    if(center.x < 0) {
+      center.vx *= -1;
+      center.x = 0;
+    }
+    if(center.x > w) {
+      center.vx *= -1;
+      center.x = w;
+    }
+    if(center.y < 0) {
+      center.vy *= -1;
+      center.y = 0;
+    }
+    if(center.y > h) {
+      center.vy *= -1;
+      center.y = h;
+    }
+
+    for(var i = 0; i < 10; i++) {
+      var p = new Particle();
+      p.reset();
+      p.ox = p.x = center.x + 50 * (Math.random() * 2 - 1);
+      p.oy = p.y = center.y + 50 * (Math.random() * 2 - 1);
+      p.vx =  10 * (Math.random() * 2 - 1);
+      p.vy =  10 * (Math.random() * 2 - 1);
+      var hue = -(80 * (Math.cos(0.1 * time) + 1)) % 180;
+      var hue = 0.5 * (1 + Math.cos(0.1 * time)) * 60 + (Math.cos(0.05 * time) > 0 ? 180 : 0);
+      var lig = 20 + Math.floor(Math.random() * 60);
+      var alpha = 0.5 + 0.5 * Math.random();
+      p.color = "hsla(" + hue + ", 100%, " + lig + "%, " + alpha + ")";
+      particles.push(p);
+    }
+
+    out.save();
+    particles.forEach(function(p) {
+      p.update();
+      p.draw(out);
+    });
+    out.restore();
+
+
+    for(var i = 0; i < particles.length; i++)
+    {
+      var p = particles[i];
+      if(p.time > p.maxTime) {
+        particles.splice(i, 1);
+        i--;
+      }
+    }
+
+
+  });
+	
+  </script>
+  <p>inspired by <a href="http://giphy.com/gifs/motionaddicts-art-design-abstract-3xz2BQKaaGqHPydLhe">http://giphy.com/gifs/motionaddicts-art-design-abstract-3xz2BQKaaGqHPydLhe</a></p>
+  <script type="text/javascript">
+	  var _gaq = _gaq || [];
+	  _gaq.push(['_setAccount', 'UA-6101672-1']);
+	  _gaq.push(['_trackPageview']);
+
+	  (function() {
+		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	  })();
+	</script>
+</body>
+</html>

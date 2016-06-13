@@ -1,0 +1,350 @@
+<html>
+<head>
+	<title>growth</title>
+	<link rel="stylesheet" type="text/css" href="../css/styles.css"/>
+</head>
+<body>
+	<script type="text/javascript" src="../libs/tools.js"></script>
+  <script type="text/javascript">
+    tools.mixin(tools, this);
+
+    var w = 700;
+    var h = 700;
+
+
+
+    var stage = new Stage(w, h);
+
+    var ctx = stage.out;
+
+
+    function v2(x, y)
+    {
+      this.set(x, y);
+    }
+
+
+    v2.prototype = {
+      set : function(x, y){
+        this.x = x;
+        this.y = y;
+        return this;
+      },
+
+      copy : function(v){
+        this.x = v.x;
+        this.y = v.y;
+        return this;
+      },
+
+      add : function(v){
+        this.x += v.x;
+        this.y += v.y;
+        return this;
+      },
+
+      sub : function(v){
+        this.x -= v.x;
+        this.y -= v.y;
+        return this;
+      },
+
+      scale : function(s){
+        this.x *= s;
+        this.y *= s;
+        return this;
+      },
+
+      norm : function(){
+        this.setLength(1);
+        return this;
+      },
+
+      getLength2 : function(){
+        return this.x * this.x + this.y * this.y;
+      },
+
+      getLength : function(value){
+        return Math.sqrt(this.getLength2());
+      },
+
+      setLength : function(value){
+        var r = value / this.getLength();
+        this.x *= r;
+        this.y *= r;
+        return this;
+      },
+
+      clone : function(){
+        return (new v2()).copy(this);
+      }
+    };
+
+    var nParticlesInit = 10;
+    var maxParticles = 2000;
+    var minDist = 50;
+    var edgeMaxLength = 50;
+    var edgeGrowthRate = 1.02;
+    var radiusInit = minDist / (2 * Math.sin(Math.PI / nParticlesInit));
+
+    var nParticles = nParticlesInit;
+
+    var temp = new v2();
+
+
+    function Particle(x, y)
+    {
+      this.pos = new v2(x, y);
+      this.oPos = this.pos.clone();
+      this.force = new v2();
+      this.mass = 1;
+      this.edges = [];
+    }
+
+
+    function Edge(a, b)
+    {
+      this.a = a;
+      this.b = b;
+      this.length = temp.copy(b.pos).sub(a.pos).getLength();
+      this.leftTriangle = this.rightTriangle = null;
+    }
+
+
+    Edge.prototype = {
+      update : function()
+      {
+        var diff = temp.copy(this.b.pos).sub(this.a.pos);
+        var dist = diff.getLength();
+        this.length *= edgeGrowthRate;
+        if(this.length > dist)return;
+        var force = diff.scale(0.9 * 0.5 * (this.length - dist) / dist);
+        this.a.force.sub(force);
+        this.b.force.add(force);
+      }
+    };
+
+
+    function Triangle(a, b, c)
+    {
+      this.a = a;
+      this.b = b;
+      this.c = c;
+    }
+
+
+    var particles = [];
+    var triangles = [];
+
+    function initParticles()
+    {
+      var pa = new Particle(
+          Math.random() * w,
+          Math.random() * h
+      );
+      var pb = new Particle(
+          Math.random() * w,
+          Math.random() * h
+      );
+      var pc = new Particle(
+          Math.random() * w,
+          Math.random() * h
+      );
+      var ea = new Edge(pa, pb);
+      var eb = new Edge(pb, pc);
+      var ec = new Edge(pc, pa);
+      pa.edges.push(ea);
+      pb.edges.push(eb);
+      pc.edges.push(ec);
+      var triangle = new Triangle(pa, pb, pc);
+      triangles[0] = triangle;
+      ea.rightTriangle = eb.rightTriangle = ec.rightTriangle = triangle;
+    }
+
+
+    function resetParticles()
+    {
+      for(var i = 0; i < nParticles; i++){
+        particles[i].force.set(0, 0);
+      }
+    }
+
+
+    function separateParticles()
+    {
+      var diff = new v2();
+      for(var i = 0; i < nParticles; i++){
+        var p0 = particles[i];
+        for(var j = i + 1; j < nParticles; j++){
+          var p1 = particles[j];
+          //checker les links
+          //if(p1 === p0.prev || p1 === p0.next)continue;
+          diff.copy(p1.pos).sub(p0.pos);
+          var d2 = diff.getLength2();
+          if(d2 < minDist * minDist){
+            var dist = Math.sqrt(d2);
+            var separation = diff.scale(0.01 * 0.5 * (minDist - dist) / dist);
+            p0.force.sub(separation);
+            p1.force.add(separation);
+          }
+        }
+      }
+    }
+
+
+
+    function applyEdges()
+    {
+      for(var i = 0; i < nParticles; i++){
+        var edges = particles[i].edges;
+        var nEdges = edges.length;
+        for(var j = 0; j < nEdges; j++){
+          var edge = edges[j];
+          edge.update();
+          if(edge.length > edgeMaxLength && nParticles < maxParticles){
+            splitEdge(edge);
+            i++;
+          }
+        }
+      }
+    }
+
+
+    function splitEdge(edge)
+    {
+      var newPt = new Particle(0, 0);
+      newPt.pos.copy(edge.a.pos).add(edge.b.pos).scale(0.5);
+      newPt.force.copy(edge.a.force).add(edge.b.force).scale(0.5);
+
+      particles.push(newPt);
+      nParticles++;
+
+
+      var newEdge = new Edge(newPt, edge.b);
+
+      if(edge.rightTriangle !== undefined){
+        var t = edge.rightTriangle;
+        var third;
+        if(edge.a === t.a){
+          third = t.c;
+        }
+        else if(edge.a === t.b){
+          third = t.a;
+        }
+        else
+          third = t.b;
+        }
+        var newEdge = new Edge(newPt, edge.b);
+      }
+
+      edge.b = newPt;
+      edge.length *= 0.5;
+    }
+
+
+    function applyFriction()
+    {
+      var temp = new v2();
+      for(var i = 0; i < nParticles; i++){
+        var p = particles[i];
+        temp.copy(p.pos).sub(p.oPos).scale(0.9);
+        p.pos.copy(p.oPos).add(temp);
+      }
+    }
+
+    function constraintFrame()
+    {
+      var maxDist = 0.4 * w;
+      for(var i = 0; i < nParticles; i++){
+        var p = particles[i];
+        /*if(p.pos.x < 0) p.pos.x = 0;
+        else if(p.pos.x > w) p.pos.x = w;
+        if(p.pos.y < 0) p.pos.y = 0;
+        else if(p.pos.y > h) p.pos.y = h;*/
+
+        var dx = 0.5 * w - p.pos.x;
+        var dy = 0.5 * h - p.pos.y;
+        var dist = dx * dx + dy * dy;
+        if(dist > maxDist * maxDist){
+          var r = maxDist / Math.sqrt(dist);
+          p.pos.x = 0.5 * w - dx * r;
+          p.pos.y = 0.5 * h - dy * r;
+        }
+      }
+    }
+
+
+    function updateParticles()
+    {
+      var dt = 1;
+      var temp = new v2();
+      for(var i = 0; i < nParticles; i++){
+        var p = particles[i];
+        temp.copy(p.pos);
+        p.pos.scale(2).sub(p.oPos).add(p.force.scale(dt * dt / p.mass));
+        p.oPos.copy(temp);
+      }
+    }
+
+
+    function drawParticles()
+    {
+      ctx.fillStyle = "black";
+      for(var i = 0; i < nParticles; i++){
+        var p = particles[i];
+        ctx.beginPath();
+        ctx.arc(p.pos.x, p.pos.y, 5, 0, 2 * Math.PI);
+        ctx.fill();
+      }
+    }
+
+    function drawTriangles()
+    {
+      ctx.strokeStyle = "black";
+      ctx.fillStyle = "black";
+      ctx.beginPath();
+      var nTriangles = triangles.length;
+      for(var i = 0; i < nTriangles; i++){
+        var t = triangles[i];
+        ctx.moveTo(t.a.pos.x, t.a.pos.y);
+        ctx.lineTo(t.b.pos.x, t.b.pos.y);
+        ctx.lineTo(t.c.pos.x, t.c.pos.y);
+      }
+      ctx.stroke();
+      //ctx.fill();
+    }
+
+    initParticles();
+
+    var loop = new tools.Loop(function(){
+      resetParticles();
+      separateParticles();
+      applyEdges();
+      applyFriction();
+      constraintFrame();
+      updateParticles();
+
+      ctx.clearRect(0, 0, w, h);
+      //drawParticles();
+      drawTriangles();
+    }, false);
+
+    loop.play();
+
+
+
+  </script>
+	<script type="text/javascript">
+	  var _gaq = _gaq || [];
+	  _gaq.push(['_setAccount', 'UA-6101672-1']);
+	  _gaq.push(['_trackPageview']);
+
+	  (function() {
+		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	  })();
+	</script>
+</body>
+</html>
+

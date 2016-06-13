@@ -1,0 +1,148 @@
+<html>
+<head>
+	<title>Particles</title>
+	<link rel="stylesheet" type="text/css" href="../css/styles.css"/>
+</head>
+<body>
+	<script type="text/javascript" src="../libs/tools.js"></script>
+	<script type="text/javascript">
+		tools.mixin(tools, this);
+		
+		
+		var w = 700;
+		var h = 700;
+		var stage = new Stage(w, h);
+		var out = stage.out;
+		
+		
+		function Particle()
+		{
+			this.x = this.y = 0;
+			this.vx = this.vy = 0;
+			this.ox = this.oy = 0;
+		
+			this.color = "black";	
+		}
+		
+		Particle.prototype = {
+			init : function(x, y, speed, l)
+			{
+				this.x = this.ox = x;
+				this.y = this.oy = y;
+		
+				this.vx = (Math.random() * 2 - 1);
+				this.vy = (Math.random() * 2 - 1);
+				var r = speed / Math.sqrt(this.vx * this.vx + this.vy * this.vy);
+				this.vx *= r;
+				this.vy *= r;
+		
+				this.color = "hsl(0, 0%, " + Math.round(l) + "%)"
+			},
+		
+			update : function(gravity, friction)
+			{
+				this.ox = this.x;
+				this.oy = this.y;
+				this.vx = friction * this.vx;
+				this.vy = friction * this.vy + gravity;
+				this.x += this.vx;
+				this.y += this.vy;
+			},
+		
+			draw : function(out)
+			{
+				out.beginPath();
+				out.moveTo(this.ox, this.oy);
+				out.lineTo(this.x, this.y);
+				out.strokeStyle = this.color;
+				out.stroke();
+			}
+		}
+		
+		
+		function ParticlesPool(n)
+		{
+			this.particles = [];
+			this.length = 0;
+			for(var i = 0; i < n; i++)
+				this.particles[i] = new Particle();
+		}
+		
+		ParticlesPool.prototype = {
+			getParticle : function()
+			{
+				if(this.length >= this.particles.length)return;
+				this.length++;
+				return this.particles[this.length - 1];
+			},
+		
+			freeParticle : function(id)
+			{
+				this.length--;
+				var temp = this.particles[this.length];
+				this.particles[this.length] = this.particles[id];
+				this.particles[id] = temp;
+			}
+		}
+		
+		
+		function Emitter(x, y, maxSpeed, pool)
+		{
+			this.x = x;
+			this.y = y;
+			this.pool = pool;
+			this.emissionRate = 10;
+			this.maxSpeed = maxSpeed;
+		}
+		
+		Emitter.prototype = {
+			createParticles : function()
+			{
+				for(var i = 0; i < this.emissionRate; i++)
+				{
+					var p = this.pool.getParticle();
+					if(!p)return;
+					p.init(this.x, this.y, Math.random() * this.maxSpeed + 1, Math.random() * 100);
+				}
+			}
+		}
+		
+		var gravity = 0;
+		var friction = 1;
+		
+		var pool = new ParticlesPool(300);
+		var emitter = new Emitter(0.5 * w, 0.3 * h, 10, pool);
+		
+		
+		new Loop(function(){
+		
+			emitter.createParticles();
+		
+			for(var i = 0; i < pool.length; i++)
+			{
+				var p = pool.particles[i];
+				p.update(gravity, friction);
+				p.draw(out);
+		
+				if(p.x < 0 || p.x > w || p.y < 0 || p.y > h)
+				{
+					pool.freeParticle(i);
+					i--;
+				}
+			}
+		
+		});</script>
+	
+	<script type="text/javascript">
+	  var _gaq = _gaq || [];
+	  _gaq.push(['_setAccount', 'UA-6101672-1']);
+	  _gaq.push(['_trackPageview']);
+
+	  (function() {
+		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	  })();
+	</script>
+</body>
+</html>

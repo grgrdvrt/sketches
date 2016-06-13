@@ -1,0 +1,67 @@
+<html>
+<head>
+	<title>Randomness</title>
+	<link rel="stylesheet" type="text/css" href="../css/styles.css"/>
+</head>
+<body>
+	<script type="text/javascript" src="../libs/tools.js"></script>
+  <script type="text/javascript">
+
+
+    var w = 700;
+    var h = 700;
+
+    tools.mixin(tools, this);
+    var stage = new Stage(w, h);
+    var out = stage.out;
+
+    for(var i = 0; i < 5000; i++)
+    {
+      out.save();
+      var alpha = Math.random() * 0.1;
+      var l = Math.round(Math.random() * 100);
+      out.fillStyle = "hsla(0, 0%, " + l + "%, " + alpha + ")";
+      var radius = Math.random() * 200;
+      var x = Math.random() * w;
+      var y = Math.random() * h;
+      if(Math.random() < 0.5)
+      {
+        out.beginPath();
+        out.moveTo(x + radius, y);
+        out.arc(x, y, radius, 0, 2 * Math.PI);
+        out.fill();
+      }
+      else
+      {
+        out.translate(x, y);
+        out.rotate(Math.random() * 2 * Math.PI);
+        out.fillRect(-radius, -radius, 2 * radius, 2 * radius);
+        out.restore();
+      }
+    }
+
+    var data = out.getImageData(0, 0, w, h).data;
+    out.fillStyle = "white";
+    out.fillRect(0, 0, w, h);
+    out.fillStyle = "black";
+    var n = data.length / 4;
+    for(var i = 0; i < n; i++)
+    {
+      if(data[4 * i] >= 0x80)
+        out.fillRect(i % w, Math.floor(i / w), 1, 1);
+    }
+  </script>
+	
+	<script type="text/javascript">
+	  var _gaq = _gaq || [];
+	  _gaq.push(['_setAccount', 'UA-6101672-1']);
+	  _gaq.push(['_trackPageview']);
+
+	  (function() {
+		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	  })();
+	</script>
+</body>
+</html>

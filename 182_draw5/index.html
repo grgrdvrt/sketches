@@ -1,0 +1,171 @@
+<html>
+<head>
+	<title>draw</title>
+	<link rel="stylesheet" type="text/css" href="../css/styles.css"/>
+</head>
+<body>
+	<script type="text/javascript" src="../libs/tools.js"></script>
+	<script type="text/javascript">
+    var w = 700;
+    var h = 700;
+		var stage = new tools.Stage(700, 700);
+		var mouse = new tools.Mouse(stage.canvas);
+		
+		var out = stage.out;
+    out.strokeStyle = "black";
+
+
+    var paths = [];
+
+    var currentPath;
+
+    mouse.onDown.add(onMouseDown, this);
+    mouse.onUp.add(onMouseUp, this);
+
+    function onMouseDown()
+    {
+      currentPath = [];
+      addPointToPath();
+    }
+
+
+    function onMouseUp()
+    {
+      paths.push(currentPath);
+      computeNormals(currentPath);
+      currentPath = null;
+    }
+
+
+    function update()
+    {
+      out.clearRect(0, 0, w, h);
+
+      if(currentPath)
+        addPointToPath();
+
+      var nPaths = paths.length;
+      for(var i = 0; i < nPaths; i++)
+      {
+        var path = paths[i];
+        drawPath(path);
+      }
+
+      if(currentPath)
+        drawCurrentPath();
+
+    }
+
+    function drawCurrentPath()
+    {
+      out.beginPath();
+      var nPts = currentPath.length;
+      var pt = currentPath[0];
+      for(var i = 0; i < nPts; i++)
+      {
+        pt = currentPath[i];
+        out.lineTo(pt.x, pt.y);
+      }
+      out.stroke();
+    }
+
+
+    function drawPath(path)
+    {
+      var i;
+      var nPts = path.length;
+      var radius = 15;
+      var time = 0.005 * Date.now();
+      var positions = []
+      for(i = 0; i < nPts; i++)
+      {
+        var pt = path[i];
+        var amplitude = radius * Math.cos(time + 0.5 * i);
+        positions.push({x : pt.x + amplitude * pt.normal.x,
+                        y : pt.y + amplitude * pt.normal.y});
+      }
+
+      var pos0, pos1;
+      pos0 = positions[0];
+      out.beginPath();
+      out.moveTo(pos0.x, pos0.y);
+      for(var i = 1; i < nPts - 2; i++)
+      {
+        var pos0 = positions[i];
+        var pos1 = positions[i + 1];
+        out.quadraticCurveTo(pos0.x, pos0.y, 0.5 * (pos0.x + pos1.x), 0.5 * (pos0.y + pos1.y));
+      }
+
+      pos0 = positions[nPts - 2];
+      pos1 = positions[nPts - 1];
+      out.quadraticCurveTo(pos0.x, pos0.y, pos1.x, pos1.y);
+
+      out.stroke();
+    }
+
+
+    function computeNormals(path)
+    {
+      var n = path.length;
+      for(var i = 1; i < n - 1; i++)
+      {
+        var pt0 = path[i - 1];
+        var pt1 = path[i];
+        var pt2 = path[i + 1];
+        
+        var v0 = normalize({x:pt1.x - pt0.x, y:pt1.y - pt0.y});
+        var v1 = normalize({x:pt1.x - pt2.x, y:pt1.y - pt2.y});
+        var sign = v0.x * v1.y - v1.x * v0.y > 0 ? -1 : 1;
+
+        pt1.normal = normalize({x:v0.x + v1.x, y:v0.y + v1.y});
+        pt1.normal.x *= sign;
+        pt1.normal.y *= sign;
+        if(isNaN(pt1.normal.x))pt1.normal.x = 0;
+        if(isNaN(pt1.normal.y))pt1.normal.y = 0;
+      }
+
+      var p0, p1;
+      p0 = path[0];
+      p1 = path[1];
+      p0.normal = normalize({x:p1.y - p0.y, y:p0.x - p1.x});
+      p0 = path[n - 1];
+      p1 = path[n - 2];
+      p0.normal = normalize({x:p0.y - p1.y, y:p1.x - p0.x});
+    }
+    
+    function normalize(v)
+    {
+      var r = 1 / Math.sqrt(v.x * v.x + v.y * v.y);
+      v.x *= r;
+      v.y *= r;
+      return v;
+    }
+
+
+
+    function addPointToPath()
+    {
+      var pos = {x:mouse.x, y:mouse.y};
+      var lastPos = currentPath[currentPath.length - 1];
+      if(!lastPos || lastPos.x !== pos.x || lastPos.y !== pos.y)
+        currentPath.push(pos);
+    }
+		
+		
+		new tools.Loop(update, this);
+	</script>
+	
+	<script type="text/javascript">
+	  var _gaq = _gaq || [];
+	  _gaq.push(['_setAccount', 'UA-6101672-1']);
+	  _gaq.push(['_trackPageview']);
+
+	  (function() {
+		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	  })();
+	</script>
+</body>
+</html>
+

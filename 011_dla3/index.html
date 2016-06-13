@@ -1,0 +1,78 @@
+<html>
+<head>
+	<title>dla 3</title>
+	<link rel="stylesheet" type="text/css" href="../css/styles.css"/>
+</head>
+<body>
+	<script type="text/javascript" src="../libs/tools.js"></script>
+	<script type="text/javascript">
+		var stage = new tools.Stage(700, 700);
+		
+		stage.out.fillStyle = "black";
+		
+		var pixels = [];
+		
+		var nSources = 5;
+		
+		for(var i = 0; i < nSources; i ++)
+		{
+			var p = {};
+			p.x = Math.random() * stage.width;
+			p.y = Math.random() * stage.height;
+			pixels[i] = p;
+		}
+		function update()
+		{
+			for(var i = 0; i < 100; i++) addPixel();
+		}
+		
+		
+		function addPixel()
+		{
+			var p = {};
+			p.x = Math.random() * stage.width;
+			p.y = Math.random() * stage.height;
+		
+			var n = pixels.length;
+			var pRef, dxRef, dyRef;
+			var dRef = Number.MAX_VALUE;
+			for(var i = 0; i < n; i++)
+			{
+				var p2 = pixels[i];
+				var dx = p2.x - p.x;
+				var dy = p2.y - p.y;
+				var d = dx * dx + dy * dy;
+				if(d < dRef)
+				{
+					dxRef = dx;
+					dyRef = dy;
+					dRef = d;
+					pRef = p2
+				}
+			}
+		
+			var ratio = 1 / Math.sqrt(dRef);
+			p.x = pRef.x - ratio * dxRef;
+			p.y = pRef.y - ratio * dyRef;
+		
+			pixels.push(p);
+		
+			stage.out.fillRect(p.x, p.y, 1, 1);
+		}
+		
+		new tools.Loop(update, this);
+	</script>
+	
+	<script type="text/javascript">
+	  var _gaq = _gaq || [];
+	  _gaq.push(['_setAccount', 'UA-6101672-1']);
+	  _gaq.push(['_trackPageview']);
+
+	  (function() {
+		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	  })();
+	</script>
+</body>
+</html>

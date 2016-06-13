@@ -1,0 +1,90 @@
+<html>
+<head>
+	<title>circles 5</title>
+	<link rel="stylesheet" type="text/css" href="../css/styles.css"/>
+</head>
+<body>
+	<script type="text/javascript" src="../libs/tools.js"></script>
+	<script type="text/javascript">
+		function Circle(x, y, radius)
+		{
+			this.x = x;
+			this.y = y;
+			this.radius = radius;
+		}
+		
+		
+		
+		var stage = new tools.Stage(700, 700);
+		stage.out.strokeStyle = "black";
+		
+		var ran = Math.random;
+		
+		var mouse = new tools.Mouse(stage.canvas);
+		
+		var nCircles = 200;
+		var circles = [];
+		
+		 var h = ran() * 360;
+		 var s = ran() * 0.3;
+		 var l = ran() * ran() * 0.2;
+		
+		for(var i = 0; i < nCircles; i++)
+		{
+			circles[i] = new Circle(0.5 * stage.width, 0.5 * stage.height, 300 * Math.pow(i / nCircles, 1));
+		
+			var h2 = (ran() < 0.3 ? 90 : 0) + h + ran() * 50;
+			var s2 = s + ran() * 0.7 + 0.2;
+			var l2 = l + ran() * 0.9;
+			circles[i].fillStyle = "hsl(" + Math.floor(h2) + "," + Math.floor(s2 * 100) + "%," + Math.floor(l2 * 100) + "%)";
+		}
+		
+		function update()
+		{
+			circles[0].x = mouse.x;
+			circles[0].y = mouse.y;
+			stage.out.clearRect(0, 0, stage.width, stage.height);
+			for(var i = 1; i < nCircles; i++)
+			{
+				var oCircle = circles[i - 1];
+				var circle = circles[i];
+				var dx = circle.x - oCircle.x;
+				var dy = circle.y - oCircle.y;
+				var d = dx * dx + dy * dy;
+				var r = circle.radius - oCircle.radius;
+				if(d > r * r)
+				{
+					d = r / Math.sqrt(d);
+					circle.x = oCircle.x + d * dx;
+					circle.y = oCircle.y + d * dy;
+				}
+			}
+		
+			while(i--)
+			{
+				var circle = circles[i];
+				stage.out.beginPath();
+				stage.out.arc(circle.x, circle.y, circle.radius, 0, 2 * Math.PI, false);
+				stage.out.closePath();
+				stage.out.fillStyle = circle.fillStyle;
+				//stage.out.stroke();
+				stage.out.fill();
+			}
+		}
+		
+		new tools.Loop(update, this);
+	</script>
+	
+	<script type="text/javascript">
+	  var _gaq = _gaq || [];
+	  _gaq.push(['_setAccount', 'UA-6101672-1']);
+	  _gaq.push(['_trackPageview']);
+
+	  (function() {
+		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	  })();
+	</script>
+</body>
+</html>

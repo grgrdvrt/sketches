@@ -1,0 +1,85 @@
+<html>
+<head>
+	<title>Circles</title>
+	<link rel="stylesheet" type="text/css" href="../css/styles.css"/>
+</head>
+<body>
+	<script type="text/javascript" src="../libs/tools.js"></script>
+	<script type="text/javascript">
+		tools.mixin(tools, this);
+		
+		var stage = new Stage(700, 700);
+		var out = stage.out;
+		var mouse = new Mouse(stage.canvas);
+		
+		
+		var circles = [];
+		for(var i = 0; i < 500; i++)
+			addCircle();
+		
+		
+		
+		new Loop(function()
+		{
+			stage.clear();
+		
+			var n = circles.length;
+			out.beginPath();
+			for(var i = 0; i < n; i++)
+			{
+				var c = circles[i];
+				c.radius += c.dir * c.v;
+			}
+			for(var i = 0; i < n; i++)
+			{
+				var c = circles[i];
+		
+				for(var j = i + 1; j < n; j++)
+				{
+					var c2 = circles[j];
+					var dx = c2.x - c.x;
+					var dy = c2.y - c.y;
+					var r = c.radius + c2.radius;
+					if(dx * dx + dy * dy < r * r)
+						c.dir = c2.dir = -1;
+				}
+		
+				if(c.radius < 0)
+				{
+					c.radius = 0;
+					c.dir = 1;
+				}
+		
+				out.moveTo(c.x + c.radius, c.y);
+				out.arc(c.x, c.y, c.radius, 0, 2 * Math.PI);
+		
+			}
+		
+		
+			out.fill();
+		});
+		
+		function addCircle()
+		{
+			var circle = {x : Math.random() * stage.width,
+						  y : Math.random() * stage.height,
+						  radius : 0.1,
+						  dir : 1,
+						  v : Math.random() + 0.1};
+			circles.push(circle);
+		}
+	</script>
+	
+	<script type="text/javascript">
+	  var _gaq = _gaq || [];
+	  _gaq.push(['_setAccount', 'UA-6101672-1']);
+	  _gaq.push(['_trackPageview']);
+
+	  (function() {
+		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	  })();
+	</script>
+</body>
+</html>

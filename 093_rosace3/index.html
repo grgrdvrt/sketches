@@ -1,0 +1,85 @@
+<html>
+<head>
+	<title>Rosace</title>
+	<link rel="stylesheet" type="text/css" href="../css/styles.css"/>
+</head>
+<body>
+	<script type="text/javascript" src="../libs/tools.js"></script>
+	<script type="text/javascript">
+		tools.mixin(tools, this);
+		
+		var stage = new Stage(700, 700);
+		var out = stage.out;
+		out.translate(0.5 * stage.width, 0);
+		
+		var nPts;
+		
+		var radius = 300;
+		
+		var time;
+		
+		var delays = [];
+		
+		init();
+		
+		new Loop(function(){
+		
+			var oldTime = time;
+			time++;
+		
+			var nAlive = nPts;
+			out.beginPath();
+			for(var i = 0; i < nPts; i++)
+			{
+				var t1 = oldTime * delays[i];
+		
+				if(t1 > stage.height)
+				{
+					nAlive--;
+					continue;
+				}
+				
+				var t2 = time * delays[i];
+				var a = Math.PI * 2 * i / nPts + 0.01 * t1;
+				var x = radius * Math.cos(a);
+				var y = t1 + 0.2 * radius * Math.sin(a);
+		
+		
+				
+				out.moveTo(x, y);
+				a = Math.PI * 2 * i / nPts + 0.01 * t2;
+				x = radius * Math.cos(a);
+				y = t2 + 0.2 * radius * Math.sin(a);
+				out.lineTo(x, y);
+			}
+			out.stroke();
+		
+			if(nAlive <= 0)
+				init();
+		
+		});
+		
+		
+		function init()
+		{
+			stage.clear();
+			nPts = 20 + Math.floor(Math.random() * 100);
+			posY = 0;
+			time = 0;
+			for(var i = 0; i < nPts; i++)
+				delays[i] = 5 * Math.random() + 2;
+		}</script>
+	
+	<script type="text/javascript">
+	  var _gaq = _gaq || [];
+	  _gaq.push(['_setAccount', 'UA-6101672-1']);
+	  _gaq.push(['_trackPageview']);
+
+	  (function() {
+		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	  })();
+	</script>
+</body>
+</html>

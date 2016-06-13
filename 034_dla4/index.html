@@ -1,0 +1,138 @@
+<html>
+<head>
+	<title>dla 4</title>
+	<link rel="stylesheet" type="text/css" href="../css/styles.css"/>
+</head>
+<body>
+	<script type="text/javascript" src="../libs/tools.js"></script>
+	<script type="text/javascript" src="../libs/threeDimensions.js"></script>
+	<script type="text/javascript">
+		var stage = new tools.Stage(700, 700);
+		var mouse = new tools.Mouse();
+		mouse.onUp.add(reset, this);
+		
+		var engine = new threeDimensions.Engine();
+		;
+		
+		var vertex = new threeDimensions.Vertex();
+		var vertices = [vertex];
+		var grid = [];
+		var zBuffer = [];
+		
+		var scale = 1;
+		var size = scale * 300;
+		var threshold = 1 / size;
+		var hMax = size;
+		var out = stage.out;
+		var time = 0;
+		
+		reset();
+		engine.rotationX = -0.25 * Math.PI;
+		engine.rotationY = 0.1 * Math.PI;
+		engine.scale(1/scale, -1/scale, 1/scale);
+		engine.translate(300, 0.5 * (stage.height), 0);
+		
+		function reset()
+		{
+			grid.length = 0;
+			hMax = 0;
+			
+			stage.out.clearRect(0, 0, stage.width, stage.height);
+			
+			var i;
+			for(i = 0; i < size * size; i++)
+			{
+				var data ={value:0, grayScale:Math.floor(100 * Math.random())} 
+				grid[i] = data;
+			}
+			for(i = 0; i < stage.width * stage.height; i++) zBuffer[i] = 0;
+		}
+		
+		function update()
+		{
+			if(hMax > size) return;
+			
+			for(var i = 0; i < 2000; i++)
+			{
+				var data = addVertex();
+				drawVertex(data);
+			}
+		}
+		
+		function addVertex()
+		{
+			var x = getVertexPos();
+			var y = getVertexPos();
+			var data = {grayScale:0, value:0};
+			compare(x - 1, y - 1, data);
+			compare(x + 1, y - 1, data);
+			compare(x - 1, y + 1, data);
+			compare(x + 1, y + 1, data);
+		
+			compare(x, y - 1, data);
+			compare(x - 1, y, data);
+			compare(x + 1, y, data);
+			compare(x, y + 1, data);
+		
+			compare(x, y, data);
+			
+			if(hMax < data.value) hMax = data.value;
+			data.value++;
+			grid[x + size * y] = data;
+			
+			vertex.x = x;
+			vertex.y = data.value;
+			vertex.z = y;
+			
+			return data;
+		}
+		
+		function drawVertex(data)
+		{
+			engine.computeProjections(vertices);
+			vertex.tx = Math.floor(vertex.tx);
+			vertex.ty = Math.floor(vertex.ty);
+			var index = vertex.tx + vertex.ty * stage.width;
+		
+			if(zBuffer[index] > vertex.tz) return;
+			
+			zBuffer[index] = vertex.tz;
+			out.fillStyle = "hsl(0, 0%, " + data.grayScale + "%)";
+			out.beginPath();
+			out.fillRect(vertex.tx, vertex.ty, 1, 1);
+			out.fill();
+			out.closePath();
+		}
+		
+		function getVertexPos()
+		{
+			return Math.floor(size * Math.random());
+			//return Math.floor(size * Math.pow(Math.random(), 0.1) * Math.random());
+		}
+		
+		function compare(x, y, data)
+		{
+			if(x < 0 || x >= size || y < 0 || y >= size) return;
+			cell = grid[x + size * y];
+			if(cell.value < data.value)return;
+			data.value = cell.value;
+			data.grayScale = cell.grayScale;
+		
+		}
+		
+		new tools.Loop(update, this);
+	</script>
+	
+	<script type="text/javascript">
+	  var _gaq = _gaq || [];
+	  _gaq.push(['_setAccount', 'UA-6101672-1']);
+	  _gaq.push(['_trackPageview']);
+
+	  (function() {
+		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	  })();
+	</script>
+</body>
+</html>

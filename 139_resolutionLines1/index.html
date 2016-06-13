@@ -1,0 +1,128 @@
+<html>
+<head>
+	<title>Resolution lines</title>
+	<link rel="stylesheet" type="text/css" href="../css/styles.css"/>
+</head>
+<body>
+	<script type="text/javascript" src="../libs/tools.js"></script>
+	<script type="text/javascript">
+		tools.mixin(tools, this);
+		
+		var w = 700;
+		var h = 700;
+		var stage = new Stage(w, h);
+		var out = stage.out;
+		var tempStage = new Stage(w, h, false);
+		var tempOut = tempStage.out;
+		
+		
+		function Point(x, y)
+		{
+			this.x = x;
+			this.y = y;
+		}
+		
+		Point.prototype = {
+			setPos : function(x, y)
+			{
+				this.x = x;
+				this.y = y;
+			},
+			setPt : function(pt)
+			{
+				this.x = pt.x;
+				this.y = pt.y;
+			}
+		}
+		
+		function Wanderer(value, spr, fr, force, minTime, maxTime)
+		{
+			this.value = this.target = value;
+			this.vel = 0;
+			this.spr = spr;
+			this.fr = fr;
+			this.force = force;
+		
+			this.minTime = minTime;
+			this.maxTime = maxTime;
+			this.time = 0;
+			this.reset();
+		}
+		
+		Wanderer.prototype = {
+			update : function()
+			{
+				this.vel += this.spr * (this.target - this.value);
+				this.vel *= this.fr;
+				this.value += this.vel;
+				if(this.value < 0)
+					this.vel += this.force;
+				else if(this.value > 1)
+					this.vel -= this.force;
+		
+				if(--this.time < 0)this.reset();
+			},
+			
+			reset : function()
+			{
+				this.target = Math.random();
+				this.time = this.minTime + Math.random() * (this.maxTime - this.minTime);
+			}
+		}
+		
+		function Ribbon()
+		{
+			this.posX = new Wanderer(Math.random(), 0.001, 0.95, 0.001, 30, 100);
+			this.posY = new Wanderer(Math.random(), 0.001, 0.95, 0.001, 30, 100);
+			var min = 0.01, max = 1;
+			this.scale = min + Math.random() * (max - min);
+			this.iScale = 1 / this.scale;
+			this.sx = this.scale * w;
+			this.sy = this.scale * h;
+			var l = Math.round(Math.random() * 100);
+			this.color = "hsl(0, 0%, " + l + "%)";
+		}
+		
+		Ribbon.prototype = {
+			update : function(out)
+			{
+				out.strokeStyle = this.color;
+				out.beginPath();
+				out.moveTo(this.posX.value * this.sx, this.posY.value * this.sy);
+				this.posX.update();
+				this.posY.update();
+				out.lineTo(this.posX.value * this.sx, this.posY.value * this.sy);
+				out.stroke();
+			}
+		}
+		
+		var ribbons = [];
+		var nRibbons = 50;
+		for(var i = 0; i < nRibbons; i++)
+			ribbons[i] = new Ribbon();
+		
+		var loop = new Loop(update);
+		var time;
+		function update(){
+			for(var i = 0; i < nRibbons; i++)
+			{
+				tempOut.clearRect(0, 0, w, h);
+				var r = ribbons[i];
+				r.update(tempOut);
+				out.drawImage(tempStage.canvas, 0, 0, w * r.scale, h * r.scale, 0, 0, w, h);
+			}
+		}</script>
+	
+	<script type="text/javascript">
+	  var _gaq = _gaq || [];
+	  _gaq.push(['_setAccount', 'UA-6101672-1']);
+	  _gaq.push(['_trackPageview']);
+
+	  (function() {
+		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	  })();
+	</script>
+</body>
+</html>

@@ -1,0 +1,64 @@
+<html>
+<head>
+	<title>Snowflake 1</title>
+	<link rel="stylesheet" type="text/css" href="../css/styles.css"/>
+</head>
+<body>
+	<script type="text/javascript" src="../libs/tools.js"></script>
+	<script type="text/javascript">
+		
+		var angle = Math.PI / 3;
+		var stage = new tools.Stage(700, 700);
+		var tmp = document.createElement("canvas").getContext("2d");
+		var w = tmp.canvas.width = 0.5 * stage.width;
+		var h = tmp.canvas.height = w * Math.tan(0.5 * angle);
+		
+		var n = 100;
+		var i;
+		
+		tmp.strokeStyle = "black";
+		tmp.fillStyle = "back";
+		
+		tmp.beginPath();
+		for(i = 0; i < n; i++)
+		{
+			var x = Math.random() * w;
+			tmp.lineTo(x, Math.random() * x * h / w);
+		} 
+		tmp.stroke();
+		tmp.fill();
+		tmp.beginPath();
+		tmp.strokeStyle = "red";
+		tmp.moveTo(0, 0);
+		tmp.lineTo(w, h);
+		//tmp.stroke();
+		
+		var out = stage.out;
+		out.translate(0.5 * stage.width, 0.5 * stage.height);
+		for(i = 0; i < 6; i++)
+		{
+			out.save();
+			out.rotate(i * angle);
+			out.drawImage(tmp.canvas, 0, 0);
+			out.restore();
+			out.save();
+			out.scale(1, -1);
+			out.rotate(i * angle);
+			out.drawImage(tmp.canvas, 0, 0);
+			out.restore();
+		}
+	</script>
+	
+	<script type="text/javascript">
+	  var _gaq = _gaq || [];
+	  _gaq.push(['_setAccount', 'UA-6101672-1']);
+	  _gaq.push(['_trackPageview']);
+
+	  (function() {
+		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	  })();
+	</script>
+</body>
+</html>

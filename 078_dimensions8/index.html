@@ -1,0 +1,135 @@
+<html>
+<head>
+	<title>Dimensions</title>
+	<link rel="stylesheet" type="text/css" href="../css/styles.css"/>
+</head>
+<body>
+	<script type="text/javascript" src="../libs/tools.js"></script>
+	<script type="text/javascript" src="threeDimensions.js"></script>
+	<script type="text/javascript">
+		tools.mixin(tools, this);
+		tools.mixin(threeDimensions, this);
+		var w = 700;
+		var h = 700;
+		
+		var stage = new Stage(w, h);
+		var out = stage.out;
+		
+		var friction = 0.99;
+		var attraction = -0.00001;
+		var vel = 0.0002;
+		var radiusInit = 0.4;
+		
+		function Curve()
+		{
+			this.pts = [];
+			this.projections = [];
+			for(var i = 0; i < 4; i++)
+			{
+				var p = new Vector4();
+				p.vx = p.vy = p.vz = 0;
+				if(i)
+				{
+					p.x = radiusInit * (Math.random() * 2 - 1);
+					p.y = radiusInit * (Math.random() * 2 - 1);
+					p.z = radiusInit * (Math.random() * 2 - 1);
+				}
+				this.pts[i] = p;
+				this.projections[i] = new Vector4();
+			}
+		}
+		
+		Curve.prototype = {
+			update : function()
+			{
+				var n = this.pts.length;
+				for(var i = 1; i < n; i++)
+				{
+					var p = this.pts[i];
+					p.vx = friction * p.vx + attraction * p.x + vel * (Math.random() * 2 - 1);
+					p.vy = friction * p.vy + attraction * p.y + vel * (Math.random() * 2 - 1);
+					p.vz = friction * p.vz + attraction * p.z + vel * (Math.random() * 2 - 1);
+					p.x += p.vx;
+					p.y += p.vy;
+					p.z += p.vz;
+				}
+			},
+		
+			project : function(matrix)
+			{
+				var n = this.pts.length;
+				for(var i = 0; i < n; i++)
+				{
+					matrix.transformVector(this.pts[i], this.projections[i]);
+					this.projections[i].reciprocalDivide();
+				}
+			},
+		
+			draw : function(out)
+			{
+				var p = this.projections;
+				out.beginPath();
+				out.moveTo(p[0].x, p[0].y);
+				out.bezierCurveTo(p[1].x, p[1].y, p[2].x, p[2].y, p[3].x, p[3].y);
+				out.stroke();
+				var r = Math.abs(5 - 5 * p[3].z);
+				out.beginPath();
+				out.moveTo(p[3].x + r, p[3].y);
+				out.arc(p[3].x, p[3].y, r, 0, 2 * Math.PI);
+				out.fill();
+			}
+		}
+		
+		
+		var renderer = new Matrix4();
+		renderer.translate(0, 0, 1);
+		renderer.appendTransform(Matrix4.projection(70, w / h, 1, 1000));
+		renderer.appendTransform(Matrix4.getToScreen(w, h, 0, 0));
+		
+		var rotation = new Matrix4();
+		var transform = new Matrix4();
+		
+		var nCurves = 30;
+		var curves = [];
+		
+		for(var i = 0; i < nCurves; i++)
+		{
+			curves[i] = new Curve();
+		}
+		
+		function update()
+		{
+			stage.clear();
+		
+			rotation.rotate(1, 1, 1, 0.005);
+		
+			transform.identity();
+			transform.appendTransform(rotation);
+			transform.appendTransform(renderer);
+		
+			out.strokeStyle = "black";
+			out.fillStyle = "black";
+			for(var i = 0; i < nCurves; i++)
+			{
+				var curve = curves[i];
+				curve.update();
+				curve.project(transform);
+				curve.draw(out);
+			}
+		}
+		
+		new Loop(update, this);</script>
+	
+	<script type="text/javascript">
+	  var _gaq = _gaq || [];
+	  _gaq.push(['_setAccount', 'UA-6101672-1']);
+	  _gaq.push(['_trackPageview']);
+
+	  (function() {
+		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	  })();
+	</script>
+</body>
+</html>

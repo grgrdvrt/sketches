@@ -1,0 +1,132 @@
+<html>
+<head>
+	<title>Network Evolution</title>
+	<link rel="stylesheet" type="text/css" href="../css/styles.css"/>
+</head>
+<body>
+	<script type="text/javascript" src="../libs/tools.js"></script>
+	<script type="text/javascript">
+		var stage = new tools.Stage(700, 700);
+		var out = stage.out;
+		
+		out.strokeStyle = "rgba(0, 0, 0, 0.2)";
+		
+		var nodes;
+		
+		
+		function initNodes()
+		{
+			
+			var node0 = new Node(0);
+			var node1 = new Node(1);
+			var node2 = new Node(2);
+			var node3 = new Node(3);
+			
+			nodes = [node0, node1, node2, node3];
+			
+			var total = 0;
+			var radius = 0.45 * Math.min(stage.width, stage.height);
+			for(var i = 0; i < 3; i++)
+			{
+				var ran = Math.random();
+				var node = nodes[i];
+				var angle = Math.random() * 2 * Math.PI;
+				node.x = 0.5 * stage.width + radius * Math.cos(angle);
+				node.y = 0.5 * stage.height + radius * Math.sin(angle);
+				node3.x += ran * node.x;
+				node3.y += ran * node.y;
+				total += ran;
+			}
+			total = 1 / total;
+			node3.x *= total;
+			node3.y *= total;
+			
+			node0.nodes = [node1, node2, node3];
+			node1.nodes = [node2, node3, node0];
+			node2.nodes = [node3, node0, node1];
+			
+			node3.nodes = [node0, node1, node2];
+		}
+		
+		function Node(id)
+		{
+			this.x = this.y = 0;
+			this.nodes = [];
+			this.id = id;
+		}
+		
+		function divideNode(nodeA)
+		{
+			var node0 = nodeA.nodes[0];
+			var node1 = nodeA.nodes[1];
+			var node2 = nodeA.nodes[2];
+			var nodeB = new Node(nodes.length);
+			var nodeC = new Node(nodes.length + 1);
+			
+			nodeB.nodes.push(nodeA, node1, nodeC);
+			nodeC.nodes.push(nodeB, nodeA, node2);
+			
+			setNodePosition(nodeB, nodeA, node1);
+			setNodePosition(nodeC, nodeA, node2);
+			setNodePosition(nodeA, nodeA, node0);
+			
+			nodeA.nodes[1] = nodeC;
+			nodeA.nodes[2] = nodeB;
+			
+			node1.nodes[1] = nodeB;
+			node2.nodes[0] = nodeC;
+			
+			nodes.push(nodeB, nodeC);
+		}
+		
+		function setNodePosition(node, nodeA, nodeB)
+		{
+			var ratio = 1 - Math.pow(Math.random(), 1.5);
+			node.x = nodeA.x + ratio * (nodeB.x - nodeA.x);
+			node.y = nodeA.y + ratio * (nodeB.y - nodeA.y);
+		}
+		
+		function drawNetwork()
+		{
+			out.clearRect(0, 0, stage.width, stage.height);
+			out.beginPath();
+			var n = nodes.length;
+			for(var i = 0; i < n; i++)
+			{
+				var node = nodes[i];
+				var n2 = node.nodes.length;
+				for(var j = 0; j < n2; j++)
+				{
+					var node2 = node.nodes[j];
+					if(node2.id < node.id) continue;
+					out.moveTo(node.x, node.y);
+					out.lineTo(node2.x, node2.y);
+				}
+			}
+			out.stroke();
+		}
+		
+		function update()
+		{	
+			divideNode(nodes[Math.floor(Math.random() * (nodes.length - 3) + 3)]);
+			drawNetwork();
+		}
+		
+		initNodes();
+		drawNetwork();
+		setInterval(update, 20);
+	</script>
+	
+	<script type="text/javascript">
+	  var _gaq = _gaq || [];
+	  _gaq.push(['_setAccount', 'UA-6101672-1']);
+	  _gaq.push(['_trackPageview']);
+
+	  (function() {
+		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	  })();
+	</script>
+</body>
+</html>

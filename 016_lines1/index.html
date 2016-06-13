@@ -1,0 +1,74 @@
+<html>
+<head>
+	<title>lines 1</title>
+	<link rel="stylesheet" type="text/css" href="../css/styles.css"/>
+</head>
+<body>
+	<script type="text/javascript" src="../libs/tools.js"></script>
+	<script type="text/javascript">
+		var stage = new tools.Stage(700, 700);
+		
+		var posX = 0.5 * stage.width;
+		var vy = 0;
+		var r = 0;
+		var vr = 0;
+		var a = 0;
+		var fr = 0.9;
+		
+		var ptX = r + posX;
+		var ptY = 0.5 * stage.height;
+		
+		function update()
+		{
+			stage.out.strokeStyle = "black";
+			stage.out.beginPath();
+			stage.out.moveTo(ptX, ptY);
+			a += Math.PI * 0.05;
+			ptX = posX + r * Math.cos(a);
+			vy = vy * fr + 3 * (Math.random() * 2 - 1);
+			ptY += vy;
+			stage.out.lineTo(ptX, ptY);
+			stage.out.stroke();
+			stage.out.closePath();
+			vr = vr * fr + (Math.random() * 2 - 1);
+			r += vr;
+			if(ptY > stage.height)
+			{
+				ptY = stage.height;
+				vy *= -1;
+			}
+			else if(ptY < 0)
+			{
+				ptY = 0;
+				vy *= -1;
+			}
+			
+			if(r > 0.5 * stage.width)
+			{
+				r = 0.5 * stage.width;
+				vr *= -1;
+			}
+			if(r < -0.5 * stage.width)
+			{
+				r = -0.5 * stage.width;
+				vr *= -1;
+			}
+			
+		}
+		
+		new tools.Loop(update, this);
+	</script>
+	
+	<script type="text/javascript">
+	  var _gaq = _gaq || [];
+	  _gaq.push(['_setAccount', 'UA-6101672-1']);
+	  _gaq.push(['_trackPageview']);
+
+	  (function() {
+		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	  })();
+	</script>
+</body>
+</html>

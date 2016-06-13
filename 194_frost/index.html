@@ -1,0 +1,138 @@
+<html>
+<head>
+	<title>frost</title>
+	<link rel="stylesheet" type="text/css" href="../css/styles.css"/>
+</head>
+<body>
+	<script type="text/javascript" src="../libs/tools.js"></script>
+	<script type="text/javascript">
+
+    var w = 700;
+    var h = 700;
+		var stage = new tools.Stage(w, h);
+    var out = stage.out;
+
+    var mouse = new tools.Mouse(stage.canvas);
+		
+		out.fillStyle = "lightBlue";
+    out.fillRect(0, 0, w, h);
+		out.fillStyle = "rgba(255, 255, 255, 0.1";
+		
+		var pixels = [];
+    for(var i = 0; i < 100; i++) {
+      pixels[i] = {
+        x:Math.random() * w,
+        y:Math.random() * h
+      };
+    }
+		
+		function update()
+		{
+      var n = pixels.length;
+      for(var i = 0; i < 100 && n < 50000; i++) {
+        addPixel();
+        n++
+      }
+
+      var dMin = 40;
+      for(var i = 0; i < n; i++) {
+        var p = pixels[i];
+        var dx = mouse.x - p.x;
+        var dy = mouse.y - p.y;
+        if(dx * dx + dy * dy < dMin * dMin) {
+          pixels[i] = pixels[n - 1];
+          n--;
+          i--;
+        }
+      }
+      out.save();
+      out.fillStyle = "lightBlue";
+      out.beginPath();
+      out.moveTo(mouse.x + dMin, mouse.y);
+      out.arc(mouse.x, mouse.y, dMin, 0, 2 * Math.PI);
+      out.fill();
+      out.restore();
+      pixels.length = n;
+		}
+		
+		
+		function addPixel()
+		{
+			var p = {
+        x : Math.random() * w,
+        y : Math.random() * h
+      };
+		
+			var pRef, dxRef, dyRef;
+			var dRef = Number.MAX_VALUE;
+
+      if(p.x < dRef) {
+        pRef = {x:0, y:p.y};
+        dxRef = -p.x;
+        dyRef = 0;
+        dRef = p.x;
+      }
+      if(w - p.x < dRef) {
+        pRef = {x:w, y:p.y};
+        dxRef = w - p.x;
+        dyRef = 0;
+        dRef = w - p.x;
+      }
+      if(p.y < dRef) {
+        pRef = {x:p.x, y:0};
+        dxRef = 0;
+        dyRef = -p.y;
+        dRef = p.y;
+      }
+      if(h - p.y < dRef) {
+        pRef = {x:p.x, y:h};
+        dxRef = 0;
+        dRef = dyRef = h - p.y;
+        dRef = h - p.y;
+      }
+      dRef *= 30;
+
+
+      var n = pixels.length;
+			for(var i = 0; i < n; i++) {
+        var p2 = pixels[i];
+				var dx = p2.x - p.x;
+				var dy = p2.y - p.y;
+				var d = dx * dx + dy * dy;
+				if(d < dRef) {
+					dxRef = dx;
+					dyRef = dy;
+					dRef = d;
+					pRef = p2;
+				}
+			}
+		
+      if(pRef) {
+        var ratio = 1 / Math.sqrt(dRef);
+        p.x = pRef.x - ratio * dxRef;
+        p.y = pRef.y - ratio * dyRef;
+      }
+		
+			pixels.push(p);
+
+
+		
+			out.fillRect(p.x - 1, p.y - 1, 2, 2);
+		}
+		
+		new tools.Loop(update, this);
+	</script>
+	
+	<script type="text/javascript">
+	  var _gaq = _gaq || [];
+	  _gaq.push(['_setAccount', 'UA-6101672-1']);
+	  _gaq.push(['_trackPageview']);
+
+	  (function() {
+		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	  })();
+	</script>
+</body>
+</html>

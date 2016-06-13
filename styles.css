@@ -1,0 +1,57 @@
+.header
+{
+}
+
+.header-home
+{
+  font-size:1.7em;
+  display:inline;
+  color:white;
+  background-color:black;
+  padding:5px 10px;
+}
+
+.header-home a
+{
+  text-decoration:none;
+}
+
+.header-menu-list
+{
+  margin-left:10px;
+  display:inline;
+}
+
+.header-menu-item
+{
+  list-style-type:none;
+  display:inline;
+  font-size:1.5em;
+  margin-right:30px;
+}
+
+.header-menu-item a
+{
+  text-decoration:none;
+}
+
+.header-menu-item a:hover
+{ 
+  color:black;
+  background-color:white;
+}
+
+
+
+.sketches-title
+{
+  font-size:3em;
+  text-align:center;
+  margin:200px 0 100px 0;
+}
+
+
+.sketches-sketches-list
+{
+  text-align:center; 
+}

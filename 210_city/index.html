@@ -1,0 +1,110 @@
+<html>
+	<head>
+		<title>buildings</title>
+		<style>
+			body { margin: 0; overflow:hidden; }
+			canvas { width: 100%; height: 100% }
+		</style>
+	</head>
+	<body>
+		<script src="../libs/three.min.js"></script>
+		<script src="../libs/OrbitControls.js"></script>
+		<script>
+      var mainColor = 0xada38e;
+
+      var renderer = new THREE.WebGLRenderer({ antialias:true });
+      var width = window.innerWidth;
+      var height = window.innerHeight ;
+			renderer.setSize(width, height);
+      renderer.setClearColor(mainColor);
+			document.body.appendChild( renderer.domElement );
+
+      var center = new THREE.Vector3();
+			var scene = new THREE.Scene();
+
+      scene.fog = new THREE.FogExp2(mainColor, 0.025);
+			var camera = new THREE.PerspectiveCamera( 30, window.innerWidth/window.innerHeight, 0.1, 1000 );
+      width *= 0.05;
+      height *= 0.05;
+			camera.position.set(30, 15, 30);
+      camera.lookAt(center);
+
+      var controls = new THREE.OrbitControls(camera, renderer.element);
+      controls.enablePan = false;
+
+			var geometry = new THREE.BoxGeometry( 1, 1, 1 );
+			var material = new THREE.MeshLambertMaterial( { color: 0x808080 } );
+
+      var d0 = new THREE.DirectionalLight(0x808080);
+      d0.position.set(0.5, 1, 1);
+      d0.lookAt(center);
+      scene.add(d0);
+
+      var d1 = new THREE.DirectionalLight(0x808080);
+      d1.position.set(0.5, 0.5, 1);
+      d1.lookAt(center);
+      scene.add(d1);
+
+      scene.add(new THREE.AmbientLight(new THREE.Color(mainColor).multiplyScalar(0.2)));
+
+      var buildingSize = 5;
+
+
+      function createBuilding()
+      {
+        var building = new THREE.Group();
+        var n = Math.random() * 7 + 3;
+        for(var i = 0; i < n; i++){
+          var cube = new THREE.Mesh(geometry, material);
+          var ratio = (i + 1) / n;
+          var s1 = Math.pow(ratio, 0.1);
+          var s2 = Math.pow(ratio, 2);
+          cube.scale.set(
+            0.1 + Math.random() * buildingSize * s2,
+            0.1 + Math.random() * 50 * s1 + 0.1,
+            0.1 + Math.random() * buildingSize * s2
+          );
+          cube.position.y = 0.5 * cube.scale.y;
+          building.add(cube);
+        }
+        return building;
+      }
+
+      var nx = 11;
+      var n = nx * nx;
+
+      var group = new THREE.Group();
+      group.position.set(
+        -Math.floor(0.5 * nx) * buildingSize,
+        -40,
+        -Math.floor(0.5 * nx) * buildingSize
+      );
+      scene.add(group);
+
+      for(var i = 0; i < n; i++){
+        var building = createBuilding();
+        group.add(building);
+        building.position.set(
+          buildingSize * (i % nx),
+          0,
+          buildingSize * Math.floor(i / nx)
+        );
+      }
+
+
+      var time = 0;
+			function update() {
+        var oldTime = time;
+        time = Date.now();
+
+        controls.update(time - oldTime);
+
+				renderer.render(scene, camera);
+
+				requestAnimationFrame( update );
+			};
+
+			update();
+		</script>
+	</body>
+</html>
