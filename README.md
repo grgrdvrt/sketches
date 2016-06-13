@@ -1,2 +1,2 @@
 # sketches
-[http://www.grgrdvrt.com/sketches/]
+http://www.grgrdvrt.com/sketches/
