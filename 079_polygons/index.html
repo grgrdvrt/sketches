@@ -1,58 +1,45 @@
 <html>
-<head>
-	<title>polygon</title>
-	<link rel="stylesheet" type="text/css" href="../css/styles.css"/>
-</head>
-<body>
-	<script type="text/javascript" src="../libs/tools.js"></script>
-	<script type="text/javascript">
-		tools.mixin(tools, this);
-		var stage = new tools.Stage(700, 700);
-		var out = stage.out;
-		out.translate(0.5 * stage.width, 0.5 * stage.height);
-		out.strokeStyle = "black";
-		
-		var nSides = 3 + Math.floor(Math.random() * 7);
-		var radius = 0.4 * stage.width;
-		var alpha = Math.PI / nSides
-		var a = Math.sin(alpha);
-		var c = 4 * a * a;
-		
-		var x = radius;
-		var y = 0;
-		
-		var time = 0;
-		function update()
-		{
-			out.beginPath();
-			out.moveTo(x, y);
-			var t = (time * 0.001) % 1;
-			var t2 = t * nSides;
-			t2 -= Math.floor(t2);
-			var r = radius * Math.sqrt(c * t2 * (t2 - 1) + 1);
-		
-			var angle = t * 2 * Math.PI;
-			x = r * Math.cos(angle);
-			y = r * Math.sin(angle);
-		
-			out.lineTo(x, y);
-			out.stroke();
-		
-			time++;
-		}
-		
-		new Loop(update, this);</script>
-	
-	<script type="text/javascript">
-	  var _gaq = _gaq || [];
-	  _gaq.push(['_setAccount', 'UA-6101672-1']);
-	  _gaq.push(['_trackPageview']);
+    <head>
+        <title>polygon</title>
+        <link rel="stylesheet" type="text/css" href="../css/styles.css"/>
+    </head>
+    <body>
+        <script type="text/javascript" src="../libs/tools.js"></script>
+        <script type="text/javascript">
+         tools.mixin(tools, this);
+         var stage = new tools.Stage(700, 700);
+         var out = stage.out;
+         out.translate(0.5 * stage.width, 0.5 * stage.height);
+         out.strokeStyle = "black";
 
-	  (function() {
-		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-	  })();
-	</script>
-</body>
+         var nSides = 3 + Math.floor(Math.random() * 7);
+         var radius = 0.4 * stage.width;
+         var alpha = Math.PI / nSides
+         var a = Math.sin(alpha);
+         var c = 4 * a * a;
+
+         var x = radius;
+         var y = 0;
+
+         var time = 0;
+         function update(){
+             out.beginPath();
+             out.moveTo(x, y);
+             var t = (time * 0.001) % 1;
+             var t2 = t * nSides;
+             t2 -= Math.floor(t2);
+             var r = radius * Math.sqrt(c * t2 * (t2 - 1) + 1);
+
+             var angle = t * 2 * Math.PI;
+             x = r * Math.cos(angle);
+             y = r * Math.sin(angle);
+
+             out.lineTo(x, y);
+             out.stroke();
+
+             time++;
+         }
+
+         new Loop(update, this);</script>
+    </body>
 </html>

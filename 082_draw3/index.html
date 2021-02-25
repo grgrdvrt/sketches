@@ -1,98 +1,79 @@
 <html>
-<head>
-	<title>Lines</title>
-	<link rel="stylesheet" type="text/css" href="../css/styles.css"/>
-</head>
-<body>
-	<script type="text/javascript" src="../libs/tools.js"></script>
-	<script type="text/javascript">
-		tools.mixin(tools, this);
-		var stage = new Stage(700, 700);
-		var out = stage.out;
-		var mouse = new Mouse(stage.canvas);
-		out.strokeStyle = "rgba(0, 0, 0, 0.1)";
-		out.fillStyle = "rgba(255, 255, 255, 0.01)";
-		
-		function Line()
-		{
-			this.friction = 0.95;
-			this.spring = 0.01;
-		
-			this.x = this.ox = 0;
-			this.y = this.oy = 0;
-			this.vx = this.vy = 0;
-		
-			this.ranVel = 0;
-		}
-		
-		Line.prototype = {
-			update : function(mouse)
-			{
-				this.vx *= this.friction;
-				this.vy *= this.friction;
-				this.vx += this.spring * (mouse.x - this.x);
-				this.vy += this.spring * (mouse.y - this.y);
-				this.vx += this.ranVel * (Math.random() * 2 - 1);
-				this.vy += this.ranVel * (Math.random() * 2 - 1);
-				this.ox = this.x;
-				this.oy = this.y;
-				this.x += this.vx;
-				this.y += this.vy;
-			},
-			setPosition : function(x, y)
-			{
-				this.x = this.ox = x;
-				this.y = this.oy = y;
-			},
-			draw : function(out)
-			{
-				out.moveTo(this.ox, this.oy);
-				out.lineTo(this.x, this.y);
-			}
-		}
-		
-		var lines = [];
-		var nLines = 500;
-		
-		for(var i = 0; i < nLines; i++)
-		{
-			var line = new Line();
-			line.friction = Math.random() * 0.05 + 0.85;
-			line.spring = Math.random() * 0.005 + 0.005;
-			line.setPosition(0.5 * stage.width, 0.5 * stage.height);
-			line.ranVel = 2 * Math.random();
-			lines[i] = line;
-		}
-		
-		var time = 0;
-		
-		function update()
-		{
-			out.beginPath();
-		
-			for(var i = 0; i < nLines; i++)
-			{
-				var line = lines[i];
-				line.update(mouse);
-				line.draw(out);
-			}
-			out.stroke();
-		}
-		
-		mouse.onUp.add(stage.clear, stage);
-		
-		new Loop(update, this);</script>
-	
-	<script type="text/javascript">
-	  var _gaq = _gaq || [];
-	  _gaq.push(['_setAccount', 'UA-6101672-1']);
-	  _gaq.push(['_trackPageview']);
+    <head>
+        <title>Lines</title>
+        <link rel="stylesheet" type="text/css" href="../css/styles.css"/>
+    </head>
+    <body>
+        <script type="text/javascript" src="../libs/tools.js"></script>
+        <script type="text/javascript">
+         tools.mixin(tools, this);
+         var stage = new Stage(700, 700);
+         var out = stage.out;
+         var mouse = new Mouse(stage.canvas);
+         out.strokeStyle = "rgba(0, 0, 0, 0.1)";
+         out.fillStyle = "rgba(255, 255, 255, 0.01)";
 
-	  (function() {
-		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-	  })();
-	</script>
-</body>
+         function Line(){
+             this.friction = 0.95;
+             this.spring = 0.01;
+
+             this.x = this.ox = 0;
+             this.y = this.oy = 0;
+             this.vx = this.vy = 0;
+
+             this.ranVel = 0;
+         }
+
+         Line.prototype = {
+             update : function(mouse){
+                 this.vx *= this.friction;
+                 this.vy *= this.friction;
+                 this.vx += this.spring * (mouse.x - this.x);
+                 this.vy += this.spring * (mouse.y - this.y);
+                 this.vx += this.ranVel * (Math.random() * 2 - 1);
+                 this.vy += this.ranVel * (Math.random() * 2 - 1);
+                 this.ox = this.x;
+                 this.oy = this.y;
+                 this.x += this.vx;
+                 this.y += this.vy;
+             },
+             setPosition : function(x, y){
+                 this.x = this.ox = x;
+                 this.y = this.oy = y;
+             },
+             draw : function(out){
+                 out.moveTo(this.ox, this.oy);
+                 out.lineTo(this.x, this.y);
+             }
+         }
+
+         var lines = [];
+         var nLines = 500;
+
+         for(var i = 0; i < nLines; i++){
+             var line = new Line();
+             line.friction = Math.random() * 0.05 + 0.85;
+             line.spring = Math.random() * 0.005 + 0.005;
+             line.setPosition(0.5 * stage.width, 0.5 * stage.height);
+             line.ranVel = 2 * Math.random();
+             lines[i] = line;
+         }
+
+         var time = 0;
+
+         function update(){
+             out.beginPath();
+
+             for(var i = 0; i < nLines; i++){
+                 var line = lines[i];
+                 line.update(mouse);
+                 line.draw(out);
+             }
+             out.stroke();
+         }
+
+         mouse.onUp.add(stage.clear, stage);
+
+         new Loop(update, this);</script>
+    </body>
 </html>

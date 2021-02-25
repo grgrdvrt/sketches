@@ -1,80 +1,64 @@
 <html>
-<head>
-	<title>Maze</title>
-	<link rel="stylesheet" type="text/css" href="../css/styles.css"/>
-</head>
-<body>
-	<script type="text/javascript" src="../libs/tools.js"></script>
-  <script type="text/javascript">
+    <head>
+        <title>Maze</title>
+        <link rel="stylesheet" type="text/css" href="../css/styles.css"/>
+    </head>
+    <body>
+        <script type="text/javascript" src="../libs/tools.js"></script>
+        <script type="text/javascript">
 
 
-    var w = 700;
-    var h = 700;
+         var w = 700;
+         var h = 700;
 
-    tools.mixin(tools, this);
-    var stage = new Stage(w, h);
-    var out = stage.out;
+         tools.mixin(tools, this);
+         var stage = new Stage(w, h);
+         var out = stage.out;
 
-    var funcs = [function (out, w, h, margin)
-      {
-        out.fillRect(margin, 0, w - 2 * margin, h);
-      },
+         var funcs = [function (out, w, h, margin){
+                 out.fillRect(margin, 0, w - 2 * margin, h);
+             },
 
-      function (out, w, h, margin)
-      {
-        out.fillRect(margin, 0, w - 2 * margin, h - margin);
-        out.fillRect(margin, margin, w - margin, h - 2 * margin);
-      },
+                      function (out, w, h, margin){
+                 out.fillRect(margin, 0, w - 2 * margin, h - margin);
+                 out.fillRect(margin, margin, w - margin, h - 2 * margin);
+             },
 
-      function (out, w, h, margin)
-      {
-        out.fillRect(margin, 0, w - 2 * margin, h);
-        out.fillRect(margin, margin, w - margin, h - 2 * margin);
-      },
-        
-      function (out, w, h, margin)
-      {
-        out.fillRect(margin, 0, w - 2 * margin, h);
-        out.fillRect(0, margin, w, h - 2 * margin);
-      }
-    ];
+                      function (out, w, h, margin){
+                 out.fillRect(margin, 0, w - 2 * margin, h);
+                 out.fillRect(margin, margin, w - margin, h - 2 * margin);
+             },
+
+                      function (out, w, h, margin){
+                 out.fillRect(margin, 0, w - 2 * margin, h);
+                 out.fillRect(0, margin, w, h - 2 * margin);
+             }
+         ];
 
 
-    var tileW = 50;
-    var tileH = 50;
-    var margin = 5;
+         var tileW = 50;
+         var tileH = 50;
+         var margin = 5;
 
 
-    var nx = w / tileW;
-    var ny = h / tileH;
-    var n = nx * ny;
+         var nx = w / tileW;
+         var ny = h / tileH;
+         var n = nx * ny;
 
-    out.fillStyle = "black";
+         out.fillStyle = "black";
 
-    for(var i = 0; i < n; i++)
-    {
-      var posX = tileW * (i % nx);
-      var posY = tileH * Math.floor(i / nx);
-      out.save();
-      out.translate(posX, posY);
-      out.translate(0.5 * tileW, 0.5 * tileH);
-      out.rotate(0.5 * Math.PI * Math.floor(Math.random() * 4));
-      out.translate(-0.5 * tileW, -0.5 * tileH);
-      funcs[Math.floor(Math.random() * funcs.length)](out, tileW, tileH, margin);
-      out.restore();
-    }
-  </script>
-	
-	<script type="text/javascript">
-	  var _gaq = _gaq || [];
-	  _gaq.push(['_setAccount', 'UA-6101672-1']);
-	  _gaq.push(['_trackPageview']);
+         for(var i = 0; i < n; i++){
+             var posX = tileW * (i % nx);
+             var posY = tileH * Math.floor(i / nx);
+             out.save();
+             out.translate(posX, posY);
+             out.translate(0.5 * tileW, 0.5 * tileH);
+             out.rotate(0.5 * Math.PI * Math.floor(Math.random() * 4));
+             out.translate(-0.5 * tileW, -0.5 * tileH);
+             funcs[Math.floor(Math.random() * funcs.length)](out, tileW, tileH, margin);
+             out.restore();
+         }
+        </script>
 
-	  (function() {
-		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-	  })();
-	</script>
-</body>
+    </body>
 </html>

@@ -1,42 +1,29 @@
 <html>
-<head>
-	<title>rosace</title>
-	<link rel="stylesheet" type="text/css" href="../css/styles.css"/>
-</head>
-<body>
-	<script type="text/javascript" src="../libs/tools.js"></script>
-	<script type="text/javascript">
-		var w = 700, h = 700;
-		var stage = new tools.Stage(w, h);
-		
-		var r = 0.25 * Math.sqrt(w * w + h * h);
-		var a = 0;
-		var step = Math.random() * Math.PI;
-		var n = 50 * 2 * Math.PI / step;
-		
-		stage.out.strokeStyle = "black";
-		stage.out.beginPath();
-		stage.out.moveTo(0.5 * w + r, 0.5 * h)
-		for(var i = 0; i < n; i++)
-		{
-			stage.out.lineTo(0.5 * w + r * Math.cos(a),
-							 0.5 * h + r * Math.sin(a))
-			a += step;
-		}
-		stage.out.stroke();
-		stage.out.closePath();
-	</script>
-	
-	<script type="text/javascript">
-	  var _gaq = _gaq || [];
-	  _gaq.push(['_setAccount', 'UA-6101672-1']);
-	  _gaq.push(['_trackPageview']);
+    <head>
+        <title>rosace</title>
+        <link rel="stylesheet" type="text/css" href="../css/styles.css"/>
+    </head>
+    <body>
+        <script type="text/javascript" src="../libs/tools.js"></script>
+        <script type="text/javascript">
+         var w = 700, h = 700;
+         var stage = new tools.Stage(w, h);
 
-	  (function() {
-		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-	  })();
-	</script>
-</body>
+         var r = 0.25 * Math.sqrt(w * w + h * h);
+         var a = 0;
+         var step = Math.random() * Math.PI;
+         var n = 50 * 2 * Math.PI / step;
+
+         stage.out.strokeStyle = "black";
+         stage.out.beginPath();
+         stage.out.moveTo(0.5 * w + r, 0.5 * h)
+         for(var i = 0; i < n; i++){
+             stage.out.lineTo(0.5 * w + r * Math.cos(a),
+                              0.5 * h + r * Math.sin(a))
+             a += step;
+         }
+         stage.out.stroke();
+         stage.out.closePath();
+        </script>
+    </body>
 </html>

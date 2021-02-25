@@ -1,125 +1,104 @@
 <html>
-<head>
-	<title>Polygons</title>
-	<link rel="stylesheet" type="text/css" href="../css/styles.css"/>
-	<style type="text/css">
-		p
-		{
-			font-family: sans-serif;
-			font-size: 12px;
-			color:#ccc;
-			width:700px;
-			margin:auto;
-		}
-		a, a:hover, a:visited
-		{
-			color:#ccc;
-		}
-	</style>
-</head>
-<body>
-	<script type="text/javascript" src="../libs/tools.js"></script>
-	<script type="text/javascript">
-		tools.mixin(tools, this);
-		var stage = new tools.Stage(700, 700);
-		var out = stage.out;
-		
-		
-		function Polygon(nSides, radius, rotation)
-		{
-			this.nSides = nSides;
-			this.radius = radius;
-			this.x = 0;
-			this.y = 0;
-			this.rotation = 0;
-		}
-		
-		Polygon.prototype = {
-			draw : function(out, time)
-			{
-				out.save();
-				out.strokeStyle = "rgba(0, 0, 0, 0.1)";
-				out.translate(this.x, this.y);
-				out.rotate(this.rotation);
-				out.beginPath();
-				out.moveTo(this.radius, 0);
-				for(var i = 1; i < this.nSides + 1; i++)
-				{
-					var angle = 2 * Math.PI * i / this.nSides;
-					out.lineTo(this.radius * Math.cos(angle), this.radius * Math.sin(angle));
-				}
-				out.stroke();
-		
-				var t = time % 1;
-				var t2 = t * this.nSides;
-				var t3 = t2 - Math.floor(t2);
-				var ratio = 2 * Math.PI / this.nSides;
-				var ang1 = ratio * Math.floor(t2);
-				var ang2 = ratio * Math.ceil(t2);
-				var x1 = Math.cos(ang1);
-				var y1 = Math.sin(ang1);
-				var x2 = Math.cos(ang2);
-				var y2 = Math.sin(ang2);
-		
-				var x = this.radius * (x1 + t3 * (x2 - x1));
-				var y = this.radius * (y1 + t3 * (y2 - y1));
-		
-				out.fillStyle = "black";
-				out.beginPath();
-				out.moveTo(x + 4, y);
-				out.arc(x, y, 4, 0, 2 * Math.PI);
-				out.fill();
-		
-				out.restore();
-			}
-		}
-		
-		var polys = [];
-		var radius = 30;
-		var nx = Math.floor(stage.width / radius * 0.7);
-		var ny = Math.floor(stage.height / radius * 0.7);
-		
-		for(var j = 0; j < ny; j++)
-		{
-			for(var i = 0; i < nx; i++)
-			{
-				var nSides = 3 + Math.floor(Math.random() * 5);
-				//nSides = 3 + Math.floor(j / ny * 10);
-				//nSides = 3;
-				var poly = new Polygon(nSides, radius, 0);
-				polys[j * nx + i] = poly;
-				poly.x = i / nx * stage.width;
-				poly.y = j / ny * stage.height;
-				poly.rotation = 0.3 * (i + j);
-			}
-		}
-		var time = 0;
-		function update()
-		{
-			stage.clear();
-			var n = polys.length;
-			var t = time * 0.012;
-			for(var i = 0; i < n; i++)
-			{
-				var poly = polys[i];
-				poly.draw(out, t);
-			}
-			time++;
-		}
-		
-		new Loop(update, this);</script>
-	<p>see <a href="http://codepen.io/tholman/pen/gidfy">http://codepen.io/tholman/pen/gidfy</a></p>
-	
-	<script type="text/javascript">
-	  var _gaq = _gaq || [];
-	  _gaq.push(['_setAccount', 'UA-6101672-1']);
-	  _gaq.push(['_trackPageview']);
+    <head>
+        <title>Polygons</title>
+        <link rel="stylesheet" type="text/css" href="../css/styles.css"/>
+        <style type="text/css">
+         p{
+             font-family: sans-serif;
+             font-size: 12px;
+             color:#ccc;
+             width:700px;
+             margin:auto;
+         }
+         a, a:hover, a:visited{
+             color:#ccc;
+         }
+        </style>
+    </head>
+    <body>
+        <script type="text/javascript" src="../libs/tools.js"></script>
+        <script type="text/javascript">
+         tools.mixin(tools, this);
+         var stage = new tools.Stage(700, 700);
+         var out = stage.out;
 
-	  (function() {
-		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-	  })();
-	</script>
-</body>
+
+         function Polygon(nSides, radius, rotation){
+             this.nSides = nSides;
+             this.radius = radius;
+             this.x = 0;
+             this.y = 0;
+             this.rotation = 0;
+         }
+
+         Polygon.prototype = {
+             draw : function(out, time){
+                 out.save();
+                 out.strokeStyle = "rgba(0, 0, 0, 0.1)";
+                 out.translate(this.x, this.y);
+                 out.rotate(this.rotation);
+                 out.beginPath();
+                 out.moveTo(this.radius, 0);
+                 for(var i = 1; i < this.nSides + 1; i++){
+                     var angle = 2 * Math.PI * i / this.nSides;
+                     out.lineTo(this.radius * Math.cos(angle), this.radius * Math.sin(angle));
+                 }
+                 out.stroke();
+
+                 var t = time % 1;
+                 var t2 = t * this.nSides;
+                 var t3 = t2 - Math.floor(t2);
+                 var ratio = 2 * Math.PI / this.nSides;
+                 var ang1 = ratio * Math.floor(t2);
+                 var ang2 = ratio * Math.ceil(t2);
+                 var x1 = Math.cos(ang1);
+                 var y1 = Math.sin(ang1);
+                 var x2 = Math.cos(ang2);
+                 var y2 = Math.sin(ang2);
+
+                 var x = this.radius * (x1 + t3 * (x2 - x1));
+                 var y = this.radius * (y1 + t3 * (y2 - y1));
+
+                 out.fillStyle = "black";
+                 out.beginPath();
+                 out.moveTo(x + 4, y);
+                 out.arc(x, y, 4, 0, 2 * Math.PI);
+                 out.fill();
+
+                 out.restore();
+             }
+         }
+
+         var polys = [];
+         var radius = 30;
+         var nx = Math.floor(stage.width / radius * 0.7);
+         var ny = Math.floor(stage.height / radius * 0.7);
+
+         for(var j = 0; j < ny; j++){
+             for(var i = 0; i < nx; i++){
+                 var nSides = 3 + Math.floor(Math.random() * 5);
+                 //nSides = 3 + Math.floor(j / ny * 10);
+                 //nSides = 3;
+                 var poly = new Polygon(nSides, radius, 0);
+                 polys[j * nx + i] = poly;
+                 poly.x = i / nx * stage.width;
+                 poly.y = j / ny * stage.height;
+                 poly.rotation = 0.3 * (i + j);
+             }
+         }
+         var time = 0;
+         function update(){
+             stage.clear();
+             var n = polys.length;
+             var t = time * 0.012;
+             for(var i = 0; i < n; i++){
+                 var poly = polys[i];
+                 poly.draw(out, t);
+             }
+             time++;
+         }
+
+         new Loop(update, this);</script>
+        <p>see <a href="http://codepen.io/tholman/pen/gidfy">http://codepen.io/tholman/pen/gidfy</a></p>
+    </body>
 </html>

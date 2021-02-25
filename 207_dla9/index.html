@@ -1,236 +1,217 @@
-
 <html>
-  <head>
-    <title>dla</title>
-    <style>
-      html, body{margin:0; padding:0; overflow:hidden;}
-    </style>
-  </head>
-  <body>
-    <script type="text/javascript" src="../libs/three.min.js"></script>
-    <script type="text/javascript" src="../libs/TrackballControls.js"></script>
-    <script>
-      function Main()
-      {
-        this.scene = new THREE.Scene();
-        this.camera = new THREE.PerspectiveCamera( 50, window.innerWidth/window.innerHeight, 0.1, 1000 );
-        this.camera.position.z = 5;
+    <head>
+        <title>dla</title>
+        <style>
+         html, body{margin:0; padding:0; overflow:hidden;}
+        </style>
+    </head>
+    <body>
+        <script type="text/javascript" src="../libs/three.min.js"></script>
+        <script type="text/javascript" src="../libs/TrackballControls.js"></script>
+        <script>
+         function Main(){
+             this.scene = new THREE.Scene();
+             this.camera = new THREE.PerspectiveCamera( 50, window.innerWidth/window.innerHeight, 0.1, 1000 );
+             this.camera.position.z = 5;
 
-        this.renderer = new THREE.WebGLRenderer({ antialias:true });
+             this.renderer = new THREE.WebGLRenderer({ antialias:true });
 
-        this.renderer.setSize( window.innerWidth, window.innerHeight );
-        document.body.appendChild( this.renderer.domElement );
-
-
-        this.group = new THREE.Group();
-        var s = 0.15;
-        this.group.scale.set(s, s, s);
-        this.scene.add(this.group);
-
-        this.lights = this.initLights(10);
-        this.lights.forEach(function(light){
-          this.group.add(light);
-        },this);
+             this.renderer.setSize( window.innerWidth, window.innerHeight );
+             document.body.appendChild( this.renderer.domElement );
 
 
-        var initBall = {
-          position:new THREE.Vector3(),
-          radius : 0.1 + 0.9 * Math.random()
-        };
-        this.bSphere = 2 * initBall.radius;
+             this.group = new THREE.Group();
+             var s = 0.15;
+             this.group.scale.set(s, s, s);
+             this.scene.add(this.group);
+
+             this.lights = this.initLights(10);
+             this.lights.forEach(function(light){
+                 this.group.add(light);
+             },this);
 
 
-        this.balls = [initBall];
-        for(var i = 0; i < 550; i++) {
-          this.balls[i + 1] = this.createBall();
-        }
+             var initBall = {
+                 position:new THREE.Vector3(),
+                 radius : 0.1 + 0.9 * Math.random()
+             };
+             this.bSphere = 2 * initBall.radius;
 
 
-        var sphereGeometry = new THREE.SphereBufferGeometry(1, 32, 32);
-        var geom = this.createGeometry(this.balls, sphereGeometry);
-        console.log(geom);
-
-        var material = new THREE.MeshPhongMaterial( { color: 0x999999, shininess: 1} );
-        var mesh = new THREE.Mesh(geom, material);
-        this.group.add(mesh);
-
-        this.controls = new THREE.TrackballControls(this.camera, this.renderer.element);
+             this.balls = [initBall];
+             for(var i = 0; i < 550; i++) {
+                 this.balls[i + 1] = this.createBall();
+             }
 
 
-        this.time = Date.now();
-        this.update();
-      }
+             var sphereGeometry = new THREE.SphereBufferGeometry(1, 32, 32);
+             var geom = this.createGeometry(this.balls, sphereGeometry);
+             console.log(geom);
+
+             var material = new THREE.MeshPhongMaterial( { color: 0x999999, shininess: 1} );
+             var mesh = new THREE.Mesh(geom, material);
+             this.group.add(mesh);
+
+             this.controls = new THREE.TrackballControls(this.camera, this.renderer.element);
 
 
-      Main.prototype = {
-
-        initLights : function(nLights)
-        {
-          var lights = [];
-
-          var globalHue = Math.random() * 360;
-          var sat = Math.round(Math.random() * 50) + 50;
-          var lig = 60;
-
-          for(var i = 0; i < nLights; i++){
-
-            var hue = Math.round(globalHue + Math.random() * 120);
-            var color = "hsl(" + hue + ", " + sat + "%, " + lig + "%)";
-
-            var light = new THREE.PointLight(color, 1, 2, 1);
-            light.position.set(
-              Math.random() * 2 - 1,
-              Math.random() * 2 - 1,
-              Math.random() * 2 - 1
-            );
-            light.position.multiplyScalar(15);
-            lights[i] = light;
-          }
-          var bgColor = new THREE.Color();
-          bgColor.setHSL(globalHue / 360, sat / 100, lig / 100);
-          bgColor.multiplyScalar(0.1);
-          this.scene.add(new THREE.AmbientLight(bgColor));
-          bgColor.multiplyScalar(0.1);
-          this.renderer.setClearColor(bgColor);
-          return lights;
-        },
+             this.time = Date.now();
+             this.update();
+         }
 
 
-        createBall : function()
-        {
-          var u = Math.random();
-          var v = Math.random();
-          var theta = 2 * Math.PI * u;
-          var phi = Math.acos(2 * v - 1);
+         Main.prototype = {
 
-          var ball = {
-            position:new THREE.Vector3(
-              Math.sin(phi) * Math.cos(theta),
-              Math.sin(phi) * Math.sin(theta),
-              Math.cos(phi)
-            ),
-            radius : 0.2 + Math.random() * 0.8
-          };
+             initLights : function(nLights){
+                 var lights = [];
 
-          ball.position.multiplyScalar(this.bSphere + ball.radius);
+                 var globalHue = Math.random() * 360;
+                 var sat = Math.round(Math.random() * 50) + 50;
+                 var lig = 60;
 
-          var closest = this.getClosest(ball);
+                 for(var i = 0; i < nLights; i++){
 
-          var diff = closest.position.clone().sub(ball.position);
-          diff.setLength(ball.radius + closest.radius).negate();
-          ball.position.addVectors(closest.position, diff);
-          var distFromCenter = ball.position.length() + ball.radius;
-          if(distFromCenter > this.bSphere){
-            this.bSphere = distFromCenter;
-          }
-          return ball;
-        },
+                     var hue = Math.round(globalHue + Math.random() * 120);
+                     var color = "hsl(" + hue + ", " + sat + "%, " + lig + "%)";
 
-
-        getClosest : function(ball)
-        {
-          var closest = this.balls.reduce(function(closest, b) {
-            var diff = b.position.clone().sub(ball.position);
-            var dist = diff.length() + b.radius + ball.radius;
-            if(dist < closest.dist) {
-              closest.dist = dist;
-              closest.ball = b;
-            }
-            return closest;
-          }, {dist:Number.MAX_VALUE, ball:undefined});
-          return closest.ball;
-        },
+                     var light = new THREE.PointLight(color, 1, 2, 1);
+                     light.position.set(
+                         Math.random() * 2 - 1,
+                         Math.random() * 2 - 1,
+                         Math.random() * 2 - 1
+                     );
+                     light.position.multiplyScalar(15);
+                     lights[i] = light;
+                 }
+                 var bgColor = new THREE.Color();
+                 bgColor.setHSL(globalHue / 360, sat / 100, lig / 100);
+                 bgColor.multiplyScalar(0.1);
+                 this.scene.add(new THREE.AmbientLight(bgColor));
+                 bgColor.multiplyScalar(0.1);
+                 this.renderer.setClearColor(bgColor);
+                 return lights;
+             },
 
 
-        createGeometry : function(balls, sphereGeometry)
-        {
-          var geometries = balls.map(function(ball){
-            var p = ball.position;
-            var r = ball.radius;
-            var geom = sphereGeometry.clone();
-            geom.scale(r, r, r );
-            geom.translate(p.x, p.y, p.z);
-            return geom;
-          });
-          return mergeGeometries(geometries);
-        },
+             createBall : function(){
+                 var u = Math.random();
+                 var v = Math.random();
+                 var theta = 2 * Math.PI * u;
+                 var phi = Math.acos(2 * v - 1);
+
+                 var ball = {
+                     position:new THREE.Vector3(
+                         Math.sin(phi) * Math.cos(theta),
+                         Math.sin(phi) * Math.sin(theta),
+                         Math.cos(phi)
+                     ),
+                     radius : 0.2 + Math.random() * 0.8
+                 };
+
+                 ball.position.multiplyScalar(this.bSphere + ball.radius);
+
+                 var closest = this.getClosest(ball);
+
+                 var diff = closest.position.clone().sub(ball.position);
+                 diff.setLength(ball.radius + closest.radius).negate();
+                 ball.position.addVectors(closest.position, diff);
+                 var distFromCenter = ball.position.length() + ball.radius;
+                 if(distFromCenter > this.bSphere){
+                     this.bSphere = distFromCenter;
+                 }
+                 return ball;
+             },
 
 
-        update : function()
-        {
-          var oldTime = this.time;
-          this.time = Date.now();
-          this.controls.update(this.time - oldTime);
-
-          this.renderer.render(this.scene, this.camera);
-
-          requestAnimationFrame( this.update.bind(this) );
-
-        }
-      };
-      var main = new Main();
-
-    function mergeGeometries(geometries){
-
-        function getBufferLength(bufferName) {
-            return geometries.reduce(function(n, geom){
-                return n + geom.attributes[bufferName].array.length;
-            }, 0);
-        }
-
-        function mergeBuffer(bufferName, bufferType, itemSize){
-            var outBuffer = new bufferType(getBufferLength(bufferName));
-            geometries.reduce(function(outBuffer, geom){
-                var buffer = geom.attributes[bufferName].array;
-                var n = buffer.length;
-                for(var i = 0; i < n; i++){
-                    outBuffer.buffer[outBuffer.indexBegin + i] = buffer[i];
-                }
-                outBuffer.indexBegin += n;
-                return outBuffer;
-            }, {indexBegin:0, buffer:outBuffer});
-            geometry.addAttribute(bufferName, new THREE.BufferAttribute(outBuffer, itemSize));
-        }
-
-        function mergeIds(){
-            var bufferLength = geometries.reduce(function(n, geom){
-                return n + geom.index.array.length;
-            }, 0);
-            var outBuffer = new Uint32Array(bufferLength);
-            geometries.reduce(function(outBuffer, geom){
-                var buffer = geom.index.array;
-                var n = buffer.length;
-                for(var i = 0; i < n; i++){
-                    outBuffer.buffer[outBuffer.indexBegin + i] = outBuffer.positionBegin + buffer[i];
-                }
-                outBuffer.indexBegin += n;
-                outBuffer.positionBegin += geom.attributes.position.array.length / 3;
-                return outBuffer;
-            }, {indexBegin:0, positionBegin:0, buffer:outBuffer});
-            geometry.setIndex(new THREE.BufferAttribute(outBuffer, 1));
-        }
+             getClosest : function(ball){
+                 var closest = this.balls.reduce(function(closest, b) {
+                     var diff = b.position.clone().sub(ball.position);
+                     var dist = diff.length() + b.radius + ball.radius;
+                     if(dist < closest.dist) {
+                         closest.dist = dist;
+                         closest.ball = b;
+                     }
+                     return closest;
+                 }, {dist:Number.MAX_VALUE, ball:undefined});
+                 return closest.ball;
+             },
 
 
-        var geometry = new THREE.BufferGeometry();
-        mergeBuffer('position', Float32Array, 3);
-        mergeBuffer('normal', Float32Array, 3);
-        mergeIds();
-        return geometry;
-    }
-      
-    </script>
+             createGeometry : function(balls, sphereGeometry){
+                 var geometries = balls.map(function(ball){
+                     var p = ball.position;
+                     var r = ball.radius;
+                     var geom = sphereGeometry.clone();
+                     geom.scale(r, r, r );
+                     geom.translate(p.x, p.y, p.z);
+                     return geom;
+                 });
+                 return mergeGeometries(geometries);
+             },
 
-    <script type="text/javascript">
-      var _gaq = _gaq || [];
-      _gaq.push(['_setAccount', 'UA-6101672-1']);
-      _gaq.push(['_trackPageview']);
 
-      (function() {
-       var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-       ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-       var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-       })();
-    </script>
-  </body>
+             update : function(){
+                 var oldTime = this.time;
+                 this.time = Date.now();
+                 this.controls.update(this.time - oldTime);
+
+                 this.renderer.render(this.scene, this.camera);
+
+                 requestAnimationFrame( this.update.bind(this) );
+
+             }
+         };
+         var main = new Main();
+
+         function mergeGeometries(geometries){
+
+             function getBufferLength(bufferName) {
+                 return geometries.reduce(function(n, geom){
+                     return n + geom.attributes[bufferName].array.length;
+                 }, 0);
+             }
+
+             function mergeBuffer(bufferName, bufferType, itemSize){
+                 var outBuffer = new bufferType(getBufferLength(bufferName));
+                 geometries.reduce(function(outBuffer, geom){
+                     var buffer = geom.attributes[bufferName].array;
+                     var n = buffer.length;
+                     for(var i = 0; i < n; i++){
+                         outBuffer.buffer[outBuffer.indexBegin + i] = buffer[i];
+                     }
+                     outBuffer.indexBegin += n;
+                     return outBuffer;
+                 }, {indexBegin:0, buffer:outBuffer});
+                 geometry.addAttribute(bufferName, new THREE.BufferAttribute(outBuffer, itemSize));
+             }
+
+             function mergeIds(){
+                 var bufferLength = geometries.reduce(function(n, geom){
+                     return n + geom.index.array.length;
+                 }, 0);
+                 var outBuffer = new Uint32Array(bufferLength);
+                 geometries.reduce(function(outBuffer, geom){
+                     var buffer = geom.index.array;
+                     var n = buffer.length;
+                     for(var i = 0; i < n; i++){
+                         outBuffer.buffer[outBuffer.indexBegin + i] = outBuffer.positionBegin + buffer[i];
+                     }
+                     outBuffer.indexBegin += n;
+                     outBuffer.positionBegin += geom.attributes.position.array.length / 3;
+                     return outBuffer;
+                 }, {indexBegin:0, positionBegin:0, buffer:outBuffer});
+                 geometry.setIndex(new THREE.BufferAttribute(outBuffer, 1));
+             }
+
+
+             var geometry = new THREE.BufferGeometry();
+             mergeBuffer('position', Float32Array, 3);
+             mergeBuffer('normal', Float32Array, 3);
+             mergeIds();
+             return geometry;
+         }
+
+        </script>
+
+    </body>
 </html>
-

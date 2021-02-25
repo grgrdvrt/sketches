@@ -1,143 +1,122 @@
 <html>
-<head>
-	<title>dla 8</title>
-	<link rel="stylesheet" type="text/css" href="../css/styles.css"/>
-</head>
-<body>
-	<script type="text/javascript" src="../libs/tools.js"></script>
-	<script type="text/javascript">
-		tools.mixin(tools, this);
-		
-
-    function setCircleTarget(c, closest)
-    {
-      var dx = closest.x - c.x;
-      var dy = closest.y - c.y;
-      var ratio = (c.r + closest.r) / Math.sqrt(dx * dx + dy * dy);
-      c.x = closest.x - dx * ratio;
-      c.y = closest.y - dy * ratio;
-    }
+    <head>
+        <title>dla 8</title>
+        <link rel="stylesheet" type="text/css" href="../css/styles.css"/>
+    </head>
+    <body>
+        <script type="text/javascript" src="../libs/tools.js"></script>
+        <script type="text/javascript">
+         tools.mixin(tools, this);
 
 
-    function createCircle()
-    {
-      return {
-        //r:Math.pow(Math.random(), 3) * 10,
-        r : 10,
-        x:Math.random() * w,
-        y:Math.random() * h
-      };
-    }
-
-    function getClosest(c, circles)
-    {
-      return circles.reduce(function(closest, c2) {
-        var dist = getDist(c, c2);
-        if(dist < closest.dist) {
-          closest.c = c2;
-          closest.dist = dist;
-        }
-        return closest;
-      }, {c:null, dist:max}).c;
-    }
+         function setCircleTarget(c, closest){
+             var dx = closest.x - c.x;
+             var dy = closest.y - c.y;
+             var ratio = (c.r + closest.r) / Math.sqrt(dx * dx + dy * dy);
+             c.x = closest.x - dx * ratio;
+             c.y = closest.y - dy * ratio;
+         }
 
 
-    function getDist(c1, c2)
-    {
-      var dx = c2.x - c1.x;
-      var dy = c2.y - c1.y;
-      return Math.sqrt(dx * dx + dy * dy) - (c1.r + c2.r);
-    }
+         function createCircle(){
+             return {
+                 //r:Math.pow(Math.random(), 3) * 10,
+                 r : 10,
+                 x:Math.random() * w,
+                 y:Math.random() * h
+             };
+         }
+
+         function getClosest(c, circles){
+             return circles.reduce(function(closest, c2) {
+                 var dist = getDist(c, c2);
+                 if(dist < closest.dist) {
+                     closest.c = c2;
+                     closest.dist = dist;
+                 }
+                 return closest;
+             }, {c:null, dist:max}).c;
+         }
 
 
-    function getPts(c0, c1)
-    {
-      var dx = c1.x - c0.x;
-      var dy = c1.y - c0.y;
-      var dist = Math.sqrt(dx * dx + dy * dy);
-
-      var angC = Math.atan2(dy, dx);
-      var ang0 = Math.acos((c0.r - c1.r) / dist);
-      var cos0 = Math.cos(angC - ang0);
-      var cos1 = Math.cos(angC + ang0);
-      var sin0 = Math.sin(angC - ang0);
-      var sin1 = Math.sin(angC + ang0);
-
-      return [
-        {
-          x:c0.x + c0.r * cos0,
-          y:c0.y + c0.r * sin0
-        },
-        {
-          x:c0.x + c0.r * cos1,
-          y:c0.y + c0.r * sin1
-        },
-        {
-          x:c1.x + c1.r * cos0,
-          y:c1.y + c1.r * sin0
-        },
-        {
-          x:c1.x + c1.r * cos1,
-          y:c1.y + c1.r * sin1
-        }
-      ]
-    }
+         function getDist(c1, c2){
+             var dx = c2.x - c1.x;
+             var dy = c2.y - c1.y;
+             return Math.sqrt(dx * dx + dy * dy) - (c1.r + c2.r);
+         }
 
 
-		var w = 700;
-		var h = 700;
-		var stage = new tools.Stage(w, h);
-		var out = stage.out;
-    var max = Number.MAX_VALUE;
+         function getPts(c0, c1){
+             var dx = c1.x - c0.x;
+             var dy = c1.y - c0.y;
+             var dist = Math.sqrt(dx * dx + dy * dy);
+
+             var angC = Math.atan2(dy, dx);
+             var ang0 = Math.acos((c0.r - c1.r) / dist);
+             var cos0 = Math.cos(angC - ang0);
+             var cos1 = Math.cos(angC + ang0);
+             var sin0 = Math.sin(angC - ang0);
+             var sin1 = Math.sin(angC + ang0);
+
+             return [{
+                     x:c0.x + c0.r * cos0,
+                     y:c0.y + c0.r * sin0
+                 },{
+                     x:c0.x + c0.r * cos1,
+                     y:c0.y + c0.r * sin1
+                 },{
+                     x:c1.x + c1.r * cos0,
+                     y:c1.y + c1.r * sin0
+                 },{
+                     x:c1.x + c1.r * cos1,
+                     y:c1.y + c1.r * sin1
+                 }
+             ]
+         }
 
 
-    var circles = [];
-    for(var i = 0; i < 5; i++) {
-      var c = createCircle();
-      circles.push(c);
-      out.beginPath();
-      out.arc(c.x, c.y, c.r, 0, 2 * Math.PI);
-      out.fill();
-    }
+         var w = 700;
+         var h = 700;
+         var stage = new tools.Stage(w, h);
+         var out = stage.out;
+         var max = Number.MAX_VALUE;
 
-    var loop = new Loop(update);
-    function update()
-    {
-      var c = createCircle();
-      
-      var closest = getClosest(c, circles);
-      c.r = 0.95 * closest.r;
-      setCircleTarget(c, closest);
-      circles.push(c);
-      out.beginPath();
-      out.arc(c.x, c.y, c.r, 0, 2 * Math.PI);
-      out.fill();
-      var pts = getPts(c, closest);
-      out.beginPath();
-      out.moveTo(pts[0].x, pts[0].y);
-      out.lineTo(pts[1].x, pts[1].y);
-      out.lineTo(pts[3].x, pts[3].y);
-      out.lineTo(pts[2].x, pts[2].y);
-      out.lineTo(pts[0].x, pts[0].y);
-      out.fill();
-      if(circles.length > 1000) {
-        loop.pause();
-      }
-      
-    }
 
-  </script>
-	
-	<script type="text/javascript">
-	  var _gaq = _gaq || [];
-	  _gaq.push(['_setAccount', 'UA-6101672-1']);
-	  _gaq.push(['_trackPageview']);
+         var circles = [];
+         for(var i = 0; i < 5; i++) {
+             var c = createCircle();
+             circles.push(c);
+             out.beginPath();
+             out.arc(c.x, c.y, c.r, 0, 2 * Math.PI);
+             out.fill();
+         }
 
-	  (function() {
-		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-	  })();
-	</script>
-</body>
+         var loop = new Loop(update);
+         function update(){
+             var c = createCircle();
+
+             var closest = getClosest(c, circles);
+             c.r = 0.95 * closest.r;
+             setCircleTarget(c, closest);
+             circles.push(c);
+             out.beginPath();
+             out.arc(c.x, c.y, c.r, 0, 2 * Math.PI);
+             out.fill();
+             var pts = getPts(c, closest);
+             out.beginPath();
+             out.moveTo(pts[0].x, pts[0].y);
+             out.lineTo(pts[1].x, pts[1].y);
+             out.lineTo(pts[3].x, pts[3].y);
+             out.lineTo(pts[2].x, pts[2].y);
+             out.lineTo(pts[0].x, pts[0].y);
+             out.fill();
+             if(circles.length > 1000) {
+                 loop.pause();
+             }
+
+         }
+
+        </script>
+
+    </body>
 </html>

@@ -1,0 +1,86 @@
+<html>
+    <head>
+        <title>distance</title>
+        <link rel="stylesheet" type="text/css" href="../css/styles.css"/>
+    </head>
+    <body>
+        <script type="text/javascript" src="../libs/tools.js"></script>
+        <script type="text/javascript">
+         tools.mixin(tools, this);
+
+         var w = 700;
+         var h = 700;
+
+         var cx = 0.5 * w;
+         var cy = 0.5 * h;
+
+         var stage = new Stage(w, h);
+         var out = stage.out;
+         var mouse = new Mouse(stage.canvas);
+
+         function lerp(a, b, t){
+             return a + (b - a) * t;
+         }
+
+         function clamp(x, min, max){
+             return Math.min(Math.max(x, min), max);
+         }
+
+         function smoothstep(edge0, edge1, x) {
+             x = clamp((x - edge0) / (edge1 - edge0), 0.0, 1.0);
+             return x * x * (3 - 2 * x);
+         }
+
+         var pts = [];
+         var nPts = 100;
+         var r = 200;
+         for(var i = 0; i < nPts; i++){
+             var angle = 2 * Math.PI * i / nPts;
+             pts[i] = {
+                 x : cx + r * Math.cos(angle),
+                 y : cy + r * Math.sin(angle)
+             };
+         }
+
+         new Loop(function(){
+             var c = {
+                 x:mouse.x,
+                 y:mouse.y,
+                 r : 100
+             }
+             out.lineWidth = 2;
+             out.clearRect(0, 0, w, h);
+             for(var i = 0; i < nPts; i++){
+                 var pt = pts[i];
+                 var dx = pt.x - c.x;
+                 var dy = pt.y - c.y;
+                 var dist = Math.sqrt(dx * dx + dy * dy);
+                 var px = i * w / nPts;
+                 var py = h - Math.abs((dist - c.r));
+
+                 out.beginPath();
+                 out.moveTo(px, h);
+                 out.lineTo(px, py);
+
+                 out.moveTo(pt.x, pt.y);
+                 out.lineTo(c.x + dx * c.r / dist, c.y + dy * c.r / dist);
+
+                 var s = Math.round(360 * i / nPts);
+                 out.strokeStyle = "hsl(" + s + ", 100%, 50%)";
+                 out.stroke();
+             }
+
+             out.lineWidth = 1;
+             out.strokeStyle = "black";
+             out.beginPath();
+             out.moveTo(cx + r, cy);
+             out.arc(cx, cy, r, 0, 2 * Math.PI);
+             out.moveTo(c.x + c.r, c.y);
+             out.arc(c.x, c.y, c.r, 0, 2 * Math.PI);
+             out.stroke();
+         });
+
+
+        </script>
+    </body>
+</html>

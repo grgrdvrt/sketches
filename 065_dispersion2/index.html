@@ -1,126 +1,106 @@
 <html>
-<head>
-	<title>dispersion</title>
-	<link rel="stylesheet" type="text/css" href="../css/styles.css"/>
-</head>
-<body>
-	<script type="text/javascript" src="../libs/tools.js"></script>
-	<script type="text/javascript">
-		var stage = new tools.Stage(700, 700);
-		var mouse = new tools.Mouse(stage.canvas);
-		
-		var out = stage.out;
-		
-		out.strokeStyle = "black";
-		
-		var map = [];
-		
-		
-		out.fillStyle = "white";
-		var nBubbles = 30;
-		var radiusMin = 50;
-		var radiusMax = 200;
-		var bubbles = [];
-		
-		for(var i = 0; i < nBubbles; i++)
-		{
-			var radius = radiusMin + (radiusMax - radiusMin) * Math.random() * Math.random();
-			bubbles[i] = {x:Math.random() * stage.width,
-						  y:Math.random() * stage.height,
-						  radius2: radius * radius};
-		
-			out.beginPath();
-			out.arc(bubbles[i].x, bubbles[i].y, radius, 0, 2 * Math.PI);
-			out.fill();
-			out.stroke();
-		}
-		out.fillStyle = "black";
-		
-		var n = stage.width * stage.height;
-		for(var i = 0; i < n; i++)
-		{
-			var posX = i % stage.width;
-			var posY = Math.floor(i / stage.width);
-		
-			for(var j = 0; j < nBubbles; j++)
-			{
-				var bubble = bubbles[j];
-				var dx = bubble.x - posX;
-				var dy = bubble.y - posY;
-				map[i] = map[i] || dx * dx + dy * dy < bubble.radius2;
-			}
-		
-		}
-		
-		var iteration = 0;
-		
-		var head, tail;
-		
-		var pos = {x:0.5 * stage.width, y:0.5 * stage.height};
-		while(map[pos.y * stage.width + pos.x])
-		{
-			pos.x = Math.floor(Math.random() * stage.width);
-			pos.y = Math.floor(Math.random() * stage.height);
-		}
-		addPosition(pos.x, pos.y);
-		
-		
-		function update()
-		{
-			while(head && head.iteration == iteration)
-			{
-				processPos(head);
-				head = head.next;
-			}
-			iteration++;
-		}
-		
-		function processPos(pos)
-		{
-			out.fillRect(pos.x, pos.y, 1, 1);
-		
-			addPosition(pos.x - 1, pos.y - 1);
-			addPosition(pos.x, pos.y - 1);
-			addPosition(pos.x + 1, pos.y - 1);
-			addPosition(pos.x - 1, pos.y);
-			addPosition(pos.x + 1, pos.y);
-			addPosition(pos.x - 1, pos.y + 1);
-			addPosition(pos.x, pos.y + 1);
-			addPosition(pos.x + 1, pos.y + 1);
-		
-			if(!head.next) processPos(pos);
-		}
-		
-		function addPosition(x, y)
-		{
-			if(x < 0 || y < 0 || x > stage.width || y > stage.height) return;
-			if(head && Math.random() < 0.5)return;
-			x = Math.floor(x);
-			y = Math.floor(y);
-			if(map[y * stage.width + x]) return;
-			var pos = {x:x, y:y};
-			if(!head) head = pos;
-			else tail.next = pos;
-			tail = pos;
-		
-			pos.iteration = iteration + 1;
-		
-			map[y * stage.width + x] = true;
-		}
-		
-		new tools.Loop(update, this);
-	</script>
-	
-	<script type="text/javascript">
-	  var _gaq = _gaq || [];
-	  _gaq.push(['_setAccount', 'UA-6101672-1']);
-	  _gaq.push(['_trackPageview']);
+    <head>
+        <title>dispersion</title>
+        <link rel="stylesheet" type="text/css" href="../css/styles.css"/>
+    </head>
+    <body>
+        <script type="text/javascript" src="../libs/tools.js"></script>
+        <script type="text/javascript">
+         var stage = new tools.Stage(700, 700);
+         var mouse = new tools.Mouse(stage.canvas);
 
-	  (function() {
-		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-	  })();
-	</script>
-</body>
+         var out = stage.out;
+
+         out.strokeStyle = "black";
+
+         var map = [];
+
+
+         out.fillStyle = "white";
+         var nBubbles = 30;
+         var radiusMin = 50;
+         var radiusMax = 200;
+         var bubbles = [];
+
+         for(var i = 0; i < nBubbles; i++){
+             var radius = radiusMin + (radiusMax - radiusMin) * Math.random() * Math.random();
+             bubbles[i] = {x:Math.random() * stage.width,
+                           y:Math.random() * stage.height,
+                           radius2: radius * radius};
+
+             out.beginPath();
+             out.arc(bubbles[i].x, bubbles[i].y, radius, 0, 2 * Math.PI);
+             out.fill();
+             out.stroke();
+         }
+         out.fillStyle = "black";
+
+         var n = stage.width * stage.height;
+         for(var i = 0; i < n; i++){
+             var posX = i % stage.width;
+             var posY = Math.floor(i / stage.width);
+
+             for(var j = 0; j < nBubbles; j++){
+                 var bubble = bubbles[j];
+                 var dx = bubble.x - posX;
+                 var dy = bubble.y - posY;
+                 map[i] = map[i] || dx * dx + dy * dy < bubble.radius2;
+             }
+
+         }
+
+         var iteration = 0;
+
+         var head, tail;
+
+         var pos = {x:0.5 * stage.width, y:0.5 * stage.height};
+         while(map[pos.y * stage.width + pos.x]){
+             pos.x = Math.floor(Math.random() * stage.width);
+             pos.y = Math.floor(Math.random() * stage.height);
+         }
+         addPosition(pos.x, pos.y);
+
+
+         function update(){
+             while(head && head.iteration == iteration){
+                 processPos(head);
+                 head = head.next;
+             }
+             iteration++;
+         }
+
+         function processPos(pos){
+             out.fillRect(pos.x, pos.y, 1, 1);
+
+             addPosition(pos.x - 1, pos.y - 1);
+             addPosition(pos.x, pos.y - 1);
+             addPosition(pos.x + 1, pos.y - 1);
+             addPosition(pos.x - 1, pos.y);
+             addPosition(pos.x + 1, pos.y);
+             addPosition(pos.x - 1, pos.y + 1);
+             addPosition(pos.x, pos.y + 1);
+             addPosition(pos.x + 1, pos.y + 1);
+
+             if(!head.next) processPos(pos);
+         }
+
+         function addPosition(x, y){
+             if(x < 0 || y < 0 || x > stage.width || y > stage.height) return;
+             if(head && Math.random() < 0.5)return;
+             x = Math.floor(x);
+             y = Math.floor(y);
+             if(map[y * stage.width + x]) return;
+             var pos = {x:x, y:y};
+             if(!head) head = pos;
+             else tail.next = pos;
+             tail = pos;
+
+             pos.iteration = iteration + 1;
+
+             map[y * stage.width + x] = true;
+         }
+
+         new tools.Loop(update, this);
+        </script>
+    </body>
 </html>

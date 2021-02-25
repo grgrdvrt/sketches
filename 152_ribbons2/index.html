@@ -1,181 +1,159 @@
 <html>
-<head>
-	<title>Ribbons</title>
-	<link rel="stylesheet" type="text/css" href="../css/styles.css"/>
-</head>
-<body>
-	<script type="text/javascript" src="../libs/tools.js"></script>
-	<script type="text/javascript">
-		tools.mixin(tools, this);
-		
-		var w = 700;
-		var h = 700;
-		var stage = new Stage(w, h);
-		var out = stage.out;
-		
-		var r = 0.5 * Math.sqrt(w * w + h * h);
-		var gradient = out.createRadialGradient(0.5 * w, 0.5 * h, 0.25 * w, 0.5 * w, 0.5 * h, r);
-		gradient.addColorStop(0, "#d0d0d0");
-		gradient.addColorStop(1, "#909090");
-		//out.fillStyle = "#808080";
-		out.fillStyle = gradient;
-		out.fillRect(0, 0, w, h);
-		
-		out.fillStyle = "black";
-		out.strokeStyle = "black";
-		
-		
-		function Point(x, y)
-		{
-			this.x = x;
-			this.y = y;
-		}
-		
-		Point.prototype = {
-			setPos : function(x, y)
-			{
-				this.x = x;
-				this.y = y;
-			},
-			setPt : function(pt)
-			{
-				this.x = pt.x;
-				this.y = pt.y;
-			}
-		}
-		
-		function Wanderer(value, spr, fr, force, randomness, minTime, maxTime)
-		{
-			this.value = this.target = value;
-			this.vel = 0;
-			this.spr = spr;
-			this.fr = fr;
-			this.force = force;
-		
-			this.randomness = randomness;
-			this.minTime = minTime;
-			this.maxTime = maxTime;
-			this.time = 0;
-			this.reset();
-		}
-		
-		Wanderer.prototype = {
-			update : function()
-			{
-				this.vel += this.spr * (this.target - this.value);
-				this.vel += this.randomness * (Math.random() * 2 - 1);
-				this.vel *= this.fr;
-				this.value += this.vel;
-				if(this.value < 0)
-					this.vel += this.force;
-				else if(this.value > 1)
-					this.vel -= this.force;
-		
-				if(--this.time < 0)this.reset();
-			},
-			
-			reset : function()
-			{
-				this.target = Math.random();
-				this.time = this.minTime + Math.random() * (this.maxTime - this.minTime);
-			}
-		}
-		
-		function Ribbon()
-		{
-		
-			this.oPos = new Point();
-			this.left0 = new Point();
-			this.right0 = new Point();
-			this.left1 = new Point();
-			this.right1 = new Point();
-			this.left = new Point();
-			this.right = new Point();
-		
-			this.lightness = new Wanderer(0.5, 0.003, 0.95, 0.001, 0.005, 10, 100);
-			this.thickness = new Wanderer(Math.random(), 0.002, 0.99, 0.001, 0.005, 10, 100);
-			this.posX = new Wanderer(Math.random(), 0.004, 0.95, 0.001, 0, 10, 40);
-			this.posY = new Wanderer(Math.random(), 0.004, 0.95, 0.001, 0, 10, 40);
-		
-			this.vt = 0;
-			this.t = 1;
-		}
-		
-		Ribbon.prototype = {
-			update : function(out)
-			{
-				this.lightness.update();
-				this.thickness.update();
-				this.posX.update();
-				this.posY.update();
-				var x = this.posX.value * w;
-				var y = this.posY.value * h;
-		
-				var vx = x - this.oPos.x;
-				var vy = y - this.oPos.y;
-				var vel = Math.sqrt(vx * vx + vy * vy);
-				var r = 1000 / vel;
-				this.left.x = x + vy * r;
-				this.left.y = y - vx * r;
-				this.right.x = x - vy * r;
-				this.right.y = y + vx * r;
-		
-		
-				this.draw(out);
-		
-				this.oPos.setPos(x, y);
-				this.left0.setPt(this.left1);
-				this.right0.setPt(this.right1);
-				this.left1.setPt(this.left);
-				this.right1.setPt(this.right);
-			},
-		
-			draw : function(out)
-			{
-				var l = 100 * Math.pow(this.lightness.value, 2);
-				if(l < 0)l = 0;
-				else if(l > 100) l = 100;
-				//if(l < 50)l = 0;
-				//else l = 100;
-				out.fillStyle = "hsl(0, 0%, " + l + "%)";
-				out.strokeStyle = out.fillStyle;
-		
-				this.drawSegment(out, this.left0, this.right0,
-									  this.left1, this.right1,
-									  this.left, this.right);
-				out.fill();
-				out.stroke();
-			},
-		
-			drawSegment : function(out, l0, r0, l1, r1, l2, r2)
-			{
-				out.beginPath();
-				out.moveTo(0.5 * (l0.x + l1.x), 0.5 * (l0.y + l1.y));
-				out.quadraticCurveTo(l1.x, l1.y, 0.5 * (l1.x + l2.x), 0.5 * (l1.y + l2.y));
-				out.lineTo(0.5 * (r1.x + r2.x), 0.5 * (r1.y + r2.y));
-				out.quadraticCurveTo(r1.x, r1.y, 0.5 * (r0.x + r1.x), 0.5 * (r0.y + r1.y));
-				out.closePath();
-			}
-		}
-		
-		var ribbon = new Ribbon();
-		
-		var loop = new Loop(
-			function (){
-				ribbon.update(out);
-			}
-		);</script>
-	
-	<script type="text/javascript">
-	  var _gaq = _gaq || [];
-	  _gaq.push(['_setAccount', 'UA-6101672-1']);
-	  _gaq.push(['_trackPageview']);
+    <head>
+        <title>Ribbons</title>
+        <link rel="stylesheet" type="text/css" href="../css/styles.css"/>
+    </head>
+    <body>
+        <script type="text/javascript" src="../libs/tools.js"></script>
+        <script type="text/javascript">
+         tools.mixin(tools, this);
 
-	  (function() {
-		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-	  })();
-	</script>
-</body>
+         var w = 700;
+         var h = 700;
+         var stage = new Stage(w, h);
+         var out = stage.out;
+
+         var r = 0.5 * Math.sqrt(w * w + h * h);
+         var gradient = out.createRadialGradient(0.5 * w, 0.5 * h, 0.25 * w, 0.5 * w, 0.5 * h, r);
+         gradient.addColorStop(0, "#d0d0d0");
+         gradient.addColorStop(1, "#909090");
+         //out.fillStyle = "#808080";
+         out.fillStyle = gradient;
+         out.fillRect(0, 0, w, h);
+
+         out.fillStyle = "black";
+         out.strokeStyle = "black";
+
+
+         function Point(x, y){
+             this.x = x;
+             this.y = y;
+         }
+
+         Point.prototype = {
+             setPos : function(x, y){
+                 this.x = x;
+                 this.y = y;
+             },
+             setPt : function(pt){
+                 this.x = pt.x;
+                 this.y = pt.y;
+             }
+         }
+
+         function Wanderer(value, spr, fr, force, randomness, minTime, maxTime){
+             this.value = this.target = value;
+             this.vel = 0;
+             this.spr = spr;
+             this.fr = fr;
+             this.force = force;
+
+             this.randomness = randomness;
+             this.minTime = minTime;
+             this.maxTime = maxTime;
+             this.time = 0;
+             this.reset();
+         }
+
+         Wanderer.prototype = {
+             update : function(){
+                 this.vel += this.spr * (this.target - this.value);
+                 this.vel += this.randomness * (Math.random() * 2 - 1);
+                 this.vel *= this.fr;
+                 this.value += this.vel;
+                 if(this.value < 0)
+                     this.vel += this.force;
+                 else if(this.value > 1)
+                     this.vel -= this.force;
+
+                 if(--this.time < 0)this.reset();
+             },
+
+             reset : function(){
+                 this.target = Math.random();
+                 this.time = this.minTime + Math.random() * (this.maxTime - this.minTime);
+             }
+         }
+
+         function Ribbon(){
+
+             this.oPos = new Point();
+             this.left0 = new Point();
+             this.right0 = new Point();
+             this.left1 = new Point();
+             this.right1 = new Point();
+             this.left = new Point();
+             this.right = new Point();
+
+             this.lightness = new Wanderer(0.5, 0.003, 0.95, 0.001, 0.005, 10, 100);
+             this.thickness = new Wanderer(Math.random(), 0.002, 0.99, 0.001, 0.005, 10, 100);
+             this.posX = new Wanderer(Math.random(), 0.004, 0.95, 0.001, 0, 10, 40);
+             this.posY = new Wanderer(Math.random(), 0.004, 0.95, 0.001, 0, 10, 40);
+
+             this.vt = 0;
+             this.t = 1;
+         }
+
+         Ribbon.prototype = {
+             update : function(out){
+                 this.lightness.update();
+                 this.thickness.update();
+                 this.posX.update();
+                 this.posY.update();
+                 var x = this.posX.value * w;
+                 var y = this.posY.value * h;
+
+                 var vx = x - this.oPos.x;
+                 var vy = y - this.oPos.y;
+                 var vel = Math.sqrt(vx * vx + vy * vy);
+                 var r = 1000 / vel;
+                 this.left.x = x + vy * r;
+                 this.left.y = y - vx * r;
+                 this.right.x = x - vy * r;
+                 this.right.y = y + vx * r;
+
+
+                 this.draw(out);
+
+                 this.oPos.setPos(x, y);
+                 this.left0.setPt(this.left1);
+                 this.right0.setPt(this.right1);
+                 this.left1.setPt(this.left);
+                 this.right1.setPt(this.right);
+             },
+
+             draw : function(out){
+                 var l = 100 * Math.pow(this.lightness.value, 2);
+                 if(l < 0)l = 0;
+                 else if(l > 100) l = 100;
+                 //if(l < 50)l = 0;
+                 //else l = 100;
+                 out.fillStyle = "hsl(0, 0%, " + l + "%)";
+                 out.strokeStyle = out.fillStyle;
+
+                 this.drawSegment(out, this.left0, this.right0,
+                                  this.left1, this.right1,
+                                  this.left, this.right);
+                 out.fill();
+                 out.stroke();
+             },
+
+             drawSegment : function(out, l0, r0, l1, r1, l2, r2){
+                 out.beginPath();
+                 out.moveTo(0.5 * (l0.x + l1.x), 0.5 * (l0.y + l1.y));
+                 out.quadraticCurveTo(l1.x, l1.y, 0.5 * (l1.x + l2.x), 0.5 * (l1.y + l2.y));
+                 out.lineTo(0.5 * (r1.x + r2.x), 0.5 * (r1.y + r2.y));
+                 out.quadraticCurveTo(r1.x, r1.y, 0.5 * (r0.x + r1.x), 0.5 * (r0.y + r1.y));
+                 out.closePath();
+             }
+         }
+
+         var ribbon = new Ribbon();
+
+         var loop = new Loop(
+             function (){
+                 ribbon.update(out);
+             }
+         );</script>
+    </body>
 </html>

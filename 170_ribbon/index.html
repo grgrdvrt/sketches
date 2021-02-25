@@ -1,64 +1,51 @@
 <html>
-<head>
-	<title>ribbon</title>
-	<link rel="stylesheet" type="text/css" href="../css/styles.css"/>
-</head>
-<body>
-	<script type="text/javascript" src="../libs/tools.js"></script>
-  <script type="text/javascript">
+    <head>
+        <title>ribbon</title>
+        <link rel="stylesheet" type="text/css" href="../css/styles.css"/>
+    </head>
+    <body>
+        <script type="text/javascript" src="../libs/tools.js"></script>
+        <script type="text/javascript">
 
 
-    var w = 700;
-    var h = 700;
+         var w = 700;
+         var h = 700;
 
-    tools.mixin(tools, this);
-    var stage = new Stage(w, h);
-    var out = stage.out;
+         tools.mixin(tools, this);
+         var stage = new Stage(w, h);
+         var out = stage.out;
 
-    var dist = 100;
+         var dist = 100;
 
-    var p0 = {x:Math.random() * w, y:Math.random() * h};
-    var p1 = getNext(p0);
+         var p0 = {x:Math.random() * w, y:Math.random() * h};
+         var p1 = getNext(p0);
 
-    function next()
-    {
-      var nP = getNext(p1);
-      
-      out.beginPath();
-      var a = Math.sqrt(Math.random());
-      out.fillStyle = "rgba(0, 0, 0, " + a + ")";
-      out.moveTo(p0.x, p0.y);
-      out.lineTo(p1.x, p1.y);
-      out.lineTo(nP.x, nP.y);
-      out.lineTo(p0.x, p0.y);
-      out.fill();
+         function next(){
+             var nP = getNext(p1);
 
-      p0 = p1;
-      p1 = nP;
-    }
+             out.beginPath();
+             var a = Math.sqrt(Math.random());
+             out.fillStyle = "rgba(0, 0, 0, " + a + ")";
+             out.moveTo(p0.x, p0.y);
+             out.lineTo(p1.x, p1.y);
+             out.lineTo(nP.x, nP.y);
+             out.lineTo(p0.x, p0.y);
+             out.fill();
 
-    function getNext(pt)
-    {
-     return {x:pt.x + dist * (Math.random() * 2 - 1),
-              y:pt.y + dist * (Math.random() * 2 - 1)}
-    }
+             p0 = p1;
+             p1 = nP;
+         }
 
-    for(var i = 0; i < 100; i++)
-      next();
+         function getNext(pt){
+             return {x:pt.x + dist * (Math.random() * 2 - 1),
+                     y:pt.y + dist * (Math.random() * 2 - 1)}
+         }
+
+         for(var i = 0; i < 100; i++)
+             next();
 
 
-  </script>
-	
-	<script type="text/javascript">
-	  var _gaq = _gaq || [];
-	  _gaq.push(['_setAccount', 'UA-6101672-1']);
-	  _gaq.push(['_trackPageview']);
+        </script>
 
-	  (function() {
-		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-	  })();
-	</script>
-</body>
+    </body>
 </html>

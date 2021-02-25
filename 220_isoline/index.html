@@ -1,0 +1,52 @@
+<html>
+    <head>
+        <title>Simplex Noise</title>
+        <link rel="stylesheet" type="text/css" href="../css/styles.css"/>
+    </head>
+    <body>
+        <script type="text/javascript" src="../libs/perlin-noise-simplex.js"></script>
+        <script type="text/javascript" src="../libs/tools.js"></script>
+        <script type="text/javascript">
+         tools.mixin(tools, this);
+
+         var w = 700;
+         var h = 700;
+
+         var stage = new Stage(w, h);
+         var out = stage.out;
+
+         var noise = new SimplexNoise();
+
+         var scale = 0.002;
+         var t = [0, -1];
+         var l = [1, 0];
+         var b = [0, -1];
+         var r = [-1, 0];
+         var tl = [1, -1];
+         var bl = [1, 1];
+         var tr = [-1, -1];
+         var br = [1, -1];
+         var directions = [null, tr, br, r, tl, t, null, tr, bl, null, b, br, l, tl, bl, null]
+         var nx = 700;
+         var ny = 700;
+         var cx = w / nx;
+         var cy = h / ny;
+         var n = nx * ny;
+         var threshold = 15;
+         var grid = [];
+         for(var i = 0; i < n; i++){
+             var x = (i % nx) * cx;
+             var y = (Math.floor(i / ny)) * cy;
+             var value = 0.5 + 0.5 * noise.noise(x * scale, y * scale);
+             value = Math.round(value * threshold) / threshold;
+             grid[i] = value;
+
+             var gs = Math.floor(value * 0xff);
+             out.fillStyle = "#" + ((gs << 16) | (gs << 8) | gs).toString(16);
+             out.fillRect(x, y, cx, cy);
+         }
+
+
+        </script>
+    </body>
+</html>

@@ -1,52 +1,36 @@
 <html>
-<head>
-	<title>goto10</title>
-	<link rel="stylesheet" type="text/css" href="../css/styles.css"/>
-</head>
-<body>
-	<script type="text/javascript" src="../libs/tools.js"></script>
-	<script type="text/javascript">
-		var stage = new tools.Stage(700, 700);
-		var out = stage.out;
-		
-		
-		var size = 20;
-		
-		
-		out.strokeStyle = "black";
-		out.lineCap = "square";
-		out.lineWidth = 0.5 * size * Math.sqrt(2);
-		var n = size * size;
-		var w = stage.width / size;
-		var h = stage.height / size;
-		out.beginPath();
-		for(var i = 0; i < n; i++)
-		{
-			var posX = w * (i % size);
-			var posY = h * Math.floor(i / size);
-			if(Math.random() < 0.5)
-			{
-				out.moveTo(posX + w, posY);
-				out.lineTo(posX, posY + h);
-			}
-			else {
-				out.moveTo(posX, posY);
-				out.lineTo(posX + w, posY + h);
-			}
-		}
-		out.stroke();
-	</script>
-	
-	<script type="text/javascript">
-	  var _gaq = _gaq || [];
-	  _gaq.push(['_setAccount', 'UA-6101672-1']);
-	  _gaq.push(['_trackPageview']);
+    <head>
+        <title>goto10</title>
+        <link rel="stylesheet" type="text/css" href="../css/styles.css"/>
+    </head>
+    <body>
+        <script type="text/javascript" src="../libs/tools.js"></script>
+        <script type="text/javascript">
+         var stage = new tools.Stage(700, 700);
+         var out = stage.out;
 
-	  (function() {
-		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-	  })();
-	</script>
-</body>
+         var size = 20;
+
+         out.strokeStyle = "black";
+         out.lineCap = "square";
+         out.lineWidth = 0.5 * size * Math.sqrt(2);
+         var n = size * size;
+         var w = stage.width / size;
+         var h = stage.height / size;
+         out.beginPath();
+         for(var i = 0; i < n; i++){
+             var posX = w * (i % size);
+             var posY = h * Math.floor(i / size);
+             if(Math.random() < 0.5){
+                 out.moveTo(posX + w, posY);
+                 out.lineTo(posX, posY + h);
+             }
+             else {
+                 out.moveTo(posX, posY);
+                 out.lineTo(posX + w, posY + h);
+             }
+         }
+         out.stroke();
+        </script>
+    </body>
 </html>

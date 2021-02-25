@@ -1,155 +1,135 @@
 <html>
-<head>
-	<title>Repulsion</title>
-	<link rel="stylesheet" type="text/css" href="../css/styles.css"/>
-</head>
-<body>
-	<script type="text/javascript" src="../libs/tools.js"></script>
-	<script type="text/javascript">
-		tools.mixin(tools, this);
-		
-		var w = 700;
-		var h = 700;
-		var stage = new tools.Stage(w, h);
-		var out = stage.out;
-		var mouse = new Mouse(stage.canvas);
-		//out.lineCap = out.lineJoin = "round";
-		//out.lineCap = "round";
-		
-		var spr1 = 0.005;
-		var spr2 = 0.01;
-		var fr = 0.95;
-		var radius = 200;
-		
-		function Point(x, y)
-		{
-			this.x = this.tx = x;
-			this.y = this.ty = y;
-			this.vx = this.vy = 0;
-			this.radius = 20;
-			this.radius = Math.random() * 10 + 2;
-			this.color = "black";
-		}
-		
-		
-		Point.prototype = {
-		
-			update : function()
-			{
-				this.vx += spr1 * (this.tx - this.x);
-				this.vy += spr1 * (this.ty - this.y);
-		
-				this.vx *= fr;
-				this.vy *= fr;
-		
-				this.x += this.vx;
-				this.y += this.vy;
-			},
-		
-			
-			avoid : function(mx, my, radius)
-			{
-				var dx = mx - this.x;
-				var dy = my - this.y;
-				var dist = dx * dx + dy * dy;
-				if(dx * dx + dy * dy < radius * radius)
-				{
-					var r = radius / Math.sqrt(dist);
-					this.vx += spr2 * (mx - dx * r - this.x);
-					this.vy += spr2 * (my - dy * r - this.y);
-				}
-			},
-		
-			draw : function(out)
-			{
-				var r = this.radius;
-				out.beginPath();
-				//out.fillStyle = this.color;
-				//out.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
-				//out.fill();
-				out.strokeStyle = this.color;
-				out.moveTo(this.x - 2 * this.vx, this.y - 2 * this.vy);
-				out.lineTo(this.x, this.y);
-				out.lineWidth = 2 * this.radius;
-				out.stroke();
-			}
-		}
-		
-		
-		var centers = [];
-		var nCenters = 1;
-		for(var i = 0; i < nCenters; i++)
-		{
-			var c = {};
-			c.x = Math.random() * w;
-			c.y = Math.random() * h;
-			c.vx = 4 * (Math.random()* 2 - 1);
-			c.vy = 4 * (Math.random()* 2 - 1);
-			c.radius = Math.random() * 100 + 100;
-			centers[i] = c;
-		}
-		
-		var pts = [];
-		var nPts = 1000;
-		
-		var globalHue = Math.random() * 360;
-		
-		for(var i = 0; i < nPts; i++)
-		{
-			var p = new Point(Math.random() * w, Math.random() * h);
-			//p.x = Math.random() * w;
-			//p.y = Math.random() * h;
-			var hue = Math.round(globalHue + Math.random() * 150);
-			var sat = 100;
-			var lig = Math.round(Math.random() * 100);
-			out.fillStyle = "hsl(" + hue + ", " + sat + "%, " + lig + "%)";
-			p.color = out.fillStyle;
-			pts[i] = p;
-		}
-		
-		new Loop(function(){
-		
-			out.fillStyle = "hsl(" + Math.round(globalHue) + ", 50%, 50%)";
-			//out.fillRect(0, 0, w, h);
-			for(var i = 0; i < nCenters; i++)
-			{
-				var c = centers[i];
-				c.vx = c.vx * 0.99 + 0.5 * (Math.random() * 2 - 1);
-				c.vy = c.vy * 0.99 + 0.5 * (Math.random() * 2 - 1);
-				c.x += c.vx;
-				c.y += c.vy;
-				if(c.x < 0 || c.x > w) c.vx *= -1;
-				if(c.y < 0 || c.y > w) c.vy *= -1;
-				if(c.x < 0) c.x = 0;
-				else if(c.x > w) c.x = w;
-				if(c.y < 0) c.y = 0;
-				else if(c.y > h) c.y = h;
-			}
-			for(var i = 0; i < nPts; i++)
-			{
-				var p = pts[i];
-				for(var j = 0; j < nCenters; j++)
-				{
-					var c = centers[j];
-					p.avoid(c.x, c.y, c.radius);
-				}
-				if(mouse.x + mouse.y > 0)
-					p.avoid(mouse.x, mouse.y, radius);
-				p.update();
-				p.draw(out);
-			}
-		});</script>
-	
-	<script type="text/javascript">
-	  var _gaq = _gaq || [];
-	  _gaq.push(['_setAccount', 'UA-6101672-1']);
-	  _gaq.push(['_trackPageview']);
+    <head>
+        <title>Repulsion</title>
+        <link rel="stylesheet" type="text/css" href="../css/styles.css"/>
+    </head>
+    <body>
+        <script type="text/javascript" src="../libs/tools.js"></script>
+        <script type="text/javascript">
+         tools.mixin(tools, this);
 
-	  (function() {
-		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-	  })();
-	</script>
-</body>
+         var w = 700;
+         var h = 700;
+         var stage = new tools.Stage(w, h);
+         var out = stage.out;
+         var mouse = new Mouse(stage.canvas);
+         //out.lineCap = out.lineJoin = "round";
+         //out.lineCap = "round";
+
+         var spr1 = 0.005;
+         var spr2 = 0.01;
+         var fr = 0.95;
+         var radius = 200;
+
+         function Point(x, y){
+             this.x = this.tx = x;
+             this.y = this.ty = y;
+             this.vx = this.vy = 0;
+             this.radius = 20;
+             this.radius = Math.random() * 10 + 2;
+             this.color = "black";
+         }
+
+
+         Point.prototype = {
+
+             update : function(){
+                 this.vx += spr1 * (this.tx - this.x);
+                 this.vy += spr1 * (this.ty - this.y);
+
+                 this.vx *= fr;
+                 this.vy *= fr;
+
+                 this.x += this.vx;
+                 this.y += this.vy;
+             },
+
+
+             avoid : function(mx, my, radius) {
+                 var dx = mx - this.x;
+                 var dy = my - this.y;
+                 var dist = dx * dx + dy * dy;
+                 if(dx * dx + dy * dy < radius * radius)
+                 {
+                     var r = radius / Math.sqrt(dist);
+                     this.vx += spr2 * (mx - dx * r - this.x);
+                     this.vy += spr2 * (my - dy * r - this.y);
+                 }
+             },
+
+             draw : function(out) {
+                 var r = this.radius;
+                 out.beginPath();
+                 //out.fillStyle = this.color;
+                 //out.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
+                 //out.fill();
+                 out.strokeStyle = this.color;
+                 out.moveTo(this.x - 2 * this.vx, this.y - 2 * this.vy);
+                 out.lineTo(this.x, this.y);
+                 out.lineWidth = 2 * this.radius;
+                 out.stroke();
+             }
+         }
+
+
+         var centers = [];
+         var nCenters = 1;
+         for(var i = 0; i < nCenters; i++) {
+             var c = {};
+             c.x = Math.random() * w;
+             c.y = Math.random() * h;
+             c.vx = 4 * (Math.random()* 2 - 1);
+             c.vy = 4 * (Math.random()* 2 - 1);
+             c.radius = Math.random() * 100 + 100;
+             centers[i] = c;
+         }
+
+         var pts = [];
+         var nPts = 1000;
+
+         var globalHue = Math.random() * 360;
+
+         for(var i = 0; i < nPts; i++) {
+             var p = new Point(Math.random() * w, Math.random() * h);
+             //p.x = Math.random() * w;
+             //p.y = Math.random() * h;
+             var hue = Math.round(globalHue + Math.random() * 150);
+             var sat = 100;
+             var lig = Math.round(Math.random() * 100);
+             out.fillStyle = "hsl(" + hue + ", " + sat + "%, " + lig + "%)";
+             p.color = out.fillStyle;
+             pts[i] = p;
+         }
+
+         new Loop(function(){
+
+             out.fillStyle = "hsl(" + Math.round(globalHue) + ", 50%, 50%)";
+             //out.fillRect(0, 0, w, h);
+             for(var i = 0; i < nCenters; i++) {
+                 var c = centers[i];
+                 c.vx = c.vx * 0.99 + 0.5 * (Math.random() * 2 - 1);
+                 c.vy = c.vy * 0.99 + 0.5 * (Math.random() * 2 - 1);
+                 c.x += c.vx;
+                 c.y += c.vy;
+                 if(c.x < 0 || c.x > w) c.vx *= -1;
+                 if(c.y < 0 || c.y > w) c.vy *= -1;
+                 if(c.x < 0) c.x = 0;
+                 else if(c.x > w) c.x = w;
+                 if(c.y < 0) c.y = 0;
+                 else if(c.y > h) c.y = h;
+             }
+             for(var i = 0; i < nPts; i++) {
+                 var p = pts[i];
+                 for(var j = 0; j < nCenters; j++) {
+                     var c = centers[j];
+                     p.avoid(c.x, c.y, c.radius);
+                 }
+                 if(mouse.x + mouse.y > 0){
+                     p.avoid(mouse.x, mouse.y, radius);
+                 }
+                 p.update();
+                 p.draw(out);
+             }
+         });</script>
+    </body>
 </html>

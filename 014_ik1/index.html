@@ -1,143 +1,115 @@
 <html>
-<head>
-	<title>ik 1</title>
-	<link rel="stylesheet" type="text/css" href="../css/styles.css"/>
-</head>
-<body>
-	<script type="text/javascript" src="../libs/tools.js"></script>
-	<script type="text/javascript">
-		var stage = new tools.Stage(700, 700);
-		var friction = 0.90;
-		
-		function Line(n, segmentLength)
-		{
-			this.pts = [];
-			this.segmentLength = segmentLength;
-			for(var i = 0; i < n; i++)
-			{
-				this.pts.push(new Particle());
-			}
-		}
-		
-		Line.prototype = {
-		
-			update : function()
-			{
-				var n = this.pts.length;
-				for(var i = 1; i < n; i++)
-				{
-					var pt = this.pts[i];
-					pt.brownian(friction, 0.25);
-					var opt = this.pts[i - 1];
-					var dx = pt.x - opt.x;
-					var dy = pt.y - opt.y;
-					var ratio = this.segmentLength / Math.sqrt(dx * dx + dy * dy);
-					pt.x = opt.x + ratio * dx;
-					pt.y = opt.y + ratio * dy;
-				}
-			},
-		
-			draw : function(ctx)
-			{
-				var n = this.pts.length;
-				var pt = this.pts[0];
-				ctx.moveTo(pt.x , pt.y);
-				for(var i = 2; i < n; i ++)
-				{
-					pt = this.pts[i];
-					var opt = this.pts[i - 1];
-					ctx.quadraticCurveTo(opt.x , opt.y, 0.5 * (opt.x + pt.x), 0.5 * (opt.y + pt.y));
-				}
-			}
-		}
-		
-		function Particle()
-		{
-			this.x = 0;
-			this.y = 0;
-			this.vx = 0;
-			this.vy = 0;
-		}
-		
-		Particle.prototype = {
-		
-			brownian : function(fr, v)
-			{
-				this.vx = this.vx * fr + v * (Math.random() * 2 - 1);
-				this.vy = this.vy * fr + v * (Math.random() * 2 - 1);
-				this.x += this.vx;
-				this.y += this.vy;
-			}
-		}
-		var nLines = 200;
-		var lines = [];
-		for(var i = 0; i < nLines; i++)
-		{
-			var line = new Line(50, 15);
-			var nPts = line.pts.length;
-			for(var j = 0; j < nPts; j++)
-			{
-				var pt = line.pts[j];
-				pt.x = Math.random() * stage.width;
-				pt.y = Math.random() * stage.height;
-			}
-			lines[i] = line;
-		}
-		
-		function update()
-		{
-			var out = stage.out;
-			out.clearRect(0, 0, stage.width, stage.height);
-			out.beginPath();
-			out.strokeStyle = "black";
-			out.lineWidth = 1;
-			out.lineJoin = "round";
-			var margin = 50;
-			for(var i = 0; i < nLines; i++)
-			{
-				var line = lines[i];
-				var head = line.pts[0];
-				head.brownian(friction, 1.5);
-				if(head.x < -margin)
-				{
-					head.x = -margin;
-					head.vx *= -1;
-				}
-				else if(head.x > stage.width + margin)
-				{
-					head.x = stage.width + margin;
-					head.vx *= -1;
-				}
-		
-				if(head.y < -margin)
-				{
-					head.y = -margin;
-					head.vy *= -1;
-				}
-				else if(head.y > stage.height + margin)
-				{
-					head.y = stage.height + margin;
-					head.vy *= -1;
-				}
-				line.update();
-				line.draw(stage.out);
-			}
-			out.stroke();
-		}
-		
-		new tools.Loop(update, this);
-	</script>
-	
-	<script type="text/javascript">
-	  var _gaq = _gaq || [];
-	  _gaq.push(['_setAccount', 'UA-6101672-1']);
-	  _gaq.push(['_trackPageview']);
+    <head>
+        <title>ik 1</title>
+        <link rel="stylesheet" type="text/css" href="../css/styles.css"/>
+    </head>
+    <body>
+        <script type="text/javascript" src="../libs/tools.js"></script>
+        <script type="text/javascript">
+         var stage = new tools.Stage(700, 700);
+         var friction = 0.90;
 
-	  (function() {
-		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-	  })();
-	</script>
-</body>
+         function Line(n, segmentLength){
+             this.pts = [];
+             this.segmentLength = segmentLength;
+             for(var i = 0; i < n; i++){
+                 this.pts.push(new Particle());
+             }
+         }
+
+         Line.prototype = {
+
+             update : function(){
+                 var n = this.pts.length;
+                 for(var i = 1; i < n; i++){
+                     var pt = this.pts[i];
+                     pt.brownian(friction, 0.25);
+                     var opt = this.pts[i - 1];
+                     var dx = pt.x - opt.x;
+                     var dy = pt.y - opt.y;
+                     var ratio = this.segmentLength / Math.sqrt(dx * dx + dy * dy);
+                     pt.x = opt.x + ratio * dx;
+                     pt.y = opt.y + ratio * dy;
+                 }
+             },
+
+             draw : function(ctx){
+                 var n = this.pts.length;
+                 var pt = this.pts[0];
+                 ctx.moveTo(pt.x , pt.y);
+                 for(var i = 2; i < n; i ++){
+                     pt = this.pts[i];
+                     var opt = this.pts[i - 1];
+                     ctx.quadraticCurveTo(opt.x , opt.y, 0.5 * (opt.x + pt.x), 0.5 * (opt.y + pt.y));
+                 }
+             }
+         }
+
+         function Particle(){
+             this.x = 0;
+             this.y = 0;
+             this.vx = 0;
+             this.vy = 0;
+         }
+
+         Particle.prototype = {
+
+             brownian : function(fr, v){
+                 this.vx = this.vx * fr + v * (Math.random() * 2 - 1);
+                 this.vy = this.vy * fr + v * (Math.random() * 2 - 1);
+                 this.x += this.vx;
+                 this.y += this.vy;
+             }
+         }
+         var nLines = 200;
+         var lines = [];
+         for(var i = 0; i < nLines; i++){
+             var line = new Line(50, 15);
+             var nPts = line.pts.length;
+             for(var j = 0; j < nPts; j++){
+                 var pt = line.pts[j];
+                 pt.x = Math.random() * stage.width;
+                 pt.y = Math.random() * stage.height;
+             }
+             lines[i] = line;
+         }
+
+         function update(){
+             var out = stage.out;
+             out.clearRect(0, 0, stage.width, stage.height);
+             out.beginPath();
+             out.strokeStyle = "black";
+             out.lineWidth = 1;
+             out.lineJoin = "round";
+             var margin = 50;
+             for(var i = 0; i < nLines; i++){
+                 var line = lines[i];
+                 var head = line.pts[0];
+                 head.brownian(friction, 1.5);
+                 if(head.x < -margin){
+                     head.x = -margin;
+                     head.vx *= -1;
+                 }
+                 else if(head.x > stage.width + margin){
+                     head.x = stage.width + margin;
+                     head.vx *= -1;
+                 }
+
+                 if(head.y < -margin){
+                     head.y = -margin;
+                     head.vy *= -1;
+                 }
+                 else if(head.y > stage.height + margin){
+                     head.y = stage.height + margin;
+                     head.vy *= -1;
+                 }
+                 line.update();
+                 line.draw(stage.out);
+             }
+             out.stroke();
+         }
+
+         new tools.Loop(update, this);
+        </script>
+    </body>
 </html>

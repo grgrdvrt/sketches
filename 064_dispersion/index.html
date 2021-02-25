@@ -1,80 +1,64 @@
 <html>
-<head>
-	<title>dispersion</title>
-	<link rel="stylesheet" type="text/css" href="../css/styles.css"/>
-</head>
-<body>
-	<script type="text/javascript" src="../libs/tools.js"></script>
-	<script type="text/javascript">
-		var stage = new tools.Stage(700, 700);
-		var mouse = new tools.Mouse(stage.canvas);
-		
-		var out = stage.out;
-		
-		out.fillStyle = "black";
-		
-		var map = [];
-		
-		var iteration = 0;
-		
-		var head, tail;
-		addPosition(0.5 * stage.width, 0.5 * stage.height)
-		
-		
-		function update()
-		{
-			while(head && head.iteration == iteration)
-			{
-				processPos(head);
-				head = head.next;
-			}
-			iteration++;
-		}
-		
-		function processPos(pos)
-		{
-			out.fillRect(pos.x, pos.y, 1, 1);
-		
-			addPosition(pos.x - 1, pos.y - 1);
-			addPosition(pos.x, pos.y - 1);
-			addPosition(pos.x + 1, pos.y - 1);
-			addPosition(pos.x - 1, pos.y);
-			addPosition(pos.x + 1, pos.y);
-			addPosition(pos.x - 1, pos.y + 1);
-			addPosition(pos.x, pos.y + 1);
-			addPosition(pos.x + 1, pos.y + 1);
-		
-			if(!head.next) processPos(pos);
-		}
-		
-		function addPosition(x, y)
-		{
-			if(x < 0 || y < 0 || x > stage.width || y > stage.height) return;
-			if(head && Math.random() < 0.5)return;
-			if(map[y * stage.width + x]) return;
-			var pos = {x:x, y:y};
-			if(!head) head = pos;
-			else tail.next = pos;
-			tail = pos;
-		
-			pos.iteration = iteration + 1;
-		
-			map[y * stage.width + x] = true;
-		}
-		
-		new tools.Loop(update, this);
-	</script>
-	
-	<script type="text/javascript">
-	  var _gaq = _gaq || [];
-	  _gaq.push(['_setAccount', 'UA-6101672-1']);
-	  _gaq.push(['_trackPageview']);
+    <head>
+        <title>dispersion</title>
+        <link rel="stylesheet" type="text/css" href="../css/styles.css"/>
+    </head>
+    <body>
+        <script type="text/javascript" src="../libs/tools.js"></script>
+        <script type="text/javascript">
+         var stage = new tools.Stage(700, 700);
+         var mouse = new tools.Mouse(stage.canvas);
 
-	  (function() {
-		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-	  })();
-	</script>
-</body>
+         var out = stage.out;
+
+         out.fillStyle = "black";
+
+         var map = [];
+
+         var iteration = 0;
+
+         var head, tail;
+         addPosition(0.5 * stage.width, 0.5 * stage.height)
+
+
+         function update(){
+             while(head && head.iteration == iteration){
+                 processPos(head);
+                 head = head.next;
+             }
+             iteration++;
+         }
+
+         function processPos(pos){
+             out.fillRect(pos.x, pos.y, 1, 1);
+
+             addPosition(pos.x - 1, pos.y - 1);
+             addPosition(pos.x, pos.y - 1);
+             addPosition(pos.x + 1, pos.y - 1);
+             addPosition(pos.x - 1, pos.y);
+             addPosition(pos.x + 1, pos.y);
+             addPosition(pos.x - 1, pos.y + 1);
+             addPosition(pos.x, pos.y + 1);
+             addPosition(pos.x + 1, pos.y + 1);
+
+             if(!head.next) processPos(pos);
+         }
+
+         function addPosition(x, y){
+             if(x < 0 || y < 0 || x > stage.width || y > stage.height) return;
+             if(head && Math.random() < 0.5)return;
+             if(map[y * stage.width + x]) return;
+             var pos = {x:x, y:y};
+             if(!head) head = pos;
+             else tail.next = pos;
+             tail = pos;
+
+             pos.iteration = iteration + 1;
+
+             map[y * stage.width + x] = true;
+         }
+
+         new tools.Loop(update, this);
+        </script>
+    </body>
 </html>

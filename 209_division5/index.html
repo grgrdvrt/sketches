@@ -1,228 +1,198 @@
-
 <html>
-<head>
-	<title>division 1</title>
-  <style>
-    html, body{
-      margin:0;
-      padding:0;
-      overflow:hidden;
-    }
-  </style>
-</head>
-<body>
-	<script type="text/javascript" src="../libs/three.min.js"></script>
-  <script type="text/javascript" src="../libs/TrackballControls.js"></script>
-	<script type="text/javascript" src="../libs/TweenLite.min.js"></script>
-	<script type="text/javascript">
+    <head>
+        <title>division 1</title>
+        <style>
+         html, body{
+             margin:0;
+             padding:0;
+             overflow:hidden;
+         }
+        </style>
+    </head>
+    <body>
+        <script type="text/javascript" src="../libs/three.min.js"></script>
+        <script type="text/javascript" src="../libs/TrackballControls.js"></script>
+        <script type="text/javascript" src="../libs/TweenLite.min.js"></script>
+        <script type="text/javascript">
 
-    var scene = new THREE.Scene();
-    var camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 1000 );
-    camera.position.z = 105;
+         var scene = new THREE.Scene();
+         var camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 1000 );
+         camera.position.z = 105;
 
-    var renderer = new THREE.WebGLRenderer();
-    renderer.setSize( window.innerWidth, window.innerHeight );
-    document.body.appendChild( renderer.domElement );
+         var renderer = new THREE.WebGLRenderer();
+         renderer.setSize( window.innerWidth, window.innerHeight );
+         document.body.appendChild( renderer.domElement );
 
-    var geometry = new THREE.SphereGeometry( 1, 32, 32 );
-    var material = new THREE.MeshPhongMaterial( { color: 0x999999, shininess: 1} );
-    var sphereMesh = new THREE.Mesh( geometry, material );
+         var geometry = new THREE.SphereGeometry( 1, 32, 32 );
+         var material = new THREE.MeshPhongMaterial( { color: 0x999999, shininess: 1} );
+         var sphereMesh = new THREE.Mesh( geometry, material );
 
-    var controls = new THREE.TrackballControls(camera, renderer.element);
+         var controls = new THREE.TrackballControls(camera, renderer.element);
 
-    var group = new THREE.Group();
-    scene.add(group);
+         var group = new THREE.Group();
+         scene.add(group);
 
-    var lights = initLights(10);
-    lights.forEach(function(light){
-      group.add(light);
-    });
-		
-		
-		var spring1 = 0.005;
-		var spring2 = 0.01;
-		var friction = 0.95;
-		var radius = 10;
-		var generation = 1;
-		var maxGenerations = 10;
-		
-		var ball = createBall();
-    scene.add(ball);
-    var scaleInit = 20;
-    ball.scale.multiplyScalar(scaleInit);
-		var balls = [ball];
-
-    function initLights(nLights)
-    {
-      var lights = [];
-
-      var globalHue = Math.random() * 360;
-      var sat = Math.round(Math.random() * 50) + 50;
-      var lig = 60;
-
-      for(var i = 0; i < nLights; i++){
-
-        var hue = Math.round(globalHue + Math.random() * 120);
-        var color = "hsl(" + hue + ", " + sat + "%, " + lig + "%)";
-
-        var light = new THREE.PointLight(color, 2, 30, 1);
-        light.position.set(
-          Math.random() * 2 - 1,
-          Math.random() * 2 - 1,
-          Math.random() * 2 - 1
-        );
-        light.position.multiplyScalar(55);
-        lights[i] = light;
-      }
-      var bgColor = new THREE.Color();
-      bgColor.setHSL(globalHue / 360, sat / 100, lig / 100);
-      bgColor.multiplyScalar(0.2);
-      scene.add(new THREE.AmbientLight(bgColor));
-      bgColor.multiplyScalar(0.1);
-      renderer.setClearColor(bgColor);
-      return lights;
-    }
-
-    var pool = [];
-
-    function createBall()
-    {
-			var ball = new THREE.Mesh(geometry, material);
-      ball.vel = new THREE.Vector3();
-      return ball;
-    }
-
-    function releaseBall(ball)
-    {
-      group.remove(ball);
-    }
-		
-		function addBall(parent)
-		{
-      var ball;
-      if(pool.length > 0){
-        ball = pool.pop();
-      }
-      else ball = createBall();
-      ball.position.set(
-          Math.random() * 2 - 1,
-          Math.random() * 2 - 1,
-          Math.random() * 2 - 1
-      ).add(parent.position);
-      ball.vel.copy(parent.vel);
-      group.add(ball);
-			balls.push(ball);
-
-      ball.scale.copy(parent.scale);
-      if(parent.scale.x > 1){
-        var scale = 0.8 * parent.scale.x;
-        TweenLite.to(ball.scale, 0.3, {x:scale, y:scale, z:scale});
-        TweenLite.to(parent.scale, 0.3, {x:scale, y:scale, z:scale});
-      }
-		}
-		
-		function divide()
-		{
-      var n = balls.length;
-      var n2 = n;
-			for(var i = 0; i < n2; i++)
-      {
-        var ball = balls[i];
-        if(!ball.isDeleted && n < Math.pow(2, maxGenerations)){
-          addBall(ball);
-          n++;
-        }
-      }
-		}
-		
-		
-    var time = 0;
-		function update()
-		{
-      var oldTime = time;
-      time = Date.now();
-      controls.update(time - oldTime);
-
-			updatePositions();
-
-      renderer.render(scene, camera);
-      requestAnimationFrame( update );
-		}
-		
-    var acc = new THREE.Vector3();
-    var diff = new THREE.Vector3();
-		function updatePositions()
-		{
-			var i, ball;
-      var n = balls.length;
-			for(i = 1; i < n; i++)
-			{
-				ball = balls[i];
-				for(var j = 0; j < i; j++)
-				{
-					var ball2 = balls[j];
-          diff.copy(ball.position).sub(ball2.position);
-          //console.log("diff", diff);
-					var d = diff.lengthSq();
-					if(d === 0) d = 1;
-          var rad = radius + 2 * ball.scale.x
-					if(d < rad * rad)
-					{
-						var r = rad / Math.sqrt(d);
-            //console.log(ball.position, ball2.position);
-            acc.set(0, 0, 0).addVectors(
-              ball2.position,
-              diff.multiplyScalar(r).sub(ball.position)
-            ).multiplyScalar(0.5 * spring1);
-              //0.5 * spring1 * (ball2.position.x + r * diff.x - ball.position.x),
-
-            ball.vel.add(acc);
-						ball2.vel.sub(acc);
-					}
-				}
-			}
-
-			for(i = 0; i < n; i++)
-			{
-				var ball = balls[i];
-        ball.vel.multiplyScalar(friction);
-        ball.position.add(ball.vel);
-        if(ball.position.length() > 65 && !ball.isDeleted)
-				{
-          ball.isDeleted = true;
-          balls.splice(i, 1);
-          i--;
-          n--;
-          TweenLite.to(ball.scale, 0.9, {x:0.01, y:0.01, z:0.01, onComplete:function(){
-            releaseBall(ball);
-            ball.isDeleted = false;
-          }});
-				}
-			}
-		}
-		
-		
-		var interval = setInterval(divide, 1000);
-    //divide();
-		
-		
+         var lights = initLights(10);
+         lights.forEach(function(light){
+             group.add(light);
+         });
 
 
-			update();
-  </script>
-		
-	
-	<script type="text/javascript">
-	  var _gaq = _gaq || [];
-	  _gaq.push(['_setAccount', 'UA-6101672-1']);
-	  _gaq.push(['_trackPageview']);
+         var spring1 = 0.005;
+         var spring2 = 0.01;
+         var friction = 0.95;
+         var radius = 10;
+         var generation = 1;
+         var maxGenerations = 10;
 
-	  (function() {
-		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-	  })();
-	</script>
-</body>
+         var ball = createBall();
+         scene.add(ball);
+         var scaleInit = 20;
+         ball.scale.multiplyScalar(scaleInit);
+         var balls = [ball];
+
+         function initLights(nLights){
+             var lights = [];
+
+             var globalHue = Math.random() * 360;
+             var sat = Math.round(Math.random() * 50) + 50;
+             var lig = 60;
+
+             for(var i = 0; i < nLights; i++){
+
+                 var hue = Math.round(globalHue + Math.random() * 120);
+                 var color = "hsl(" + hue + ", " + sat + "%, " + lig + "%)";
+
+                 var light = new THREE.PointLight(color, 2, 30, 1);
+                 light.position.set(
+                     Math.random() * 2 - 1,
+                     Math.random() * 2 - 1,
+                     Math.random() * 2 - 1
+                 );
+                 light.position.multiplyScalar(55);
+                 lights[i] = light;
+             }
+             var bgColor = new THREE.Color();
+             bgColor.setHSL(globalHue / 360, sat / 100, lig / 100);
+             bgColor.multiplyScalar(0.2);
+             scene.add(new THREE.AmbientLight(bgColor));
+             bgColor.multiplyScalar(0.1);
+             renderer.setClearColor(bgColor);
+             return lights;
+         }
+
+         var pool = [];
+
+         function createBall(){
+             var ball = new THREE.Mesh(geometry, material);
+             ball.vel = new THREE.Vector3();
+             return ball;
+         }
+
+         function releaseBall(ball){
+             group.remove(ball);
+         }
+
+         function addBall(parent){
+             var ball;
+             if(pool.length > 0){
+                 ball = pool.pop();
+             }
+             else ball = createBall();
+             ball.position.set(
+                 Math.random() * 2 - 1,
+                 Math.random() * 2 - 1,
+                 Math.random() * 2 - 1
+             ).add(parent.position);
+             ball.vel.copy(parent.vel);
+             group.add(ball);
+             balls.push(ball);
+
+             ball.scale.copy(parent.scale);
+             if(parent.scale.x > 1){
+                 var scale = 0.8 * parent.scale.x;
+                 TweenLite.to(ball.scale, 0.3, {x:scale, y:scale, z:scale});
+                 TweenLite.to(parent.scale, 0.3, {x:scale, y:scale, z:scale});
+             }
+         }
+
+         function divide(){
+             var n = balls.length;
+             var n2 = n;
+             for(var i = 0; i < n2; i++){
+                 var ball = balls[i];
+                 if(!ball.isDeleted && n < Math.pow(2, maxGenerations)){
+                     addBall(ball);
+                     n++;
+                 }
+             }
+         }
+
+
+         var time = 0;
+         function update(){
+             var oldTime = time;
+             time = Date.now();
+             controls.update(time - oldTime);
+
+             updatePositions();
+
+             renderer.render(scene, camera);
+             requestAnimationFrame( update );
+         }
+
+         var acc = new THREE.Vector3();
+         var diff = new THREE.Vector3();
+         function updatePositions(){
+             var i, ball;
+             var n = balls.length;
+             for(i = 1; i < n; i++){
+                 ball = balls[i];
+                 for(var j = 0; j < i; j++){
+                     var ball2 = balls[j];
+                     diff.copy(ball.position).sub(ball2.position);
+                     //console.log("diff", diff);
+                     var d = diff.lengthSq();
+                     if(d === 0) d = 1;
+                     var rad = radius + 2 * ball.scale.x
+                     if(d < rad * rad){
+                         var r = rad / Math.sqrt(d);
+                         //console.log(ball.position, ball2.position);
+                         acc.set(0, 0, 0).addVectors(
+                             ball2.position,
+                             diff.multiplyScalar(r).sub(ball.position)
+                         ).multiplyScalar(0.5 * spring1);
+                         //0.5 * spring1 * (ball2.position.x + r * diff.x - ball.position.x),
+
+                         ball.vel.add(acc);
+                         ball2.vel.sub(acc);
+                     }
+                 }
+             }
+
+             for(i = 0; i < n; i++){
+                 var ball = balls[i];
+                 ball.vel.multiplyScalar(friction);
+                 ball.position.add(ball.vel);
+                 if(ball.position.length() > 65 && !ball.isDeleted){
+                     ball.isDeleted = true;
+                     balls.splice(i, 1);
+                     i--;
+                     n--;
+                     TweenLite.to(ball.scale, 0.9, {x:0.01, y:0.01, z:0.01, onComplete:function(){
+                         releaseBall(ball);
+                         ball.isDeleted = false;
+                     }});
+                 }
+             }
+         }
+
+         var interval = setInterval(divide, 1000);
+         //divide();
+
+         update();
+        </script>
+
+
+    </body>
 </html>
-

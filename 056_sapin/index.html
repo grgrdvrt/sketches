@@ -1,59 +1,46 @@
 <html>
-<head>
-	<title>sapin</title>
-	<link rel="stylesheet" type="text/css" href="../css/styles.css"/>
-</head>
-<body>
-	<script type="text/javascript" src="../libs/tools.js"></script>
-	<script type="text/javascript">
-		var stage = new tools.Stage(700, 700);
-		var out = stage.out;
-		
-		var n = 1000;
-		var radius = stage.width / 3;
-		var radius2 = 50;
-		
-		var ran = Math.random;
-		
-		for(var i = 0; i < n; i++)
-		{
-			var posY = Math.sqrt(ran()) * stage.height;
-			var ratio = Math.pow(posY / stage.height, 1.7);
-			var rad = ran() * radius * ratio;
-			
-			var a = ran() * Math.PI;
-			
-			posX = 0.5 * stage.width + rad * Math.cos(a);
-			
-			var r = (0.6 * ratio + 0.4) * radius2;
-			var r2 = Math.cos(a);
-			var pt1 = {x:r2 * ran2() * r + posX, y:ran2() * r + posY};
-			var pt2 = {x:r2 * ran2() * r + posX, y:ran2() * r + posY};
-			var pt3 = {x:r2 * ran2() * r + posX, y:ran2() * r + posY};
-			
-			
-			out.fillStyle = "hsl(100, " + (50 + 10 * ran()) + "%, " + (50 + 10 *(ran() * 2 - 1)) + "%)";
-			out.beginPath();
-			out.moveTo(pt1.x, pt1.y);
-			out.lineTo(pt2.x, pt2.y);
-			out.lineTo(pt3.x, pt3.y);
-			out.lineTo(pt1.x, pt1.y);
-			out.fill();
-		}
-		function ran2(){return 2 * ran() - 1};
-		
-	</script>
-	
-	<script type="text/javascript">
-	  var _gaq = _gaq || [];
-	  _gaq.push(['_setAccount', 'UA-6101672-1']);
-	  _gaq.push(['_trackPageview']);
+    <head>
+        <title>sapin</title>
+        <link rel="stylesheet" type="text/css" href="../css/styles.css"/>
+    </head>
+    <body>
+        <script type="text/javascript" src="../libs/tools.js"></script>
+        <script type="text/javascript">
+         var stage = new tools.Stage(700, 700);
+         var out = stage.out;
 
-	  (function() {
-		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-	  })();
-	</script>
-</body>
+         var n = 1000;
+         var radius = stage.width / 3;
+         var radius2 = 50;
+
+         var ran = Math.random;
+
+         for(var i = 0; i < n; i++){
+             var posY = Math.sqrt(ran()) * stage.height;
+             var ratio = Math.pow(posY / stage.height, 1.7);
+             var rad = ran() * radius * ratio;
+
+             var a = ran() * Math.PI;
+
+             posX = 0.5 * stage.width + rad * Math.cos(a);
+
+             var r = (0.6 * ratio + 0.4) * radius2;
+             var r2 = Math.cos(a);
+             var pt1 = {x:r2 * ran2() * r + posX, y:ran2() * r + posY};
+             var pt2 = {x:r2 * ran2() * r + posX, y:ran2() * r + posY};
+             var pt3 = {x:r2 * ran2() * r + posX, y:ran2() * r + posY};
+
+
+             out.fillStyle = "hsl(100, " + (50 + 10 * ran()) + "%, " + (50 + 10 *(ran() * 2 - 1)) + "%)";
+             out.beginPath();
+             out.moveTo(pt1.x, pt1.y);
+             out.lineTo(pt2.x, pt2.y);
+             out.lineTo(pt3.x, pt3.y);
+             out.lineTo(pt1.x, pt1.y);
+             out.fill();
+         }
+         function ran2(){return 2 * ran() - 1};
+
+        </script>
+    </body>
 </html>

@@ -1,129 +1,110 @@
 <html>
-<head>
-	<title>particles</title>
-	<link rel="stylesheet" type="text/css" href="../css/styles.css"/>
-</head>
-<body>
-	<script type="text/javascript" src="../libs/tools.js"></script>
-	<script type="text/javascript">
+    <head>
+        <title>particles</title>
+        <link rel="stylesheet" type="text/css" href="../css/styles.css"/>
+    </head>
+    <body>
+        <script type="text/javascript" src="../libs/tools.js"></script>
+        <script type="text/javascript">
 
-    var w = 700;
-    var h = 700;
-		var stage = new tools.Stage(w, h);
-    var out = stage.out;
-
-
-    function initParticle(p)
-    {
-      p.x = p.y = 0;
-      var a = Math.random() * 2 * Math.PI;
-      var v = Math.random() * 12;
-      p.vx = v * Math.cos(a);
-      p.vy = v * Math.sin(a);
-      p.time = Math.random() * 100;
-    }
+         var w = 700;
+         var h = 700;
+         var stage = new tools.Stage(w, h);
+         var out = stage.out;
 
 
-    function Particle()
-    {
-      this.x = this.y = 0;
-      this.oldX = this.oldY = 0;
-      this.vx = this.vy = 0;
-      this.time = 0;
-    }
-
-    Particle.prototype = {
-      update : function()
-      {
-        this.oldX = this.x;
-        this.oldY = this.y;
-        this.x += this.vx;
-        this.y += this.vy;
-        this.time--;
-      },
-
-      draw : function(out)
-      {
-        out.moveTo(this.oldX, this.oldY);
-        out.lineTo(this.x, this.y);
-      }
-    };
+         function initParticle(p){
+             p.x = p.y = 0;
+             var a = Math.random() * 2 * Math.PI;
+             var v = Math.random() * 12;
+             p.vx = v * Math.cos(a);
+             p.vy = v * Math.sin(a);
+             p.time = Math.random() * 100;
+         }
 
 
-    function attractor(x, y, strength)
-    {
-      return function(p)
-      {
-        p.vx += strength * (x - p.x);
-        p.vy += strength * (y - p.y);
-      }
-    }
+         function Particle(){
+             this.x = this.y = 0;
+             this.oldX = this.oldY = 0;
+             this.vx = this.vy = 0;
+             this.time = 0;
+         }
+
+         Particle.prototype = {
+             update : function(){
+                 this.oldX = this.x;
+                 this.oldY = this.y;
+                 this.x += this.vx;
+                 this.y += this.vy;
+                 this.time--;
+             },
+
+             draw : function(out){
+                 out.moveTo(this.oldX, this.oldY);
+                 out.lineTo(this.x, this.y);
+             }
+         };
 
 
-    function randomMove(randomness) {
-      return function(p)
-      {
-        p.vx += randomness * (Math.random() * 2 - 1);
-        p.vy += randomness * (Math.random() * 2 - 1);
-      }
-    }
+         function attractor(x, y, strength){
+             return function(p){
+                 p.vx += strength * (x - p.x);
+                 p.vy += strength * (y - p.y);
+             }
+         }
 
 
-    function friction(value)
-    {
-      return function(p) {
-        p.vx *= value;
-        p.vy *= value;
-      }
-    }
-		
+         function randomMove(randomness) {
+             return function(p){
+                 p.vx += randomness * (Math.random() * 2 - 1);
+                 p.vy += randomness * (Math.random() * 2 - 1);
+             }
+         }
 
-    var attractor = attractor(0, 0, 0.001);
-    var randomness = randomMove(0.15);
-    var friction = friction(0.99);
 
-    var particles = [];
-    for(var i = 0; i < 200; i++) {
-      var p = new Particle();
-      initParticle(p);
-      particles[i] = p;
-    }
+         function friction(value){
+             return function(p) {
+                 p.vx *= value;
+                 p.vy *= value;
+             }
+         }
 
-    out.fillStyle = "rgba(255, 255, 255, 0.05)";
-		
-		new tools.Loop(function() {
-      out.fillRect(0, 0, w, h);
-      out.save();
-      out.translate(0.5 * w, 0.5 * h);
-      out.beginPath();
-      particles.forEach(function(p) {
-        attractor(p);
-        friction(p);
-        randomness(p);
-        p.update();
-        p.draw(out);
-        if(p.time <= 0){
-          this.initParticle(p);
-        }
-      });
-      out.stroke();
-      out.restore();
-		});
-		
-		
-		new tools.Loop(update, this);
-	</script>
-	
-	<script type="text/javascript">
-	  var _gaq = _gaq || [];
-	  _gaq.push(['_setAccount', 'UA-6101672-1']);
-	  _gaq.push(['_trackPageview']);
 
-	  (function() {
-		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-	  })();
-	</script>
-</body>
+         var attractor = attractor(0, 0, 0.001);
+         var randomness = randomMove(0.15);
+         var friction = friction(0.99);
+
+         var particles = [];
+         for(var i = 0; i < 200; i++) {
+             var p = new Particle();
+             initParticle(p);
+             particles[i] = p;
+         }
+
+         out.fillStyle = "rgba(255, 255, 255, 0.05)";
+
+         new tools.Loop(function() {
+             out.fillRect(0, 0, w, h);
+             out.save();
+             out.translate(0.5 * w, 0.5 * h);
+             out.beginPath();
+             particles.forEach(function(p) {
+                 attractor(p);
+                 friction(p);
+                 randomness(p);
+                 p.update();
+                 p.draw(out);
+                 if(p.time <= 0){
+                     this.initParticle(p);
+                 }
+             });
+             out.stroke();
+             out.restore();
+         });
+
+
+         new tools.Loop(update, this);
+        </script>
+
+    </body>
 </html>

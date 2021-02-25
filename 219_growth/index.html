@@ -1,352 +1,324 @@
 <html>
-<head>
-	<title>growth</title>
-	<link rel="stylesheet" type="text/css" href="../css/styles.css"/>
-  <style type="text/css">
-		p
-		{
-			font-family: sans-serif;
-			font-size: 12px;
-			color:#ccc;
-			width:700px;
-			margin:auto;
-		}
-		a, a:hover, a:visited
-		{
-			color:#ccc;
-		}
-	</style>
-</head>
-<body>
-	<script type="text/javascript" src="../libs/tools.js"></script>
-  <script type="text/javascript">
-    tools.mixin(tools, this);
+    <head>
+        <title>growth</title>
+        <link rel="stylesheet" type="text/css" href="../css/styles.css"/>
+        <style type="text/css">
+         p{
+             font-family: sans-serif;
+             font-size: 12px;
+             color:#ccc;
+             width:700px;
+             margin:auto;
+         }
+         a, a:hover, a:visited{
+             color:#ccc;
+         }
+        </style>
+    </head>
+    <body>
+        <script type="text/javascript" src="../libs/tools.js"></script>
+        <script type="text/javascript">
+         tools.mixin(tools, this);
 
-    var w = 700;
-    var h = 700;
+         var w = 700;
+         var h = 700;
 
 
 
-    var stage = new Stage(w, h);
+         var stage = new Stage(w, h);
 
-    var ctx = stage.out;
-
-
-    function v2(x, y)
-    {
-      this.set(x, y);
-    }
+         var ctx = stage.out;
 
 
-    v2.prototype = {
-      set : function(x, y){
-        this.x = x;
-        this.y = y;
-        return this;
-      },
-
-      copy : function(v){
-        this.x = v.x;
-        this.y = v.y;
-        return this;
-      },
-
-      add : function(v){
-        this.x += v.x;
-        this.y += v.y;
-        return this;
-      },
-
-      sub : function(v){
-        this.x -= v.x;
-        this.y -= v.y;
-        return this;
-      },
-
-      scale : function(s){
-        this.x *= s;
-        this.y *= s;
-        return this;
-      },
-
-      norm : function(){
-        this.setLength(1);
-        return this;
-      },
-
-      getLength2 : function(){
-        return this.x * this.x + this.y * this.y;
-      },
-
-      getLength : function(value){
-        return Math.sqrt(this.getLength2());
-      },
-
-      setLength : function(value){
-        var r = value / this.getLength();
-        this.x *= r;
-        this.y *= r;
-        return this;
-      },
-
-      clone : function(){
-        return (new v2()).copy(this);
-      }
-    };
-
-    var nParticlesInit = 10;
-    var maxParticles = 2000;
-    var minDist = 50;
-    var linkMaxLength = 50;
-    var linkGrowthRate = 1.02;
-    var radiusInit = minDist / (2 * Math.sin(Math.PI / nParticlesInit));
-
-    var nParticles = nParticlesInit;
-
-    var temp = new v2();
+         function v2(x, y){
+             this.set(x, y);
+         }
 
 
-    function Particle(x, y)
-    {
-      this.pos = new v2(x, y);
-      this.oPos = this.pos.clone();
-      this.force = new v2();
-      this.mass = 1;
-    }
+         v2.prototype = {
+             set : function(x, y){
+                 this.x = x;
+                 this.y = y;
+                 return this;
+             },
 
-    Particle.prototype = {
-      clone : function()
-      {
-        var p = new Particle(this.pos.x, this.pos.y);
-        p.oPos.copy(this.oPos);
-        p.force.copy(this.force);
-        return p;
-      }
-    }
+             copy : function(v){
+                 this.x = v.x;
+                 this.y = v.y;
+                 return this;
+             },
+
+             add : function(v){
+                 this.x += v.x;
+                 this.y += v.y;
+                 return this;
+             },
+
+             sub : function(v){
+                 this.x -= v.x;
+                 this.y -= v.y;
+                 return this;
+             },
+
+             scale : function(s){
+                 this.x *= s;
+                 this.y *= s;
+                 return this;
+             },
+
+             norm : function(){
+                 this.setLength(1);
+                 return this;
+             },
+
+             getLength2 : function(){
+                 return this.x * this.x + this.y * this.y;
+             },
+
+             getLength : function(value){
+                 return Math.sqrt(this.getLength2());
+             },
+
+             setLength : function(value){
+                 var r = value / this.getLength();
+                 this.x *= r;
+                 this.y *= r;
+                 return this;
+             },
+
+             clone : function(){
+                 return (new v2()).copy(this);
+             }
+         };
+
+         var nParticlesInit = 10;
+         var maxParticles = 2000;
+         var minDist = 50;
+         var linkMaxLength = 50;
+         var linkGrowthRate = 1.02;
+         var radiusInit = minDist / (2 * Math.sin(Math.PI / nParticlesInit));
+
+         var nParticles = nParticlesInit;
+
+         var temp = new v2();
 
 
-    function Link(a, b)
-    {
-      this.a = a;
-      this.b = b;
-      this.a.next = b;
-      this.b.prev = a;
-      this.length = temp.copy(b.pos).sub(a.pos).getLength();
-    }
+         function Particle(x, y){
+             this.pos = new v2(x, y);
+             this.oPos = this.pos.clone();
+             this.force = new v2();
+             this.mass = 1;
+         }
+
+         Particle.prototype = {
+             clone : function(){
+                 var p = new Particle(this.pos.x, this.pos.y);
+                 p.oPos.copy(this.oPos);
+                 p.force.copy(this.force);
+                 return p;
+             }
+         }
 
 
-    Link.prototype = {
-      update : function()
-      {
-        var diff = temp.copy(this.b.pos).sub(this.a.pos);
-        var dist = diff.getLength();
-        this.length *= linkGrowthRate;
-        if(this.length > dist)return;
-        var force = diff.scale(0.9 * 0.5 * (this.length - dist) / dist);
-        this.a.force.sub(force);
-        this.b.force.add(force);
-      }
-    };
+         function Link(a, b){
+             this.a = a;
+             this.b = b;
+             this.a.next = b;
+             this.b.prev = a;
+             this.length = temp.copy(b.pos).sub(a.pos).getLength();
+         }
+
+
+         Link.prototype = {
+             update : function(){
+                 var diff = temp.copy(this.b.pos).sub(this.a.pos);
+                 var dist = diff.getLength();
+                 this.length *= linkGrowthRate;
+                 if(this.length > dist)return;
+                 var force = diff.scale(0.9 * 0.5 * (this.length - dist) / dist);
+                 this.a.force.sub(force);
+                 this.b.force.add(force);
+             }
+         };
 
 
 
-    var particles = [];
+         var particles = [];
 
-    for(var i = 0; i < nParticlesInit; i++){
-      var angle = 2 * Math.PI * i / nParticlesInit;
-      var radius = radiusInit * (1 + 0.1 * (Math.random() * 2 - 1));
-      var p = new Particle(
-        0.5 * w + radius * Math.cos(angle),
-        0.5 * h + radius * Math.sin(angle)
-      );
-      particles[i] = p;
-    }
-
-
-    var links = [];
-    for(var i = 0; i < nParticles; i++){
-      links[i] = new Link(
-        this.particles[i],
-        this.particles[(i + 1) % nParticles]
-      );
-    }
+         for(var i = 0; i < nParticlesInit; i++){
+             var angle = 2 * Math.PI * i / nParticlesInit;
+             var radius = radiusInit * (1 + 0.1 * (Math.random() * 2 - 1));
+             var p = new Particle(
+                 0.5 * w + radius * Math.cos(angle),
+                 0.5 * h + radius * Math.sin(angle)
+             );
+             particles[i] = p;
+         }
 
 
-
-    function resetParticles()
-    {
-      for(var i = 0; i < nParticles; i++){
-        particles[i].force.set(0, 0);
-      }
-    }
-
-    function separateParticles()
-    {
-      var diff = new v2();
-      for(var i = 0; i < nParticles; i++){
-        var p0 = particles[i];
-        for(var j = i + 1; j < nParticles; j++){
-          var p1 = particles[j];
-          if(p1 === p0.prev || p1 === p0.next)continue;
-          diff.copy(p1.pos).sub(p0.pos);
-          var d2 = diff.getLength2();
-          if(d2 < minDist * minDist){
-            var dist = Math.sqrt(d2);
-            var separation = diff.scale(0.01 * 0.5 * (minDist - dist) / dist);
-            p0.force.sub(separation);
-            p1.force.add(separation);
-          }
-        }
-      }
-    }
+         var links = [];
+         for(var i = 0; i < nParticles; i++){
+             links[i] = new Link(
+                 this.particles[i],
+                 this.particles[(i + 1) % nParticles]
+             );
+         }
 
 
 
-    function applyLinks()
-    {
-      var nLinks = links.length;
-      for(var i = 0; i < nLinks; i++){
-        var link = links[i];
-        link.update();
-        if(link.length > linkMaxLength && nParticles < maxParticles){
-          splitLink(link);
-          nLinks++;
-          i++;
-        }
-      }
-    }
+         function resetParticles(){
+             for(var i = 0; i < nParticles; i++){
+                 particles[i].force.set(0, 0);
+             }
+         }
 
-
-    function splitLink(link)
-    {
-      link.length *= 0.5;
-      var newPt = new Particle(
-        0.5 * (link.a.pos.x + link.b.pos.x),
-        0.5 * (link.a.pos.y + link.b.pos.y)
-      );
-      /*newPt.oPos.set(
-        0.5 * (link.a.oPos.x + link.b.oPos.x),
-        0.5 * (link.a.oPos.y + link.b.oPos.y)
-      );*/
-      newPt.force.set(
-        0.5 * (link.a.force.x + link.b.force.x),
-        0.5 * (link.a.force.y + link.b.force.y)
-      );
-      var newLink = new Link(newPt, link.b);
-      link.b = newPt;
-      links.splice(links.indexOf(link) + 1, 0, newLink);
-      particles.push(newPt);
-
-      newPt.prev = link.a;
-      newPt.next = link.b;
-      link.a.next = newLink.b.prev = newPt;
-
-      nParticles++;
-    }
-
-
-    function applyFriction()
-    {
-      var temp = new v2();
-      for(var i = 0; i < nParticles; i++){
-        var p = particles[i];
-        temp.copy(p.pos).sub(p.oPos).scale(0.9);
-        p.pos.copy(p.oPos).add(temp);
-      }
-    }
-
-    function constraintFrame()
-    {
-      var maxDist = 0.4 * w;
-      for(var i = 0; i < nParticles; i++){
-        var p = particles[i];
-        /*if(p.pos.x < 0) p.pos.x = 0;
-        else if(p.pos.x > w) p.pos.x = w;
-        if(p.pos.y < 0) p.pos.y = 0;
-        else if(p.pos.y > h) p.pos.y = h;*/
-
-        var dx = 0.5 * w - p.pos.x;
-        var dy = 0.5 * h - p.pos.y;
-        var dist = dx * dx + dy * dy;
-        if(dist > maxDist * maxDist){
-          var r = maxDist / Math.sqrt(dist);
-          p.pos.x = 0.5 * w - dx * r;
-          p.pos.y = 0.5 * h - dy * r;
-        }
-      }
-    }
-
-
-    function updateParticles()
-    {
-      var dt = 1;
-      var temp = new v2();
-      for(var i = 0; i < nParticles; i++){
-        var p = particles[i];
-        temp.copy(p.pos);
-        p.pos.scale(2).sub(p.oPos).add(p.force.scale(dt * dt / p.mass));
-        p.oPos.copy(temp);
-      }
-    }
-
-
-    function drawLinks()
-    {
-      ctx.strokeStyle = "black";
-      ctx.fillStyle = "black";
-      var nLinks = links.length
-      ctx.beginPath();
-      var link = links[0];
-      ctx.moveTo(link.a.pos.x, link.a.pos.y);
-      for(var i = 1; i < nLinks; i++){
-        link = links[i];
-        ctx.lineTo(link.b.pos.x, link.b.pos.y);
-      }
-      ctx.closePath();
-      //ctx.stroke();
-      ctx.fill();
-    }
-
-    function drawParticles()
-    {
-      ctx.fillStyle = "black";
-      for(var i = 0; i < nParticles; i++){
-        var p = particles[i];
-        ctx.beginPath();
-        ctx.arc(p.pos.x, p.pos.y, 5, 0, 2 * Math.PI);
-        ctx.fill();
-      }
-    }
-
-
-    var loop = new tools.Loop(function(){
-      resetParticles();
-      separateParticles();
-      applyLinks();
-      applyFriction();
-      constraintFrame();
-      updateParticles();
-
-      ctx.clearRect(0, 0, w, h);
-      //drawParticles();
-      drawLinks();
-    })
+         function separateParticles(){
+             var diff = new v2();
+             for(var i = 0; i < nParticles; i++){
+                 var p0 = particles[i];
+                 for(var j = i + 1; j < nParticles; j++){
+                     var p1 = particles[j];
+                     if(p1 === p0.prev || p1 === p0.next)continue;
+                     diff.copy(p1.pos).sub(p0.pos);
+                     var d2 = diff.getLength2();
+                     if(d2 < minDist * minDist){
+                         var dist = Math.sqrt(d2);
+                         var separation = diff.scale(0.01 * 0.5 * (minDist - dist) / dist);
+                         p0.force.sub(separation);
+                         p1.force.add(separation);
+                     }
+                 }
+             }
+         }
 
 
 
-  </script>
-  <p>completely stolen from <a href="http://www.inconvergent.net">here</a> and <a href="http://www.codepen.io/nicoptere/pen/QyVWmB">there</a></p>
-	<script type="text/javascript">
-	  var _gaq = _gaq || [];
-	  _gaq.push(['_setAccount', 'UA-6101672-1']);
-	  _gaq.push(['_trackPageview']);
+         function applyLinks(){
+             var nLinks = links.length;
+             for(var i = 0; i < nLinks; i++){
+                 var link = links[i];
+                 link.update();
+                 if(link.length > linkMaxLength && nParticles < maxParticles){
+                     splitLink(link);
+                     nLinks++;
+                     i++;
+                 }
+             }
+         }
 
-	  (function() {
-		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-	  })();
-	</script>
-</body>
+
+         function splitLink(link){
+             link.length *= 0.5;
+             var newPt = new Particle(
+                 0.5 * (link.a.pos.x + link.b.pos.x),
+                 0.5 * (link.a.pos.y + link.b.pos.y)
+             );
+             /*newPt.oPos.set(
+                0.5 * (link.a.oPos.x + link.b.oPos.x),
+                0.5 * (link.a.oPos.y + link.b.oPos.y)
+                );*/
+             newPt.force.set(
+                 0.5 * (link.a.force.x + link.b.force.x),
+                 0.5 * (link.a.force.y + link.b.force.y)
+             );
+             var newLink = new Link(newPt, link.b);
+             link.b = newPt;
+             links.splice(links.indexOf(link) + 1, 0, newLink);
+             particles.push(newPt);
+
+             newPt.prev = link.a;
+             newPt.next = link.b;
+             link.a.next = newLink.b.prev = newPt;
+
+             nParticles++;
+         }
+
+
+         function applyFriction(){
+             var temp = new v2();
+             for(var i = 0; i < nParticles; i++){
+                 var p = particles[i];
+                 temp.copy(p.pos).sub(p.oPos).scale(0.9);
+                 p.pos.copy(p.oPos).add(temp);
+             }
+         }
+
+         function constraintFrame(){
+             var maxDist = 0.4 * w;
+             for(var i = 0; i < nParticles; i++){
+                 var p = particles[i];
+                 /*if(p.pos.x < 0) p.pos.x = 0;
+                    else if(p.pos.x > w) p.pos.x = w;
+                    if(p.pos.y < 0) p.pos.y = 0;
+                    else if(p.pos.y > h) p.pos.y = h;*/
+
+                 var dx = 0.5 * w - p.pos.x;
+                 var dy = 0.5 * h - p.pos.y;
+                 var dist = dx * dx + dy * dy;
+                 if(dist > maxDist * maxDist){
+                     var r = maxDist / Math.sqrt(dist);
+                     p.pos.x = 0.5 * w - dx * r;
+                     p.pos.y = 0.5 * h - dy * r;
+                 }
+             }
+         }
+
+
+         function updateParticles(){
+             var dt = 1;
+             var temp = new v2();
+             for(var i = 0; i < nParticles; i++){
+                 var p = particles[i];
+                 temp.copy(p.pos);
+                 p.pos.scale(2).sub(p.oPos).add(p.force.scale(dt * dt / p.mass));
+                 p.oPos.copy(temp);
+             }
+         }
+
+
+         function drawLinks(){
+             ctx.strokeStyle = "black";
+             ctx.fillStyle = "black";
+             var nLinks = links.length
+             ctx.beginPath();
+             var link = links[0];
+             ctx.moveTo(link.a.pos.x, link.a.pos.y);
+             for(var i = 1; i < nLinks; i++){
+                 link = links[i];
+                 ctx.lineTo(link.b.pos.x, link.b.pos.y);
+             }
+             ctx.closePath();
+             //ctx.stroke();
+             ctx.fill();
+         }
+
+         function drawParticles(){
+             ctx.fillStyle = "black";
+             for(var i = 0; i < nParticles; i++){
+                 var p = particles[i];
+                 ctx.beginPath();
+                 ctx.arc(p.pos.x, p.pos.y, 5, 0, 2 * Math.PI);
+                 ctx.fill();
+             }
+         }
+
+
+         var loop = new tools.Loop(function(){
+             resetParticles();
+             separateParticles();
+             applyLinks();
+             applyFriction();
+             constraintFrame();
+             updateParticles();
+
+             ctx.clearRect(0, 0, w, h);
+             //drawParticles();
+             drawLinks();
+         })
+
+
+
+        </script>
+        <p>completely stolen from <a href="http://www.inconvergent.net">here</a> and <a href="http://www.codepen.io/nicoptere/pen/QyVWmB">there</a></p>
+    </body>
 </html>
-

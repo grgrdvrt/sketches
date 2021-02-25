@@ -1,89 +1,73 @@
 <html>
-<head>
-	<title>Circles</title>
-	<link rel="stylesheet" type="text/css" href="../css/styles.css"/>
-</head>
-<body>
-	<script type="text/javascript" src="../libs/tools.js"></script>
-	<script type="text/javascript">
-		tools.mixin(tools, this);
-		
-		var w = 700;
-		var h = 700;
-		var stage = new Stage(w, h);
-		var out = stage.out;
-		
-		function Circle(stepSize, nSteps)
-		{
-			this.stepSize = stepSize;
-			this.nSteps = nSteps;
-		
-			this.x = 0;
-			this.y = 0;
-		
-			this.vx = 0;
-			this.vy = 0;
-		
-		//	this.color = "hsl(0, 0%, " + Math.round(Math.random() * 100) + "%)";
-			this.color = Math.random() < 0.5 ? "black" : "white";
-		}
-		
-		Circle.prototype = {
-			drawStep : function(out, id)
-			{
-				if(id > this.nSteps) return;
-				out.beginPath();
-				out.arc(this.x, this.y, id * this.stepSize, 0, 2 * Math.PI);
-				out.fillStyle = this.color;
-				out.fill();
-			}
-		}
-		
-		
-		var maxSteps = 15;
-		var stepSize = 10;
-		var circles = [];
-		var nCircles = 30;
-		
-		for(var i = 0; i < nCircles; i++)
-		{
-			var circle = new Circle(stepSize, maxSteps);
-			circle.x = Math.random() * stage.width;
-			circle.y = Math.random() * stage.height;
-			circle.vx = 2 * (Math.random() * 2 - 1);
-			circle.vy = 2 * (Math.random() * 2 - 1);
-			circles[i] = circle;
-		}
-		
-		new Loop(function(){
-			stage.clear();
-		
-			var i, j;
-		
-			for(i = 0; i < nCircles; i++)
-			{
-				var circle = circles[i];
-				circle.x += circle.vx;
-				circle.y += circle.vy;
-				if(circle.x < 0 || circle.x > stage.width) circle.vx *= -1;
-				if(circle.y < 0 || circle.y > stage.height) circle.vy *= -1;
-			}
-		
-			for(j = maxSteps; j >= 0; j--)
-				for(i = 0; i < nCircles; i++)
-					circles[i].drawStep(out, j);
-		});</script>
-	
-	<script type="text/javascript">
-	  var _gaq = _gaq || [];
-	  _gaq.push(['_setAccount', 'UA-6101672-1']);
-	  _gaq.push(['_trackPageview']);
+    <head>
+        <title>Circles</title>
+        <link rel="stylesheet" type="text/css" href="../css/styles.css"/>
+    </head>
+    <body>
+        <script type="text/javascript" src="../libs/tools.js"></script>
+        <script type="text/javascript">
+         tools.mixin(tools, this);
 
-	  (function() {
-		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-	  })();
-	</script>
-</body>
+         var w = 700;
+         var h = 700;
+         var stage = new Stage(w, h);
+         var out = stage.out;
+
+         function Circle(stepSize, nSteps){
+             this.stepSize = stepSize;
+             this.nSteps = nSteps;
+
+             this.x = 0;
+             this.y = 0;
+
+             this.vx = 0;
+             this.vy = 0;
+
+             //	this.color = "hsl(0, 0%, " + Math.round(Math.random() * 100) + "%)";
+             this.color = Math.random() < 0.5 ? "black" : "white";
+         }
+
+         Circle.prototype = {
+             drawStep : function(out, id){
+                 if(id > this.nSteps) return;
+                 out.beginPath();
+                 out.arc(this.x, this.y, id * this.stepSize, 0, 2 * Math.PI);
+                 out.fillStyle = this.color;
+                 out.fill();
+             }
+         }
+
+
+         var maxSteps = 15;
+         var stepSize = 10;
+         var circles = [];
+         var nCircles = 30;
+
+         for(var i = 0; i < nCircles; i++){
+             var circle = new Circle(stepSize, maxSteps);
+             circle.x = Math.random() * stage.width;
+             circle.y = Math.random() * stage.height;
+             circle.vx = 2 * (Math.random() * 2 - 1);
+             circle.vy = 2 * (Math.random() * 2 - 1);
+             circles[i] = circle;
+         }
+
+         new Loop(function(){
+             stage.clear();
+
+             var i, j;
+
+             for(i = 0; i < nCircles; i++){
+                 var circle = circles[i];
+                 circle.x += circle.vx;
+                 circle.y += circle.vy;
+                 if(circle.x < 0 || circle.x > stage.width) circle.vx *= -1;
+                 if(circle.y < 0 || circle.y > stage.height) circle.vy *= -1;
+             }
+
+             for(j = maxSteps; j >= 0; j--)
+                 for(i = 0; i < nCircles; i++)
+                     circles[i].drawStep(out, j);
+         });</script>
+    </body>
 </html>

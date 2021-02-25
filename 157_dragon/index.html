@@ -1,60 +1,46 @@
 <html>
-<head>
-	<title>Dragon</title>
-	<link rel="stylesheet" type="text/css" href="../css/styles.css"/>
-</head>
-<body>
-	<script type="text/javascript" src="../libs/tools.js"></script>
-	<script type="text/javascript">
-		tools.mixin(tools, this);
-		
-		var w = 700;
-		var h = 700;
-		var stage = new tools.Stage(w, h);
-		var out = stage.out;
-		var n = 2500;
-		
-		var pts = [];
-		for(var i = 0; i < n; i++)
-		{
-			var p = {};
-			p.y = i / n * h;
-			p.x = Math.abs(Math.cos(0.003 * p.y - 0.25 * Math.PI)) * 2 * (Math.random() - 0.5) * 0.05 * w;
-			p.c = "#" + Math.round((0.1 * p.y % 3) / 3 * 0xffffff + 0x3000 * (Math.random() * 2 - 1)).toString(16);
-			pts[i] = p;
-		
-		}
-		
-		new Loop(function()
-		{
-			out.clearRect(0, 0, w, h);
-			for(var i = 0; i < n; i++)
-			{
-				var p = pts[i];
-				var x = p.x + 0.5 * w;
-				var y = p.y;
-				x += 20 * Math.cos(0.03 * y + 0.002 * Date.now());
-				out.beginPath();
-				out.moveTo(x, y);
-				out.lineTo(x + 5, y - 10);
-				out.lineTo(x + 10, y);
-				//out.lineTo(x + 5, y + 10);
-				out.lineTo(x, y);
-				out.fillStyle = p.c;
-				out.fill();
-			}	
-		})</script>
-	
-	<script type="text/javascript">
-	  var _gaq = _gaq || [];
-	  _gaq.push(['_setAccount', 'UA-6101672-1']);
-	  _gaq.push(['_trackPageview']);
+    <head>
+        <title>Dragon</title>
+        <link rel="stylesheet" type="text/css" href="../css/styles.css"/>
+    </head>
+    <body>
+        <script type="text/javascript" src="../libs/tools.js"></script>
+        <script type="text/javascript">
+         tools.mixin(tools, this);
 
-	  (function() {
-		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-	  })();
-	</script>
-</body>
+         var w = 700;
+         var h = 700;
+         var stage = new tools.Stage(w, h);
+         var out = stage.out;
+         var n = 2500;
+
+         var pts = [];
+         for(var i = 0; i < n; i++){
+             var p = {};
+             p.y = i / n * h;
+             p.x = Math.abs(Math.cos(0.003 * p.y - 0.25 * Math.PI)) * 2 * (Math.random() - 0.5) * 0.05 * w;
+             p.c = "#" + Math.round((0.1 * p.y % 3) / 3 * 0xffffff + 0x3000 * (Math.random() * 2 - 1)).toString(16);
+             pts[i] = p;
+
+         }
+
+         new Loop(function(){
+                 out.clearRect(0, 0, w, h);
+                 for(var i = 0; i < n; i++){
+                     var p = pts[i];
+                     var x = p.x + 0.5 * w;
+                     var y = p.y;
+                     x += 20 * Math.cos(0.03 * y + 0.002 * Date.now());
+                     out.beginPath();
+                     out.moveTo(x, y);
+                     out.lineTo(x + 5, y - 10);
+                     out.lineTo(x + 10, y);
+                     //out.lineTo(x + 5, y + 10);
+                     out.lineTo(x, y);
+                     out.fillStyle = p.c;
+                     out.fill();
+                 }
+         })</script>
+
+    </body>
 </html>

@@ -13,7 +13,7 @@ export default function create(nSites, w, h)
     var r = Math.sqrt(Math.sqrt(ran)) * w2;
     sites[i] = {
       x : r * Math.cos(ang),
-      y : r * Math.sin(ang),
+      y : r * Math.sin(ang)
     };
   }
   console.timeEnd("sites");

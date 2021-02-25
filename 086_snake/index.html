@@ -1,274 +1,235 @@
 <html>
-<head>
-	<title>Snake</title>
-	<link rel="stylesheet" type="text/css" href="../css/styles.css"/>
-</head>
-<body>
-	<script type="text/javascript" src="../libs/tools.js"></script>
-	<script type="text/javascript">
-		tools.mixin(tools, this);
-		
-		Math.sign = function (a)
-		{
-			if(a > 0) return 1;
-			else if(a < 0) return -1;
-			else return 0;
-		}
-		
-		
-		
-		
-		function Snake()
-		{
-			this.elements = [{}];
-			this.direction = {x:1, y:0};
-			this.nextDirection = {x:1, y:0};
-		}
-		
-		Snake.prototype = {
-			init : function(x, y)
-			{
-				this.elements.length = 1;
-				var head = this.elements[0];
-				head.x = Math.floor(x);
-				head.y = Math.floor(y);
-				this.setDirection(1, 0);
-			},
-		
-			setDirection : function(x, y)
-			{
-				if(y * x != 0 || x == 0 && y == 0) return;
-				x = Math.sign(x);
-				y = Math.sign(y);
-				if(x && x == -this.direction.x)return;
-				if(y && y == -this.direction.y)return;
-				this.nextDirection.x = x;
-				this.nextDirection.y = y;
-			},
-		
-			update : function()
-			{
-				var head = this.elements[0];
-				var tail = this.elements.length ? this.elements.pop() : head;
-				this.direction.x = this.nextDirection.x;
-				this.direction.y = this.nextDirection.y;
-				tail.x = head.x + this.direction.x;
-				tail.y = head.y + this.direction.y;
-				this.elements.unshift(tail);
-			},
-		
-			collides : function(x, y, ignoreHead)
-			{
-				var n = this.elements.length;
-				var begin = ignoreHead == undefined || !ignoreHead ? 0 : 1;
-				for(var i = begin; i < n; i++)
-				{
-					var emt = this.elements[i];
-					if(emt.x == x && emt.y == y)
-						return true;
-				}
-				return false;
-			},
-		
-			grow : function()
-			{
-				var n = this.elements.length;
-				var tail = n > 1 ? this.elements[n - 1] : this.elements[0];
-				this.elements.push({x:tail.x, y:tail.y});
-			},
-		
-			setLength : function(length)
-			{
-				var diff = length - this.elements.length;
-				if(diff < 0) this.elements.length = length;
-				else for(var i = 0; i < diff; i++)this.grow();
-			},
-		
-			getHead : function() { return this.elements[0]; }
-		}
-		
-		
-		
-		
-		
-		function ItemsManager(area, snake)
-		{
-			this.area = area;
-			this.snake = snake;
-			this.currentItem = {};
-			this.resetItem();
-		}
-		
-		ItemsManager.prototype = {
-			resetItem : function()
-			{
-				var isPositionValid = true;
-				var x, y;
-				do
-				{
-					x = Math.floor(Math.random() * this.area.width);	
-					y = Math.floor(Math.random() * this.area.height);
-					isPositionValid = !this.snake.collides(x, y, true);
-				}
-				while(!isPositionValid)
-				this.currentItem.x = x;
-				this.currentItem.y = y;
-			}
-		}
-		
-		
-		
-		
-		function SnakeCanvasDisplay(area, out)
-		{
-			this.area = area;
-			this.out = out;
-			this.cellWidth = Math.round(this.out.width / area.width);
-			this.cellHeight = Math.round(this.out.height / area.height);
-		}
-		
-		SnakeCanvasDisplay.prototype = {
-		
-			display : function(snake)
-			{
-				this.out.fillStyle = "black";
-				var x = -1;
-				var y = -1;
-				var n = snake.elements.length;
-				for(var i = 0; i < n; i++)
-				{
-					var element = snake.elements[i];
-					if(x == element.x && y == element.y) return;
-					x = element.x;
-					y = element.y;
-					this.out.fillRect(x * this.cellWidth, y * this.cellHeight, this.cellWidth, this.cellHeight);
-				}
-			}
-		}
-		
-		
-		
-		
-		function ItemsCanvasDisplay(area, out)
-		{
-			this.area = area;
-			this.out = out;
-			this.cellWidth = Math.round(this.out.width / area.width);
-			this.cellHeight = Math.round(this.out.height / area.height);
-		}
-		
-		ItemsCanvasDisplay.prototype = {
-			display : function(item)
-			{
-				this.out.fillStyle = "red";
-				this.out.fillRect(item.x * this.cellWidth, item.y * this.cellHeight, this.cellWidth, this.cellHeight);
-			}
-		}
-		
-		
-		function Game()
-		{
-			this.stage = new Stage(700, 700);
-			this.out = this.stage.out;
-			this.out.width = this.stage.width;
-			this.out.height = this.stage.height;
-		
-			this.area = {width : 35, height : 35};
-		
-			this.snake = new Snake();
-		
-			this.itemsManager = new ItemsManager(this.area, this.snake);
-		
-			this.snakeDisplay = new SnakeCanvasDisplay(this.area, this.out);
-			this.itemsDisplay = new ItemsCanvasDisplay(this.area, this.out);
-		
-			this.keyboard = new Keyboard();
-			this.keyboard.preventDefault([32, 37, 38, 39, 40]);
-			this.keyboard.onDown.add(this.onKeyDown, this);
-		
-		
-			this.framerate = 5;
-			this.time = 0;
-			this.loop = new Loop(this.update, this, false);
-		
-			this.startGame();
-		}
-		
-		Game.prototype = {
-			onKeyDown : function(key)
-			{
-				//console.log(key);
-				switch(key)
-				{
-					case 32 : //Space
-						this.togglePause(); break;
-		
-					case 65 :  case 81 :  case 37 : //A Q Left
-						this.snake.setDirection(-1, 0); break;
-					case 87 : case 90 : case 38 : //W Z Up
-						this.snake.setDirection(0, -1); break;
-					case 68 : case 39 : //D Right
-						this.snake.setDirection(1, 0); break;
-					case 83 : case 40 : //S Down
-						this.snake.setDirection(0, 1); break;
-					default : break;
-				}
-			},
-		
-			update : function()
-			{
-				if(++this.time % this.framerate) return;
-		
-				this.stage.clear();
-				this.snake.update();
-		
-				var head = this.snake.getHead();
-				var bitesItself = this.snake.collides(head.x, head.y, true);
-				var isOutside = head.x < 0 || head.x > this.area.width - 1 || head.y < 0 || head.y > this.area.height - 1;
-				if(bitesItself || isOutside)
-				{
-					this.startGame();
-					return;
-				}
-		
-				var item = this.itemsManager.currentItem;
-				if(item.x == head.x && item.y == head.y)
-				{
-					this.itemsManager.resetItem();
-					this.snake.grow();
-				}
-				this.itemsDisplay.display(this.itemsManager.currentItem);
-				this.snakeDisplay.display(this.snake);
-			},
-		
-			startGame : function()
-			{
-				this.snake.init(0.5 * this.area.width, 0.5 * this.area.height);
-				this.snake.setLength(3);
-				this.itemsManager.resetItem();
-				this.loop.play();
-				this.update();
-			},
-		
-			togglePause : function()
-			{
-				if(this.loop.isPaused) this.loop.play();
-				else this.loop.pause();
-			}
-		}
-		
-		new Game();</script>
-	
-	<script type="text/javascript">
-	  var _gaq = _gaq || [];
-	  _gaq.push(['_setAccount', 'UA-6101672-1']);
-	  _gaq.push(['_trackPageview']);
+    <head>
+        <title>Snake</title>
+        <link rel="stylesheet" type="text/css" href="../css/styles.css"/>
+    </head>
+    <body>
+        <script type="text/javascript" src="../libs/tools.js"></script>
+        <script type="text/javascript">
+         tools.mixin(tools, this);
 
-	  (function() {
-		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-	  })();
-	</script>
-</body>
+         Math.sign = function (a){
+             if(a > 0) return 1;
+             else if(a < 0) return -1;
+             else return 0;
+         }
+
+
+         function Snake(){
+             this.elements = [{}];
+             this.direction = {x:1, y:0};
+             this.nextDirection = {x:1, y:0};
+         }
+
+         Snake.prototype = {
+             init : function(x, y){
+                 this.elements.length = 1;
+                 var head = this.elements[0];
+                 head.x = Math.floor(x);
+                 head.y = Math.floor(y);
+                 this.setDirection(1, 0);
+             },
+
+             setDirection : function(x, y){
+                 if(y * x != 0 || x == 0 && y == 0) return;
+                 x = Math.sign(x);
+                 y = Math.sign(y);
+                 if(x && x == -this.direction.x)return;
+                 if(y && y == -this.direction.y)return;
+                 this.nextDirection.x = x;
+                 this.nextDirection.y = y;
+             },
+
+             update : function(){
+                 var head = this.elements[0];
+                 var tail = this.elements.length ? this.elements.pop() : head;
+                 this.direction.x = this.nextDirection.x;
+                 this.direction.y = this.nextDirection.y;
+                 tail.x = head.x + this.direction.x;
+                 tail.y = head.y + this.direction.y;
+                 this.elements.unshift(tail);
+             },
+
+             collides : function(x, y, ignoreHead){
+                 var n = this.elements.length;
+                 var begin = ignoreHead == undefined || !ignoreHead ? 0 : 1;
+                 for(var i = begin; i < n; i++){
+                     var emt = this.elements[i];
+                     if(emt.x == x && emt.y == y)
+                         return true;
+                 }
+                 return false;
+             },
+
+             grow : function(){
+                 var n = this.elements.length;
+                 var tail = n > 1 ? this.elements[n - 1] : this.elements[0];
+                 this.elements.push({x:tail.x, y:tail.y});
+             },
+
+             setLength : function(length){
+                 var diff = length - this.elements.length;
+                 if(diff < 0) this.elements.length = length;
+                 else for(var i = 0; i < diff; i++)this.grow();
+             },
+
+             getHead : function() { return this.elements[0]; }
+         }
+
+
+
+
+
+         function ItemsManager(area, snake){
+             this.area = area;
+             this.snake = snake;
+             this.currentItem = {};
+             this.resetItem();
+         }
+
+         ItemsManager.prototype = {
+             resetItem : function(){
+                 var isPositionValid = true;
+                 var x, y;
+                 do{
+                     x = Math.floor(Math.random() * this.area.width);
+                     y = Math.floor(Math.random() * this.area.height);
+                     isPositionValid = !this.snake.collides(x, y, true);
+                 }
+                 while(!isPositionValid)
+                     this.currentItem.x = x;
+                 this.currentItem.y = y;
+             }
+         }
+
+
+
+
+         function SnakeCanvasDisplay(area, out){
+             this.area = area;
+             this.out = out;
+             this.cellWidth = Math.round(this.out.width / area.width);
+             this.cellHeight = Math.round(this.out.height / area.height);
+         }
+
+         SnakeCanvasDisplay.prototype = {
+
+             display : function(snake){
+                 this.out.fillStyle = "black";
+                 var x = -1;
+                 var y = -1;
+                 var n = snake.elements.length;
+                 for(var i = 0; i < n; i++){
+                     var element = snake.elements[i];
+                     if(x == element.x && y == element.y) return;
+                     x = element.x;
+                     y = element.y;
+                     this.out.fillRect(x * this.cellWidth, y * this.cellHeight, this.cellWidth, this.cellHeight);
+                 }
+             }
+         }
+
+
+
+
+         function ItemsCanvasDisplay(area, out){
+             this.area = area;
+             this.out = out;
+             this.cellWidth = Math.round(this.out.width / area.width);
+             this.cellHeight = Math.round(this.out.height / area.height);
+         }
+
+         ItemsCanvasDisplay.prototype = {
+             display : function(item){
+                 this.out.fillStyle = "red";
+                 this.out.fillRect(item.x * this.cellWidth, item.y * this.cellHeight, this.cellWidth, this.cellHeight);
+             }
+         }
+
+
+         function Game(){
+             this.stage = new Stage(700, 700);
+             this.out = this.stage.out;
+             this.out.width = this.stage.width;
+             this.out.height = this.stage.height;
+
+             this.area = {width : 35, height : 35};
+
+             this.snake = new Snake();
+
+             this.itemsManager = new ItemsManager(this.area, this.snake);
+
+             this.snakeDisplay = new SnakeCanvasDisplay(this.area, this.out);
+             this.itemsDisplay = new ItemsCanvasDisplay(this.area, this.out);
+
+             this.keyboard = new Keyboard();
+             this.keyboard.preventDefault([32, 37, 38, 39, 40]);
+             this.keyboard.onDown.add(this.onKeyDown, this);
+
+
+             this.framerate = 5;
+             this.time = 0;
+             this.loop = new Loop(this.update, this, false);
+
+             this.startGame();
+         }
+
+         Game.prototype = {
+             onKeyDown : function(key){
+                 //console.log(key);
+                 switch(key){
+                     case 32 : //Space
+                     this.togglePause(); break;
+
+                     case 65 :  case 81 :  case 37 : //A Q Left
+                     this.snake.setDirection(-1, 0); break;
+                     case 87 : case 90 : case 38 : //W Z Up
+                     this.snake.setDirection(0, -1); break;
+                     case 68 : case 39 : //D Right
+                     this.snake.setDirection(1, 0); break;
+                     case 83 : case 40 : //S Down
+                     this.snake.setDirection(0, 1); break;
+                     default : break;
+                 }
+             },
+
+             update : function(){
+                 if(++this.time % this.framerate) return;
+
+                 this.stage.clear();
+                 this.snake.update();
+
+                 var head = this.snake.getHead();
+                 var bitesItself = this.snake.collides(head.x, head.y, true);
+                 var isOutside = head.x < 0 || head.x > this.area.width - 1 || head.y < 0 || head.y > this.area.height - 1;
+                 if(bitesItself || isOutside){
+                     this.startGame();
+                     return;
+                 }
+
+                 var item = this.itemsManager.currentItem;
+                 if(item.x == head.x && item.y == head.y){
+                     this.itemsManager.resetItem();
+                     this.snake.grow();
+                 }
+                 this.itemsDisplay.display(this.itemsManager.currentItem);
+                 this.snakeDisplay.display(this.snake);
+             },
+
+             startGame : function(){
+                 this.snake.init(0.5 * this.area.width, 0.5 * this.area.height);
+                 this.snake.setLength(3);
+                 this.itemsManager.resetItem();
+                 this.loop.play();
+                 this.update();
+             },
+
+             togglePause : function(){
+                 if(this.loop.isPaused) this.loop.play();
+                 else this.loop.pause();
+             }
+         }
+
+         new Game();</script>
+    </body>
 </html>

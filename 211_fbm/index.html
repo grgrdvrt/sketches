@@ -1,73 +1,61 @@
 <html>
-<head>
-	<title>Simplex Noise</title>
-	<link rel="stylesheet" type="text/css" href="../css/styles.css"/>
-</head>
-<body>
-	<script type="text/javascript" src="../libs/perlin-noise-simplex.js"></script>
-	<script type="text/javascript" src="../libs/tools.js"></script>
-	<script type="text/javascript">
-		tools.mixin(tools, this);
+    <head>
+        <title>Simplex Noise</title>
+        <link rel="stylesheet" type="text/css" href="../css/styles.css"/>
+    </head>
+    <body>
+        <script type="text/javascript" src="../libs/perlin-noise-simplex.js"></script>
+        <script type="text/javascript" src="../libs/tools.js"></script>
+        <script type="text/javascript">
+         tools.mixin(tools, this);
 
-		var w = 700;
-		var h = 700;
+         var w = 700;
+         var h = 700;
 
-		var stage = new Stage(w, h);
-		var out = stage.out;
+         var stage = new Stage(w, h);
+         var out = stage.out;
 
 
-   var noise = new SimplexNoise();
+         var noise = new SimplexNoise();
 
-   var sampleSize = 5;
-   var scale = 0.005;
-   var nSteps = 1000;
-   var time = nSteps;
+         var sampleSize = 5;
+         var scale = 0.005;
+         var nSteps = 1000;
+         var time = nSteps;
 
-   var nOctaves = 8;
-   var offset = {x:0, y:0};
+         var nOctaves = 8;
+         var offset = {x:0, y:0};
 
-   var time = 0;
-   new Loop(function(){
-       if(--time <= 0)reset();
-       for(var i = 0; i < 1000; i++){
-        var x = Math.random() * w;
-        var y = Math.random() * h;
-        var value = 0;
-        var total = 0;
-        for(var j = 0; j < nOctaves; j++){
-          var iWeight = Math.pow(2, j);
-          var weight = 1 / iWeight;
-          var noiseScale = scale * iWeight + 0.000005 * time;
-          total += weight;
-          value += weight * noise.noise(x * noiseScale + offset.x, y * noiseScale + offset.y);
-        }
-        value /= total;
-        var gs = Math.ceil(0.5 * (value + 1) * 100);
-        out.fillStyle = "hsl(0, 0%, " + gs + "%)";
-        //var size = 1 + Math.pow(time / nSteps, 0.2) * (sampleSize - 1);
-        var size = sampleSize;
-        out.fillRect(x - 0.5 * size, y - 0.5 * size, size, size);
-       }
-   });
+         var time = 0;
+         new Loop(function(){
+             if(--time <= 0)reset();
+             for(var i = 0; i < 1000; i++){
+                 var x = Math.random() * w;
+                 var y = Math.random() * h;
+                 var value = 0;
+                 var total = 0;
+                 for(var j = 0; j < nOctaves; j++){
+                     var iWeight = Math.pow(2, j);
+                     var weight = 1 / iWeight;
+                     var noiseScale = scale * iWeight + 0.000005 * time;
+                     total += weight;
+                     value += weight * noise.noise(x * noiseScale + offset.x, y * noiseScale + offset.y);
+                 }
+                 value /= total;
+                 var gs = Math.ceil(0.5 * (value + 1) * 100);
+                 out.fillStyle = "hsl(0, 0%, " + gs + "%)";
+                 //var size = 1 + Math.pow(time / nSteps, 0.2) * (sampleSize - 1);
+                 var size = sampleSize;
+                 out.fillRect(x - 0.5 * size, y - 0.5 * size, size, size);
+             }
+         });
 
-   function reset()
-   {
-     offset.x = 1000 * (Math.random() * 2 - 1);
-     offset.y = 1000 * (Math.random() * 2 - 1);
-     scale = Math.random() * 0.01 + 0.001;
-     time = nSteps;
-   }
-		</script>
-	<script type="text/javascript">
-	  var _gaq = _gaq || [];
-	  _gaq.push(['_setAccount', 'UA-6101672-1']);
-	  _gaq.push(['_trackPageview']);
-
-	  (function() {
-		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-	  })();
-	</script>
-</body>
+         function reset(){
+             offset.x = 1000 * (Math.random() * 2 - 1);
+             offset.y = 1000 * (Math.random() * 2 - 1);
+             scale = Math.random() * 0.01 + 0.001;
+             time = nSteps;
+         }
+        </script>
+    </body>
 </html>

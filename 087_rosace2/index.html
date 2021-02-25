@@ -1,54 +1,42 @@
 <html>
-<head>
-	<title>Rosace</title>
-	<link rel="stylesheet" type="text/css" href="../css/styles.css"/>
-</head>
-<body>
-	<script type="text/javascript" src="../libs/tools.js"></script>
-	<script type="text/javascript">
-		tools.mixin(tools, this);
-		
-		var stage = new Stage(700, 700);
-		var out = stage.out;
-		out.translate(0.5 * stage.width, 0.5 * stage.height);
-		
-		var time = 0;
-		var radiusInit = 300;
-		var radius = radiusInit;
-		var angle = Math.PI;
-		var n = 3 + Math.floor(Math.random() * 20);
-		var ratio1 = 0.001 + Math.random() * 0.05;
-		var ratio2 = 0.001 + Math.random() * 0.05;
-		new Loop(function(){
-			var oldRadius = radius;
-			var oldAngle = angle;
-			time++;
-			radius = radiusInit * Math.cos(ratio1 * time);
-			angle = Math.PI * (Math.sin(ratio2 * time) + 1);
-			out.beginPath();
-			for(var i = 0; i < n; i++)
-			{
-				var a = i / n * 2 * Math.PI;
-				var x = oldRadius * Math.cos(oldAngle + a);
-				var y = oldRadius * Math.sin(oldAngle + a);
-				out.moveTo(x, y);
-				x = radius * Math.cos(angle + a);
-				y = radius * Math.sin(angle + a);
-				out.lineTo(x, y);
-			}
-			out.stroke();
-		});</script>
-	
-	<script type="text/javascript">
-	  var _gaq = _gaq || [];
-	  _gaq.push(['_setAccount', 'UA-6101672-1']);
-	  _gaq.push(['_trackPageview']);
+    <head>
+        <title>Rosace</title>
+        <link rel="stylesheet" type="text/css" href="../css/styles.css"/>
+    </head>
+    <body>
+        <script type="text/javascript" src="../libs/tools.js"></script>
+        <script type="text/javascript">
+         tools.mixin(tools, this);
 
-	  (function() {
-		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-	  })();
-	</script>
-</body>
+         var stage = new Stage(700, 700);
+         var out = stage.out;
+         out.translate(0.5 * stage.width, 0.5 * stage.height);
+
+         var time = 0;
+         var radiusInit = 300;
+         var radius = radiusInit;
+         var angle = Math.PI;
+         var n = 3 + Math.floor(Math.random() * 20);
+         var ratio1 = 0.001 + Math.random() * 0.05;
+         var ratio2 = 0.001 + Math.random() * 0.05;
+         new Loop(function(){
+             var oldRadius = radius;
+             var oldAngle = angle;
+             time++;
+             radius = radiusInit * Math.cos(ratio1 * time);
+             angle = Math.PI * (Math.sin(ratio2 * time) + 1);
+             out.beginPath();
+             for(var i = 0; i < n; i++){
+                 var a = i / n * 2 * Math.PI;
+                 var x = oldRadius * Math.cos(oldAngle + a);
+                 var y = oldRadius * Math.sin(oldAngle + a);
+                 out.moveTo(x, y);
+                 x = radius * Math.cos(angle + a);
+                 y = radius * Math.sin(angle + a);
+                 out.lineTo(x, y);
+             }
+             out.stroke();
+         });
+        </script>
+    </body>
 </html>

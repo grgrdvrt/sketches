@@ -1,57 +1,42 @@
 <html>
-<head>
-	<title>mounts</title>
-	<link rel="stylesheet" type="text/css" href="../css/styles.css"/>
-</head>
-<body>
-	<script type="text/javascript" src="../libs/tools.js"></script>
-	<script type="text/javascript">
-		var stage = new tools.Stage(700, 700);
-		var out = stage.out;
-		
-		var nLines = 100;
-		
-		var step = 2;
-		
-		var time = 10;
-		var vel = 0;
-		
-		function update()
-		{
-			for(var j = 0; j < nLines; j++)
-			{
-				out.strokeStyle = j % 2 ? "black" : "white";
-				out.lineWidth = 10;
-				out.beginPath();
-				out.moveTo(0, stage.height);
-				for(var i = 0; i < stage.width; i += step)
-				{
-					var posRatio = i * Math.PI / stage.width;
-					var posY = j + j * (Math.sin(posRatio + 2.1 + 0.01 * time) + 1);
-					posY *= 1 * (Math.sin(posRatio - 1.5 - 0.1 * time) + 1);
-					posY = stage.height - posY;
-					posY += 0.5 * (Math.random() * 2 - 1);
-					out.lineTo(i, posY);
-				}
-				out.stroke();
-			}
-			vel = 0.99 * vel + (Math.random() * 2 - 1);
-			time += vel;
-		
-		};
-		
-		new tools.Loop(update, this);</script>
-	
-	<script type="text/javascript">
-	  var _gaq = _gaq || [];
-	  _gaq.push(['_setAccount', 'UA-6101672-1']);
-	  _gaq.push(['_trackPageview']);
+    <head>
+        <title>mounts</title>
+        <link rel="stylesheet" type="text/css" href="../css/styles.css"/>
+    </head>
+    <body>
+        <script type="text/javascript" src="../libs/tools.js"></script>
+        <script type="text/javascript">
+         var stage = new tools.Stage(700, 700);
+         var out = stage.out;
 
-	  (function() {
-		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-	  })();
-	</script>
-</body>
+         var nLines = 100;
+
+         var step = 2;
+
+         var time = 10;
+         var vel = 0;
+
+         function update(){
+             for(var j = 0; j < nLines; j++){
+                 out.strokeStyle = j % 2 ? "black" : "white";
+                 out.lineWidth = 10;
+                 out.beginPath();
+                 out.moveTo(0, stage.height);
+                 for(var i = 0; i < stage.width; i += step){
+                     var posRatio = i * Math.PI / stage.width;
+                     var posY = j + j * (Math.sin(posRatio + 2.1 + 0.01 * time) + 1);
+                     posY *= 1 * (Math.sin(posRatio - 1.5 - 0.1 * time) + 1);
+                     posY = stage.height - posY;
+                     posY += 0.5 * (Math.random() * 2 - 1);
+                     out.lineTo(i, posY);
+                 }
+                 out.stroke();
+             }
+             vel = 0.99 * vel + (Math.random() * 2 - 1);
+             time += vel;
+
+         };
+
+         new tools.Loop(update, this);</script>
+    </body>
 </html>

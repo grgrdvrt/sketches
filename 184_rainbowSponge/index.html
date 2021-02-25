@@ -1,109 +1,88 @@
 <html>
-<head>
-	<title>Rainbow Sponge</title>
-	<link rel="stylesheet" type="text/css" href="../css/styles.css"/>
-</head>
-<body>
-	<script type="text/javascript" src="../libs/tools.js"></script>
-	<script type="text/javascript">
-    var w = 700;
-    var h = 700;
-		var stage = new tools.Stage(w, h);
-		var out = stage.out;
+    <head>
+        <title>Rainbow Sponge</title>
+        <link rel="stylesheet" type="text/css" href="../css/styles.css"/>
+    </head>
+    <body>
+        <script type="text/javascript" src="../libs/tools.js"></script>
+        <script type="text/javascript">
+         var w = 700;
+         var h = 700;
+         var stage = new tools.Stage(w, h);
+         var out = stage.out;
 
-    var mouse = new tools.Mouse(stage.canvas);
+         var mouse = new tools.Mouse(stage.canvas);
 
-    var sw = 0.25 * w;
-    var sh = 0.20 * h;
-    var spongeStage = new tools.Stage(sw, sh, false);
-    var spongeOut = spongeStage.out;
-    var tempStage = new tools.Stage(w, h, false);
-
-    
-
-    var oldPos = {x:0, y:0};
-    mouse.onDown.add(onMouseDown, this);
-    function onMouseDown()
-    {
-      oldPos.x = mouse.x;
-      oldPos.y = mouse.y;
-      update();
-    }
-
-    function setColors()
-    {
-      var gradient = out.createLinearGradient(0.5 * sw, 0, 0.5 * sw, sh);
-      var n = 2 + Math.floor(Math.random() * 5);
-      var values = [];
-      var sum = 0;
-      for(var i = 0; i < n; i++)
-      {
-        values[i] = Math.random();
-        sum += values[i];
-      }
-      var r = 1 / sum;
-      var offset = 0;
-      for(var i = 0; i < n; i++)
-      {
-        var stripeHeight = values[i] * r;
-        var hue = Math.round(Math.random() * 360);
-        var lig = 25 + Math.round(Math.random() * 50);
-        gradient.addColorStop(offset, "hsl(" + hue + ", 100%, " + lig + "%)");
-        offset += stripeHeight;
-      }
-      spongeOut.fillStyle = gradient;
-      spongeOut.clearRect(0, 0, sw, sh);
-      spongeOut.fillRect(0, i, sw, sh);
-
-    }
-    mouse.onUp.add(setColors, this);
-    setColors();
-
-    new tools.Loop(update, this);
-
-    function update()
-    {
-      if(mouse.x + mouse.y == 0)return;
-      out.clearRect(0, 0, w, h);
-      out.drawImage(tempStage.canvas, 0, 0);
-
-      var posX = mouse.x - 0.5 * sw;
-      var posY = mouse.y - 0.5 * sh;
-      if(mouse.isDown)
-      {
-        var dx = mouse.x - oldPos.x;
-        var dy = mouse.y - oldPos.y;
-        if(dx == 0 && dy == 0)dx = 1;
-        var dist = Math.sqrt(dx * dx + dy * dy);
-        var step = 1 / dist;
-        for(var i = 0; i < dist; i++)
-        {
-          var r = -(1 - i / dist);
-          var offsetX = r * dx;
-          var offsetY = r * dy;
-          tempStage.out.drawImage(spongeStage.canvas, posX + offsetX, posY + offsetY);
-        }
-        oldPos.x = mouse.x;
-        oldPos.y = mouse.y;
-      }
-      else out.drawImage(spongeStage.canvas, posX, posY);
-    }
+         var sw = 0.25 * w;
+         var sh = 0.20 * h;
+         var spongeStage = new tools.Stage(sw, sh, false);
+         var spongeOut = spongeStage.out;
+         var tempStage = new tools.Stage(w, h, false);
 
 
 
-	</script>
-	
-	<script type="text/javascript">
-	  var _gaq = _gaq || [];
-	  _gaq.push(['_setAccount', 'UA-6101672-1']);
-	  _gaq.push(['_trackPageview']);
+         var oldPos = {x:0, y:0};
+         mouse.onDown.add(onMouseDown, this);
+         function onMouseDown(){
+             oldPos.x = mouse.x;
+             oldPos.y = mouse.y;
+             update();
+         }
 
-	  (function() {
-		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-	  })();
-	</script>
-</body>
+         function setColors(){
+             var gradient = out.createLinearGradient(0.5 * sw, 0, 0.5 * sw, sh);
+             var n = 2 + Math.floor(Math.random() * 5);
+             var values = [];
+             var sum = 0;
+             for(var i = 0; i < n; i++){
+                 values[i] = Math.random();
+                 sum += values[i];
+             }
+             var r = 1 / sum;
+             var offset = 0;
+             for(var i = 0; i < n; i++){
+                 var stripeHeight = values[i] * r;
+                 var hue = Math.round(Math.random() * 360);
+                 var lig = 25 + Math.round(Math.random() * 50);
+                 gradient.addColorStop(offset, "hsl(" + hue + ", 100%, " + lig + "%)");
+                 offset += stripeHeight;
+             }
+             spongeOut.fillStyle = gradient;
+             spongeOut.clearRect(0, 0, sw, sh);
+             spongeOut.fillRect(0, i, sw, sh);
+
+         }
+         mouse.onUp.add(setColors, this);
+         setColors();
+
+         new tools.Loop(update, this);
+
+         function update(){
+             if(mouse.x + mouse.y == 0)return;
+             out.clearRect(0, 0, w, h);
+             out.drawImage(tempStage.canvas, 0, 0);
+
+             var posX = mouse.x - 0.5 * sw;
+             var posY = mouse.y - 0.5 * sh;
+             if(mouse.isDown){
+                 var dx = mouse.x - oldPos.x;
+                 var dy = mouse.y - oldPos.y;
+                 if(dx == 0 && dy == 0)dx = 1;
+                 var dist = Math.sqrt(dx * dx + dy * dy);
+                 var step = 1 / dist;
+                 for(var i = 0; i < dist; i++){
+                     var r = -(1 - i / dist);
+                     var offsetX = r * dx;
+                     var offsetY = r * dy;
+                     tempStage.out.drawImage(spongeStage.canvas, posX + offsetX, posY + offsetY);
+                 }
+                 oldPos.x = mouse.x;
+                 oldPos.y = mouse.y;
+             }
+             else out.drawImage(spongeStage.canvas, posX, posY);
+         }
+
+        </script>
+
+    </body>
 </html>
-

@@ -1,108 +1,89 @@
 <html>
-<head>
-	<title>Delaunay</title>
-	<link rel="stylesheet" type="text/css" href="../css/styles.css"/>
-</head>
-<body>
-	<script type="text/javascript" src="../libs/tools.js"></script>
-	<script type="text/javascript" src="delaunay.js"></script>
-	<script type="text/javascript">
-		tools.mixin(tools, this);
-		
-		var w = 700;
-		var h = 700;
-		
-		var stage = new Stage(w, h);
-		var out = stage.out;
-		
-		
-		var nVertices = 100;
-		
-		var vertices = [{x:0, y:0}, {x:w, y:0}, {x:w, y:h}, {x:0, y:h}];
-		
-		
-		var triangles;
-		
-		init();
-		
-		var time = 0;
-		var maxTime = 50;
-		
-		new Loop(function(){
-		
-			drawCells(triangles, out, 1 - time / maxTime);
-		
-			if(++time > maxTime) init();
-		});
-		
-		
-		function init()
-		{
-			time = 0;
-			createVertices(vertices);
-		
-			triangles = Triangulate(vertices);
-		
-			var n = triangles.length;
-			for(var i = 0 ; i < n; i++)
-			{
-				var t = triangles[i];
-				if(!t)continue;
-				t.color = "hsl(0, 0%, " + Math.round(Math.random() * 100) + "%)";;
-			}
-		}
-		
-		function createVertices(v)
-		{
-			v.length = 4;
-			for(var i = 0; i < nVertices; i++)
-			{
-				v[i + 4] = { x : Math.random() * w,
-							 y : Math.random() * h};
-			}
-		}
-		
-		function drawCells(cells, out, t)
-		{
-			var n = cells.length;
-			for(var i = 0; i < n; i++)
-			{
-				var c = cells[i];
-				if(!c) continue;
-				drawCell(c, out, c.color, t);
-			}
-		}
-		
-		
-		function drawCell(cell, out, color, t)
-		{
-			out.fillStyle = color;
-			out.strokeStyle = color;
-			out.beginPath();
-			var x = (cell.v0.x + cell.v1.x + cell.v2.x) / 3;
-			var y = (cell.v0.y + cell.v1.y + cell.v2.y) / 3;
-		
-		
-			out.moveTo(lerp(cell.v0.x, x, t), lerp(cell.v0.y, y, t));
-			out.lineTo(lerp(cell.v1.x, x, t), lerp(cell.v1.y, y, t));
-			out.lineTo(lerp(cell.v2.x, x, t), lerp(cell.v2.y, y, t));
-			out.closePath();
-			out.fill();
-			out.stroke();//sloooooow
-		}
-		
-		function lerp(a, b, t){return a + t * (b - a);}</script>
-	
-	<script type="text/javascript">
-	  var _gaq = _gaq || [];
-	  _gaq.push(['_setAccount', 'UA-6101672-1']);
-	  _gaq.push(['_trackPageview']);
+    <head>
+        <title>Delaunay</title>
+        <link rel="stylesheet" type="text/css" href="../css/styles.css"/>
+    </head>
+    <body>
+        <script type="text/javascript" src="../libs/tools.js"></script>
+        <script type="text/javascript" src="delaunay.js"></script>
+        <script type="text/javascript">
+         tools.mixin(tools, this);
 
-	  (function() {
-		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-	  })();
-	</script>
-</body>
+         var w = 700;
+         var h = 700;
+
+         var stage = new Stage(w, h);
+         var out = stage.out;
+
+
+         var nVertices = 100;
+
+         var vertices = [{x:0, y:0}, {x:w, y:0}, {x:w, y:h}, {x:0, y:h}];
+
+
+         var triangles;
+
+         init();
+
+         var time = 0;
+         var maxTime = 50;
+
+         new Loop(function(){
+
+             drawCells(triangles, out, 1 - time / maxTime);
+
+             if(++time > maxTime) init();
+         });
+
+
+         function init(){
+             time = 0;
+             createVertices(vertices);
+
+             triangles = Triangulate(vertices);
+
+             var n = triangles.length;
+             for(var i = 0 ; i < n; i++){
+                 var t = triangles[i];
+                 if(!t)continue;
+                 t.color = "hsl(0, 0%, " + Math.round(Math.random() * 100) + "%)";;
+             }
+         }
+
+         function createVertices(v){
+             v.length = 4;
+             for(var i = 0; i < nVertices; i++){
+                 v[i + 4] = { x : Math.random() * w,
+                              y : Math.random() * h};
+             }
+         }
+
+         function drawCells(cells, out, t){
+             var n = cells.length;
+             for(var i = 0; i < n; i++){
+                 var c = cells[i];
+                 if(!c) continue;
+                 drawCell(c, out, c.color, t);
+             }
+         }
+
+
+         function drawCell(cell, out, color, t){
+             out.fillStyle = color;
+             out.strokeStyle = color;
+             out.beginPath();
+             var x = (cell.v0.x + cell.v1.x + cell.v2.x) / 3;
+             var y = (cell.v0.y + cell.v1.y + cell.v2.y) / 3;
+
+
+             out.moveTo(lerp(cell.v0.x, x, t), lerp(cell.v0.y, y, t));
+             out.lineTo(lerp(cell.v1.x, x, t), lerp(cell.v1.y, y, t));
+             out.lineTo(lerp(cell.v2.x, x, t), lerp(cell.v2.y, y, t));
+             out.closePath();
+             out.fill();
+             out.stroke();//sloooooow
+         }
+
+         function lerp(a, b, t){return a + t * (b - a);}</script>
+    </body>
 </html>

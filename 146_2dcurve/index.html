@@ -1,95 +1,80 @@
 <html>
-<head>
-	<title>2d Curve</title>
-	<link rel="stylesheet" type="text/css" href="../css/styles.css"/>
-</head>
-<body>
-	<script type="text/javascript" src="../libs/tools.js"></script>
-	<script type="text/javascript">
-		tools.mixin(tools, this);
-		
-		var w = 700;
-		var h = 700;
-		var stage = new tools.Stage(w, h);
-		var out = stage.out;
-		
-		
-		
-		
-		function Curve(value, pow, minTime, maxTime)
-		{
-			this.value = this.begin = this.end = value;
-		
-			this.pow = pow;
-		
-			this.minTime = minTime;
-			this.maxTime = maxTime;
-		
-			this.time = 0;
-			this.duration = 0;
-			this.reset();
-		}
-		
-		Curve.prototype = {
-			update : function(timeChange)
-			{
-				var timeRatio = this.time / this.duration;
-				if(timeRatio < 0.5) timeRatio = 0.5 * Math.pow(timeRatio * 2, this.pow);
-				else timeRatio = 1 - 0.5 * Math.pow((1 - timeRatio) * 2, this.pow);
-		
-				this.value = this.begin + timeRatio * (this.end - this.begin);
-				this.time += timeChange;
-				if(this.time > this.duration) this.reset();
-			},
-			
-			reset : function()
-			{
-				this.begin = this.end;
-				this.end = Math.random();
-				this.time = 0;
-				this.duration = Math.floor(this.minTime + Math.random() * (this.maxTime - this.minTime));
-			}
-		}
-		
-		var pow = 2;
-		var min = 25;
-		var max = 50;
-		var curveX = new Curve(0.5, pow, min, max);
-		var curveY = new Curve(0.5, pow, min, max);
-		
-		
-		var duration = 0;
-		
-		out.beginPath();
-		
-		var duration = 15 * 60;
-		var t = 0;
-		var posX = 0.5 * w;
-		var posY = 0.5 * h;
-		new Loop(function(){
-			var timeRatio = t / duration;
-			if(timeRatio > 1) return;
-			curveX.update(1);
-			curveY.update(1);
-			out.beginPath();
-			out.moveTo(posX, posY);
-			posX = curveX.value * w;
-			posY = curveY.value * h;
-			out.lineTo(posX, posY);
-			out.stroke();
-			t++;
-		});</script>
-	
-	<script type="text/javascript">
-	  var _gaq = _gaq || [];
-	  _gaq.push(['_setAccount', 'UA-6101672-1']);
-	  _gaq.push(['_trackPageview']);
+    <head>
+        <title>2d Curve</title>
+        <link rel="stylesheet" type="text/css" href="../css/styles.css"/>
+    </head>
+    <body>
+        <script type="text/javascript" src="../libs/tools.js"></script>
+        <script type="text/javascript">
+         tools.mixin(tools, this);
 
-	  (function() {
-		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-	  })();
-	</script>
-</body>
+         var w = 700;
+         var h = 700;
+         var stage = new tools.Stage(w, h);
+         var out = stage.out;
+
+
+
+
+         function Curve(value, pow, minTime, maxTime){
+             this.value = this.begin = this.end = value;
+
+             this.pow = pow;
+
+             this.minTime = minTime;
+             this.maxTime = maxTime;
+
+             this.time = 0;
+             this.duration = 0;
+             this.reset();
+         }
+
+         Curve.prototype = {
+             update : function(timeChange){
+                 var timeRatio = this.time / this.duration;
+                 if(timeRatio < 0.5) timeRatio = 0.5 * Math.pow(timeRatio * 2, this.pow);
+                 else timeRatio = 1 - 0.5 * Math.pow((1 - timeRatio) * 2, this.pow);
+
+                 this.value = this.begin + timeRatio * (this.end - this.begin);
+                 this.time += timeChange;
+                 if(this.time > this.duration) this.reset();
+             },
+
+             reset : function(){
+                 this.begin = this.end;
+                 this.end = Math.random();
+                 this.time = 0;
+                 this.duration = Math.floor(this.minTime + Math.random() * (this.maxTime - this.minTime));
+             }
+         }
+
+         var pow = 2;
+         var min = 25;
+         var max = 50;
+         var curveX = new Curve(0.5, pow, min, max);
+         var curveY = new Curve(0.5, pow, min, max);
+
+
+         var duration = 0;
+
+         out.beginPath();
+
+         var duration = 15 * 60;
+         var t = 0;
+         var posX = 0.5 * w;
+         var posY = 0.5 * h;
+         new Loop(function(){
+             var timeRatio = t / duration;
+             if(timeRatio > 1) return;
+             curveX.update(1);
+             curveY.update(1);
+             out.beginPath();
+             out.moveTo(posX, posY);
+             posX = curveX.value * w;
+             posY = curveY.value * h;
+             out.lineTo(posX, posY);
+             out.stroke();
+             t++;
+         });</script>
+    </body>
 </html>

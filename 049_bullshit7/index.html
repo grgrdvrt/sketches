@@ -1,96 +1,79 @@
 <html>
-<head>
-	<title>bullshit 7</title>
-	<link rel="stylesheet" type="text/css" href="../css/styles.css"/>
-</head>
-<body>
-	<script type="text/javascript" src="../libs/tools.js"></script>
-	<script type="text/javascript">
-		var stage = new tools.Stage(700, 700);
-		
-		var out = stage.out;
-		
-		
-		function StatsGenerator(){}
-		StatsGenerator.prototype.getNext = function(){return Math.random();}
-		
-		
-		function drawAxis(out, length, nDivisions)
-		{
-			out.beginPath();
-			out.moveTo(0, 0);
-			out.lineTo(length, 0);
-			
-			if(nDivisions)
-			{
-				var divisionRatio = length / nDivisions;
-				for(var i = 1; i < nDivisions; i++)
-				{
-					var posX = i * divisionRatio;
-					out.moveTo(posX, -3);
-					out.lineTo(posX, 3);
-				}
-			}
-			out.moveTo(length - 5, -5);
-			out.lineTo(length, 0);
-			out.lineTo(length - 5, 5);
-			out.stroke();
-		}
-		
-		/*
-		*	width, height : basis size
-		*/
-		function drawCircles(out, n, width, height)
-		{
-			var radiusGenerator = new StatsGenerator();
-			var xGenerator = new StatsGenerator();
-			var yGenerator = new StatsGenerator();
-			var blockWidth = Math.floor((width - margin) / n - margin);
-			var power = 5;
-			for(var i = 0; i < n; i++)
-			{
-				var posX = xGenerator.getNext();
-				var max = Math.pow(posX, power);
-				var min  = Math.pow(posX, 1 / power);
-				var posY = min + Math.random() * (max - min);
-				
-				var radius = 60 * (1 - Math.pow(Math.abs(posY - Math.pow(posX, 2)), 1 / 5));
-				var l = Math.floor(100 * Math.random());
-				out.fillStyle = "hsl(0, 0%, " + l + "%)";
-				out.beginPath();
-				out.arc(width * posX, -height * posY, radius, 0, 2 * Math.PI);
-				out.fill();
-			}
-		}
-		
-		
-		var margin = 50;
-		var w = stage.width - 2 * margin;
-		var h = stage.height - 2 * margin;
-		var nDivisions = 10;
-		
-		out.translate(margin, h + margin + 0.5);
-		out.save();
-		out.strokeStyle = "black";
-		drawAxis(out, w, 0);
-		out.rotate(-0.5 * Math.PI);
-		drawAxis(out, h, nDivisions);
-		out.rotate(-0.5 * Math.PI);
-		out.restore();
-		
-		drawCircles(out, Math.floor(Math.random() * 40 + 20), w, h - h / nDivisions);
-	</script>
-	
-	<script type="text/javascript">
-	  var _gaq = _gaq || [];
-	  _gaq.push(['_setAccount', 'UA-6101672-1']);
-	  _gaq.push(['_trackPageview']);
+    <head>
+        <title>bullshit 7</title>
+        <link rel="stylesheet" type="text/css" href="../css/styles.css"/>
+    </head>
+    <body>
+        <script type="text/javascript" src="../libs/tools.js"></script>
+        <script type="text/javascript">
+         var stage = new tools.Stage(700, 700);
 
-	  (function() {
-		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-	  })();
-	</script>
-</body>
+         var out = stage.out;
+
+
+         function StatsGenerator(){}
+         StatsGenerator.prototype.getNext = function(){return Math.random();}
+
+
+         function drawAxis(out, length, nDivisions){
+             out.beginPath();
+             out.moveTo(0, 0);
+             out.lineTo(length, 0);
+
+             if(nDivisions){
+                 var divisionRatio = length / nDivisions;
+                 for(var i = 1; i < nDivisions; i++){
+                     var posX = i * divisionRatio;
+                     out.moveTo(posX, -3);
+                     out.lineTo(posX, 3);
+                 }
+             }
+             out.moveTo(length - 5, -5);
+             out.lineTo(length, 0);
+             out.lineTo(length - 5, 5);
+             out.stroke();
+         }
+
+         /*
+          *	width, height : basis size
+          */
+         function drawCircles(out, n, width, height){
+             var radiusGenerator = new StatsGenerator();
+             var xGenerator = new StatsGenerator();
+             var yGenerator = new StatsGenerator();
+             var blockWidth = Math.floor((width - margin) / n - margin);
+             var power = 5;
+             for(var i = 0; i < n; i++){
+                 var posX = xGenerator.getNext();
+                 var max = Math.pow(posX, power);
+                 var min  = Math.pow(posX, 1 / power);
+                 var posY = min + Math.random() * (max - min);
+
+                 var radius = 60 * (1 - Math.pow(Math.abs(posY - Math.pow(posX, 2)), 1 / 5));
+                 var l = Math.floor(100 * Math.random());
+                 out.fillStyle = "hsl(0, 0%, " + l + "%)";
+                 out.beginPath();
+                 out.arc(width * posX, -height * posY, radius, 0, 2 * Math.PI);
+                 out.fill();
+             }
+         }
+
+
+         var margin = 50;
+         var w = stage.width - 2 * margin;
+         var h = stage.height - 2 * margin;
+         var nDivisions = 10;
+
+         out.translate(margin, h + margin + 0.5);
+         out.save();
+         out.strokeStyle = "black";
+         drawAxis(out, w, 0);
+         out.rotate(-0.5 * Math.PI);
+         drawAxis(out, h, nDivisions);
+         out.rotate(-0.5 * Math.PI);
+         out.restore();
+
+         drawCircles(out, Math.floor(Math.random() * 40 + 20), w, h - h / nDivisions);
+        </script>
+    </body>
 </html>

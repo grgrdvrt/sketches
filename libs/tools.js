@@ -4,11 +4,11 @@ var tools = function ()
 	{
 		for(var k in from) to[k] = from[k];
 	}
-	
-	function Signal(){this.listeners = []};
-	
+
+	function Signal(){this.listeners = [];}
+
 	Signal.prototype = {
-	
+
 		add : function(callback, scope)
 		{
 			if(!callback)throw new Error("no callback specified");
@@ -25,7 +25,7 @@ var tools = function ()
 			}
 			this.listeners.push({callback:callback, scope:scope, args:args});
 		},
-		
+
 		remove : function(callback, scope)
 		{
 			var n = this.listeners.length;
@@ -39,7 +39,7 @@ var tools = function ()
 				}
 			}
 		},
-		
+
 		dispatch : function()
 		{
 			var args = Array.prototype.slice.call(arguments);
@@ -50,38 +50,37 @@ var tools = function ()
 				listener.callback.apply(listener.scope, args.concat(listener.args));
 			}
 		},
-		
+
 		dispose : function() { this.listeners = []; }
-	}
-	
-	
-	
-	
+	};
+
+
+
+
 	function delegate(method, scope)
 	{
 		if(!method)throw new Error("no method specified");
 		var args = Array.prototype.slice.call(arguments, 2);
-		return function()
-			{
-				var params = Array.prototype.slice.call(arguments);
-				method.apply(scope, params.concat(args));
-			}
+		return function() {
+      var params = Array.prototype.slice.call(arguments);
+      method.apply(scope, params.concat(args));
+    };
 	}
-	
-	
-	
+
+
+
 	var requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame ||
 								window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
 	window.requestAnimationFrame = requestAnimationFrame;
-	
+
 	var cancelAnimationFrame = window.cancelAnimationFrame || window.mozCancelAnimationFrame || window.webkitCancelAnimationFrame;
-	
-	
-	
-	
-	
+
+
+
+
+
 	function Tween(duration) { this.init(duration); }
-	
+
 	Tween.prototype = {
 		init : function(duration)
 		{
@@ -92,7 +91,7 @@ var tools = function ()
 		{
 			return Math.min(1, (Date.now() - this.begin) / (1000 * this.duration));
 		}
-	}
+	};
 
 
 
@@ -102,7 +101,7 @@ var tools = function ()
 	{
 		this.canvas = document.createElement("canvas");
 		this.resize(w, h);
-		if(addToBody || addToBody == undefined)
+		if(addToBody || addToBody === undefined)
 		{
 			var body = document.getElementsByTagName('body')[0];
 			body.appendChild(this.canvas);
@@ -110,29 +109,29 @@ var tools = function ()
 		this.out = this.canvas.getContext("2d");
 		this.onResize = new Signal();
 	}
-	
+
 	Stage.prototype = {
-		
+
 		resize : function(w, h)
 		{
 			this.canvas.width = this.width = w;
 			this.canvas.height = this.height = h;
 		},
-	
+
 		autoSize : function(callback, scope)
 		{
 			if(callback) this.onResize.add(callback, scope);
 			window.onresize = delegate(this._onResize, this);
 			this._onResize();
 		},
-	
+
 		_onResize : function()
 		{
 			this.resize(window.innerWidth || document.body.clientWidth,
 						 window.innerHeight || document.body.clientHeight);
 			this.onResize.dispatch();
 		},
-		
+
 		clear : function()
 		{
 			this.out.save();
@@ -140,24 +139,24 @@ var tools = function ()
 			this.out.clearRect(0, 0, this.width, this.height);
 			this.out.restore();
 		}
-	}
-	
-	
-	
-	
+	};
+
+
+
+
 	function Loop(callback, scope, autoPlay)
 	{
 		this.onUpdate = new Signal();
 		if(callback)
 		{
 			this.onUpdate.add(callback, scope);
-			if(autoPlay || autoPlay == undefined)
+			if(autoPlay || autoPlay === undefined)
 				this.play();
 		}
 	}
 
 	Loop.prototype = {
-	
+
 		isPaused : true,
 
 		play : function()
@@ -180,13 +179,13 @@ var tools = function ()
 			this.isPaused = true;
 			cancelAnimationFrame(this._requestFrame);
 		},
-		
+
 		dispose : function()
 		{
 			this.onUpdate.dispose();
 			pause();
 		}
-	}
+	};
 
 
 
@@ -198,11 +197,11 @@ var tools = function ()
 		this.oldX = this.oldY = 0;
 		this.isDown = false;
 		this.target = target || document;
-		
+
 		this.onDown = new Signal();
 		this.onUp = new Signal();
 		this.onMove = new Signal();
-	
+
 		this._moveCallback = delegate(this._onMouseMove, this);
 		this._downCallback = delegate(this._onMouseDown, this);
 		this._upCallback = delegate(this._onMouseUp, this);
@@ -212,7 +211,7 @@ var tools = function ()
 	}
 
 	Mouse.prototype = {
-	
+
 		_onMouseMove : function(e)
 		{
 			var ev = e || window.event;//Moz:IE
@@ -226,10 +225,10 @@ var tools = function ()
 			{
 				//IE or compatible
 				this.x = ev.clientX;
-				this.y = ev.clientY
+				this.y = ev.clientY;
 			}
-			this.x -= this.target.offsetLeft 
-			this.y -= this.target.offsetTop
+			this.x -= this.target.offsetLeft;
+			this.y -= this.target.offsetTop;
 
 			//synchronization problems with main loop
 			//this.savePos();
@@ -255,7 +254,7 @@ var tools = function ()
 			this.oldX = this.x;
 			this.oldY = this.y;
 		},
-		
+
 		point : function(pt)
 		{
 			pt = pt || {};
@@ -263,7 +262,7 @@ var tools = function ()
 			pt.y = this.y;
 			return pt;
 		},
-		
+
 		dispose : function()
 		{
 			this.onDown.dispose();
@@ -277,7 +276,7 @@ var tools = function ()
 			if(this.target.onmouseup == this._upCallback)
 				this.target.onmouseup = null;
 		}
-	}
+	};
 
 
 
@@ -311,7 +310,7 @@ var tools = function ()
 			this._keys[e.keyCode] = false;
 			this._call(this.onUp, e.keyCode);
 		},
-		
+
 		_call : function(signal, keyCode)
 		{
 			var listeners = signal.listeners;
@@ -327,9 +326,9 @@ var tools = function ()
 		},
 
 		isDown : function(key) { return this._keys[key] || false; },
-		
+
 		dispose : function()
-		{	
+		{
 			this.onDown.dispose();
 			this.onUp.dispose();
 			document.removeEventListener("keydown", this._downCallback);
@@ -348,7 +347,7 @@ var tools = function ()
 			if(k.indexOf(e.keyCode) != -1 || k[0] == -1)
 				e.preventDefault();
 		}
-	}
+	};
 
 	return {
 			delegate:delegate,

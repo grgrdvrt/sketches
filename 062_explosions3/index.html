@@ -1,0 +1,132 @@
+<html>
+    <head>
+        <title>explosions</title>
+        <link rel="stylesheet" type="text/css" href="../css/styles.css"/>
+    </head>
+    <body>
+        <script type="text/javascript" src="../libs/tools.js"></script>
+        <script type="text/javascript" src="audio.js"></script>
+        <script type="text/javascript" src="SimpleTone.js"></script>
+        <script type="text/javascript">
+         var baseHue = Math.random() * 360;
+         function Particle(){
+             this.vx = this.vy = 0;
+             this.x = this.y = 0;
+             this.radius = 3 + Math.random() * 10;
+             this.size = 0;
+             this.hue = Math.random() * 45 + baseHue;
+             if(Math.random() < 0.3)this.hue += 90;
+         }
+
+         Particle.prototype = {
+             draw : function(out){
+                 out.moveTo(this.x + this.radius, this.y);
+                 out.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
+             }
+         }
+
+         var stage = new tools.Stage(700, 700);
+         var out = stage.out;
+         var particles = [];
+         var nParticles = 500;
+         var minDist = 20;
+         var separation = 0.02;
+         var explosion = 100;
+         var friction = 0.985;
+         var maxVel = 20;
+         var boundaryForce = 0.001;
+
+         var ctx = new AudioContext();
+
+         var tone = new SimpleTone(ctx);
+
+         for(var i = 0; i < nParticles; i++){
+             var p = new Particle();
+             p.x = Math.random() * stage.width;
+             p.y = Math.random() * stage.height;
+             particles[i] = p;
+         }
+
+
+         new tools.Loop(update);
+
+         function update(){
+             if(Math.random() < 0.02){
+                 var e = particles[Math.floor(Math.random() * particles.length)];
+                 explode(e.x, e.y, e.radius * explosion);
+             }
+
+             out.fillStyle = "black";
+             out.fillRect(0, 0, stage.width, stage.height);
+
+
+             var i, p, dx, dy, dist, ratio;
+
+
+             for(i = 0; i < nParticles; i++){
+                 p = particles[i];
+
+                 for(var j = i + 1; j < nParticles; j++){
+                     var p2 = particles[j];
+                     dx = p2.x - p.x;
+                     dy = p2.y - p.y;
+
+                     dist = dx * dx + dy * dy;
+                     if(dist == 0) dist = 1;
+                     if(dist < minDist * minDist){
+                         ratio = (p.radius + p2.radius) * separation / Math.sqrt(dist);
+
+                         p.vx -= dx * ratio;
+                         p.vy -= dy * ratio;
+                         p2.vx += dx * ratio;
+                         p2.vy += dy * ratio;
+
+                     }
+                 }
+
+                 p.vx *= friction;
+                 p.vy *= friction;
+
+                 var vel = Math.sqrt(p.vx * p.vx + p.vy * p.vy);
+                 if(vel > maxVel){
+                     ratio = 1 / vel;
+                     p.vx *= ratio;
+                     p.vy *= ratio;
+                 }
+                 p.x += p.vx;
+                 p.y += p.vy;
+
+                 if(p.x < 0) p.vx -= p.x * boundaryForce;
+                 if(p.x > stage.width)
+                     p.vx -= (p.x - stage.width) * boundaryForce;
+                 if(p.y < 0) p.vy -= p.y * boundaryForce;
+                 if(p.y > stage.height)
+                     p.vy -= (p.y - stage.height) * boundaryForce;
+
+                 var ratio = vel / maxVel;
+                 var hue = Math.floor(180 + 360 * ratio) % 360;
+                 var lightness = Math.floor(100 * ratio);
+                 out.fillStyle = "hsl(" + p.hue + ", 100%, " + lightness + "%)";
+                 out.beginPath();
+                 p.draw(out);
+                 out.fill();
+             }
+         }
+
+         function explode(x, y, strength){
+             //tone.play(0.001 * (stage.height - y) - 20);
+             //tone.play(-35 + Math.random() * 10);
+             tone.play(-25 + Math.random() * 10);
+             for(var i = 0; i < nParticles; i++){
+                 var p = particles[i];
+                 var dx = x - p.x;
+                 var dy = y - p.y;
+                 var dist = dx * dx + dy * dy;
+                 if(dist == 0) continue;
+                 var ratio = -strength / dist;
+                 p.vx += dx * ratio;
+                 p.vy += dy * ratio;
+             }
+         }</script>
+    </body>
+</html>

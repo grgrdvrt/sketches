@@ -1,103 +1,87 @@
 <html>
-<head>
-	<title>Spheres</title>
-	<link rel="stylesheet" type="text/css" href="../css/styles.css"/>
-</head>
-<body>
-	<script type="text/javascript" src="../libs/tools.js"></script>
-	<script type="text/javascript">
+    <head>
+        <title>Spheres</title>
+        <link rel="stylesheet" type="text/css" href="../css/styles.css"/>
+    </head>
+    <body>
+        <script type="text/javascript" src="../libs/tools.js"></script>
+        <script type="text/javascript">
 
 
-		tools.mixin(tools, this);
-		
-		var w = 700;
-		var h = 700;
-		var stage = new Stage(w, h);
-		var out = stage.out;
+         tools.mixin(tools, this);
 
-		var mouse = new Mouse(stage.canvas);
+         var w = 700;
+         var h = 700;
+         var stage = new Stage(w, h);
+         var out = stage.out;
 
-
-		out.strokeStyle = "black";
-
-		function drawSphere(out, x, y, r, ang, lightness)
-		{
-			out.save();
-			out.translate(x, y);
-
-			out.beginPath();
-			out.arc(0, 0, r, 0, 2 * Math.PI);
-			//var lightness = Math.round(rand(0, 100))
-			out.fillStyle = "hsl(0, 0%, " + Math.round(100 * lightness) + "%)";
-			out.fill();
-			var n = 100;
-
-			var dMax = rand(0.3, 0.8) * Math.PI;
+         var mouse = new Mouse(stage.canvas);
 
 
-			for(var i = 0; i < n; i++)
-			{
-				out.beginPath();
-				var dist1 = dMax * rand(-1, 1);
-				var dist2 = dMax * rand(-1, 1);
+         out.strokeStyle = "black";
 
-				var angBegin = ang - dist1;
-				var angEnd = ang + dist2;
+         function drawSphere(out, x, y, r, ang, lightness){
+             out.save();
+             out.translate(x, y);
 
-				var diff = Math.abs(angEnd - angBegin);
-				diff = Math.max(Math.abs(dist1), Math.abs(dist2));
-				out.globalAlpha = 1 - diff / (dMax);
+             out.beginPath();
+             out.arc(0, 0, r, 0, 2 * Math.PI);
+             //var lightness = Math.round(rand(0, 100))
+             out.fillStyle = "hsl(0, 0%, " + Math.round(100 * lightness) + "%)";
+             out.fill();
+             var n = 100;
 
-				out.moveTo(r * Math.cos(angBegin), r * Math.sin(angBegin));
-				out.lineTo(r * Math.cos(angEnd), r * Math.sin(angEnd));
-
-				out.stroke();
-			}
-			out.restore();
-		}
+             var dMax = rand(0.3, 0.8) * Math.PI;
 
 
-		var lDmax = Math.sqrt(w * w + h * h);
-		function generate(lightX, lightY)
-		{
-			out.clearRect(0, 0, w, h);
-			var n = 300;
-			for(var i = 0; i < n; i++)
-			{
-				var x = Math.random() * w;
-				var y = Math.random() * h;
-				var radius = 0.05 + Math.random() * 0.15 * w;
-				var dx = x - lightX;
-				var dy = y - lightY;
-				var lightness = 1 - Math.sqrt(dx * dx + dy * dy) / lDmax + rand(-0.2, 0.2);
-				var ang = Math.atan2(dy, dx);
-				drawSphere(out, x, y, radius, ang, lightness);
-			}
-		}
+             for(var i = 0; i < n; i++){
+                 out.beginPath();
+                 var dist1 = dMax * rand(-1, 1);
+                 var dist2 = dMax * rand(-1, 1);
+
+                 var angBegin = ang - dist1;
+                 var angEnd = ang + dist2;
+
+                 var diff = Math.abs(angEnd - angBegin);
+                 diff = Math.max(Math.abs(dist1), Math.abs(dist2));
+                 out.globalAlpha = 1 - diff / (dMax);
+
+                 out.moveTo(r * Math.cos(angBegin), r * Math.sin(angBegin));
+                 out.lineTo(r * Math.cos(angEnd), r * Math.sin(angEnd));
+
+                 out.stroke();
+             }
+             out.restore();
+         }
 
 
-		mouse.onUp.add(function () { generate(mouse.x, mouse.y); }, this);
-		
+         var lDmax = Math.sqrt(w * w + h * h);
+         function generate(lightX, lightY){
+             out.clearRect(0, 0, w, h);
+             var n = 300;
+             for(var i = 0; i < n; i++){
+                 var x = Math.random() * w;
+                 var y = Math.random() * h;
+                 var radius = 0.05 + Math.random() * 0.15 * w;
+                 var dx = x - lightX;
+                 var dy = y - lightY;
+                 var lightness = 1 - Math.sqrt(dx * dx + dy * dy) / lDmax + rand(-0.2, 0.2);
+                 var ang = Math.atan2(dy, dx);
+                 drawSphere(out, x, y, radius, ang, lightness);
+             }
+         }
 
-		generate(rand(0, w), rand(0, h));
 
-		function rand(min, max)
-		{
-			return min + Math.random() * (max - min);
-		}
+         mouse.onUp.add(function () { generate(mouse.x, mouse.y); }, this);
 
-		</script>
-	
-	<script type="text/javascript">
-	  var _gaq = _gaq || [];
-	  _gaq.push(['_setAccount', 'UA-6101672-1']);
-	  _gaq.push(['_trackPageview']);
 
-	  (function() {
-		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-	  })();
-	</script>
-</body>
+         generate(rand(0, w), rand(0, h));
+
+         function rand(min, max){
+             return min + Math.random() * (max - min);
+         }
+
+        </script>
+
+    </body>
 </html>

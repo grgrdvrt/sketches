@@ -1,103 +1,85 @@
 <html>
-<head>
-	<title>Line</title>
-	<link rel="stylesheet" type="text/css" href="../css/styles.css"/>
-</head>
-<body>
-	<script type="text/javascript" src="../libs/tools.js"></script>
-	<script type="text/javascript">
-		tools.mixin(tools, this);
-		
-		var w = 700;
-		var h = 700;
-		var stage = new Stage(w, h);
-		var out = stage.out;
-		
-		var finalStage = new Stage(w, h, false);
-		var finalOut = finalStage.out;
-		
-		var mouse = new Mouse(stage.canvas);
-		
-		var keyboard = new Keyboard(stage.canvas);
-		keyboard.onDown.add(clear);
-		mouse.onDown.add(onMouseDown);
-		
-		
-		var pts = [];
-		var length = 10;
-		var length2 = length * length;
-		var nPts = 30;
-		
-		for(var i = 0; i < nPts; i++)
-			pts[i] = {x:mouse.x, y:mouse.y};
-		
-		function clear()
-		{
-			stage.clear();
-			finalStage.clear();
-		}
-		
-		
-		function onMouseDown()
-		{
-			for(var i = 0; i < nPts; i++)
-			{
-				var p = pts[i];
-				p.x = mouse.x;
-				p.y = mouse.y;
-			}
-		}
-		
-		
-		var ox = 0.5 * w;
-		var oy = 0.5 * w;
-		finalOut.strokeStyle = "rgba(0, 0, 0, 0.1)";
-		out.strokeStyle = "black";
-		new Loop(function(){
-		
-			if(ox == mouse.x && oy == mouse.y) return;
-			ox = mouse.x;
-			oy = mouse.y;
-			stage.clear();
-			out.drawImage(finalStage.canvas, 0, 0, w, h);
-			var ctx = mouse.isDown ? finalOut : out;
-			ctx.beginPath();
-			var p = pts[0];
-			p.x = mouse.x;
-			p.y = mouse.y;
-			ctx.moveTo(p.x, p.y);
-			for(var i = 1; i < nPts; i++)
-			{
-				var p = pts[i];
-				var op = pts[i - 1];
-				var dx = p.x - op.x;
-				var dy = p.y - op.y;
-				var dist = dx * dx + dy * dy;
-				if(dist > length2)
-				{
-					var r = length / Math.sqrt(dist);
-					p.x = op.x + dx * r;
-					p.y = op.y + dy * r;
-				}
-				ctx.quadraticCurveTo(op.x, op.y, 0.5 * (p.x + op.x), 0.5 * (p.y + op.y));
-			}
-			ctx.stroke();
-		
-		
-		});
-		
-	</script>
-	
-	<script type="text/javascript">
-	  var _gaq = _gaq || [];
-	  _gaq.push(['_setAccount', 'UA-6101672-1']);
-	  _gaq.push(['_trackPageview']);
+    <head>
+        <title>Line</title>
+        <link rel="stylesheet" type="text/css" href="../css/styles.css"/>
+    </head>
+    <body>
+        <script type="text/javascript" src="../libs/tools.js"></script>
+        <script type="text/javascript">
+         tools.mixin(tools, this);
 
-	  (function() {
-		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-	  })();
-	</script>
-</body>
+         var w = 700;
+         var h = 700;
+         var stage = new Stage(w, h);
+         var out = stage.out;
+
+         var finalStage = new Stage(w, h, false);
+         var finalOut = finalStage.out;
+
+         var mouse = new Mouse(stage.canvas);
+
+         var keyboard = new Keyboard(stage.canvas);
+         keyboard.onDown.add(clear);
+         mouse.onDown.add(onMouseDown);
+
+
+         var pts = [];
+         var length = 10;
+         var length2 = length * length;
+         var nPts = 30;
+
+         for(var i = 0; i < nPts; i++)
+             pts[i] = {x:mouse.x, y:mouse.y};
+
+         function clear(){
+             stage.clear();
+             finalStage.clear();
+         }
+
+
+         function onMouseDown(){
+             for(var i = 0; i < nPts; i++){
+                 var p = pts[i];
+                 p.x = mouse.x;
+                 p.y = mouse.y;
+             }
+         }
+
+
+         var ox = 0.5 * w;
+         var oy = 0.5 * w;
+         finalOut.strokeStyle = "rgba(0, 0, 0, 0.1)";
+         out.strokeStyle = "black";
+         new Loop(function(){
+
+             if(ox == mouse.x && oy == mouse.y) return;
+             ox = mouse.x;
+             oy = mouse.y;
+             stage.clear();
+             out.drawImage(finalStage.canvas, 0, 0, w, h);
+             var ctx = mouse.isDown ? finalOut : out;
+             ctx.beginPath();
+             var p = pts[0];
+             p.x = mouse.x;
+             p.y = mouse.y;
+             ctx.moveTo(p.x, p.y);
+             for(var i = 1; i < nPts; i++){
+                 var p = pts[i];
+                 var op = pts[i - 1];
+                 var dx = p.x - op.x;
+                 var dy = p.y - op.y;
+                 var dist = dx * dx + dy * dy;
+                 if(dist > length2){
+                     var r = length / Math.sqrt(dist);
+                     p.x = op.x + dx * r;
+                     p.y = op.y + dy * r;
+                 }
+                 ctx.quadraticCurveTo(op.x, op.y, 0.5 * (p.x + op.x), 0.5 * (p.y + op.y));
+             }
+             ctx.stroke();
+
+         });
+
+        </script>
+    </body>
 </html>

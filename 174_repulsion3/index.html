@@ -1,140 +1,124 @@
 <html>
-<head>
-	<title>Repulsion</title>
-	<link rel="stylesheet" type="text/css" href="../css/styles.css"/>
-</head>
-<body>
-	<script type="text/javascript" src="../libs/tools.js"></script>
-  <script type="text/javascript">
+    <head>
+        <title>Repulsion</title>
+        <link rel="stylesheet" type="text/css" href="../css/styles.css"/>
+    </head>
+    <body>
+        <script type="text/javascript" src="../libs/tools.js"></script>
+        <script type="text/javascript">
 
 
-    var w = 700;
-    var h = 700;
+         var w = 700;
+         var h = 700;
 
-    tools.mixin(tools, this);
-    var stage = new Stage(w, h);
-    var out = stage.out;
+         tools.mixin(tools, this);
+         var stage = new Stage(w, h);
+         var out = stage.out;
 
-    var mouse = new Mouse(stage.canvas);
+         var mouse = new Mouse(stage.canvas);
 
-    var n = 1000;
-    var repulsionForce = 0.10;
-    var friction = 0.99;
-    var vel = 0.1;
-    var gravity = 0.00001;
-    var c = {x:0.5 * w, y:0.5 * h};
-    var centerDist = 0.5 * Math.sqrt(w * w + h * h);
+         var n = 1000;
+         var repulsionForce = 0.10;
+         var friction = 0.99;
+         var vel = 0.1;
+         var gravity = 0.00001;
+         var c = {x:0.5 * w, y:0.5 * h};
+         var centerDist = 0.5 * Math.sqrt(w * w + h * h);
 
-    var particles = [];
-    for(var i = 0; i < n; i++)
-      particles[i] = {x:Math.random() * w,
-        targets:[],
-      y:Math.random() * h,
-      radius:Math.random() * 20,
-      fx:0, fy:0,
-      vx:0, vy:0};
-    particles[0].radius = 100;
+         var particles = [];
+         for(var i = 0; i < n; i++)
+             particles[i] = {
+                 x:Math.random() * w,
+                 targets:[],
+                 y:Math.random() * h,
+                 radius:Math.random() * 20,
+                 fx:0, fy:0,
+                 vx:0, vy:0
+             };
+         particles[0].radius = 100;
 
-    new Loop(function(){
-      update();
-      draw();
-    });
+         new Loop(function(){
+             update();
+             draw();
+         });
 
 
-  function update()
-  {
-    particles[0].x = mouse.x;
-    particles[0].y = mouse.y;
-    for(var i = 0; i < n; i++)
-    {
-      var p = particles[i];
-      p.targets.length = 0;
-      for(var j = i + 1; j < n; j++)
-      {
-        var p2 = particles[j];
-        var dx = p2.x - p.x;
-        var dy = p2.y - p.y;
-        if(dx == 0 && dy == 0)dx = 1;
-        var d = dx * dx + dy * dy;
-        var dMin = p.radius + p2.radius;
-        if(d < dMin * dMin)
-        {
-          var r = 0.5 / Math.sqrt(d);
-          p.fx -= r * dx;
-          p.fy -= r * dy;
-          p2.fx += r * dx;
-          p2.fy += r * dy;
-        }
-        if(d < (dMin * dMin + 100))
-          p.targets.push(p2);
-      }
-    }
-    for(var i = 0; i < n; i++)
-    {
-      var p = particles[i];
-      p.vx += p.fx * repulsionForce;
-      p.vy += p.fy * repulsionForce;
-      //p.vx += (Math.random() * 2 - 1) * vel;
-      //p.vy += (Math.random() * 2 - 1) * vel;
-      var dx = c.x - p.x;
-      var dy = c.y - p.y;
-      var d = dx * dx + dy * dy;
-      if(d > centerDist)
-      {
-        var r = gravity;
-        p.vx += r * dx;
-        p.vy += r * dy;
-      }
-      p.vx *= friction;
-      p.vy *= friction;
-      p.x += p.vx;
-      p.y += p.vy;
-      p.fx = p.fy = 0;
-    }
-  }
+         function update(){
+             particles[0].x = mouse.x;
+             particles[0].y = mouse.y;
+             for(var i = 0; i < n; i++) {
+                 var p = particles[i];
+                 p.targets.length = 0;
+                 for(var j = i + 1; j < n; j++) {
+                     var p2 = particles[j];
+                     var dx = p2.x - p.x;
+                     var dy = p2.y - p.y;
+                     if(dx == 0 && dy == 0)dx = 1;
+                     var d = dx * dx + dy * dy;
+                     var dMin = p.radius + p2.radius;
+                     if(d < dMin * dMin) {
+                         var r = 0.5 / Math.sqrt(d);
+                         p.fx -= r * dx;
+                         p.fy -= r * dy;
+                         p2.fx += r * dx;
+                         p2.fy += r * dy;
+                     }
+                     if(d < (dMin * dMin + 100)){
+                         p.targets.push(p2);
+                     }
+                 }
+             }
+             for(var i = 0; i < n; i++) {
+                 var p = particles[i];
+                 p.vx += p.fx * repulsionForce;
+                 p.vy += p.fy * repulsionForce;
+                 //p.vx += (Math.random() * 2 - 1) * vel;
+                 //p.vy += (Math.random() * 2 - 1) * vel;
+                 var dx = c.x - p.x;
+                 var dy = c.y - p.y;
+                 var d = dx * dx + dy * dy;
+                 if(d > centerDist)
+                 {
+                     var r = gravity;
+                     p.vx += r * dx;
+                     p.vy += r * dy;
+                 }
+                 p.vx *= friction;
+                 p.vy *= friction;
+                 p.x += p.vx;
+                 p.y += p.vy;
+                 p.fx = p.fy = 0;
+             }
+         }
 
-  function draw()
-  {
-    out.clearRect(0, 0, w, h);
-    /*out.fillStyle = "white";
-    out.strokeStyle = "black";
-    out.beginPath();
-    for(var i = 0; i < n; i++)
-    {
-      var p = particles[i];
-      if(p.radius < 0)p.radius = 1;
-      out.moveTo(p.x + p.radius, p.y);
-      out.arc(p.x, p.y, p.radius, 0, 2 * Math.PI);
-    }
-    out.stroke();
-    out.fill();*/
+         function draw() {
+             out.clearRect(0, 0, w, h);
+             /*out.fillStyle = "white";
+                out.strokeStyle = "black";
+                out.beginPath();
+                for(var i = 0; i < n; i++)
+                {
+                var p = particles[i];
+                if(p.radius < 0)p.radius = 1;
+                out.moveTo(p.x + p.radius, p.y);
+                out.arc(p.x, p.y, p.radius, 0, 2 * Math.PI);
+                }
+                out.stroke();
+                out.fill();*/
 
-    out.beginPath();
-    for(var i = 1; i < n; i++)
-    {
-      var p = particles[i];
-      var n2 = p.targets.length;
-      for(var j = 0; j < n2; j++)
-      {
-        var p2 = p.targets[j];
-        out.moveTo(p.x, p.y);
-        out.lineTo(p2.x, p2.y);
-      }
-    }
-    out.stroke();
-  }
-  </script>
+             out.beginPath();
+             for(var i = 1; i < n; i++) {
+                 var p = particles[i];
+                 var n2 = p.targets.length;
+                 for(var j = 0; j < n2; j++) {
+                     var p2 = p.targets[j];
+                     out.moveTo(p.x, p.y);
+                     out.lineTo(p2.x, p2.y);
+                 }
+             }
+             out.stroke();
+         }
+        </script>
 
-  <script type="text/javascript">
-    var _gaq = _gaq || [];
-    _gaq.push(['_setAccount', 'UA-6101672-1']);
-    _gaq.push(['_trackPageview']);
-
-	  (function() {
-		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-	  })();
-	</script>
-</body>
+    </body>
 </html>

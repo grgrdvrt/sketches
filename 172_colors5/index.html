@@ -1,138 +1,118 @@
 <html>
-<head>
-	<title>colors</title>
-	<link rel="stylesheet" type="text/css" href="../css/styles.css"/>
-</head>
-<body>
-	<script type="text/javascript" src="../libs/tools.js"></script>
-  <script type="text/javascript">
+    <head>
+        <title>colors</title>
+        <link rel="stylesheet" type="text/css" href="../css/styles.css"/>
+    </head>
+    <body>
+        <script type="text/javascript" src="../libs/tools.js"></script>
+        <script type="text/javascript">
 
 
-    var w = 700;
-    var h = 700;
+         var w = 700;
+         var h = 700;
 
-    tools.mixin(tools, this);
-    var stage = new Stage(w, h);
-    var out = stage.out;
+         tools.mixin(tools, this);
+         var stage = new Stage(w, h);
+         var out = stage.out;
 
-    function Curve(value, pow, duration, timeBegin)
-    {
-      this.value = this.begin = this.end = value;
-    
-      this.pow = pow;
-    
-      this.maxDuration = duration;
-      this.reset();
-      this.time = timeBegin;
-    }
-    
-    Curve.prototype = {
-      update : function(timeChange)
-      {
-        if(timeChange == undefined)timeChange = 1;
-        var timeRatio = this.time / this.duration;
-        if(timeRatio < 0.5) timeRatio = 0.5 * Math.pow(timeRatio * 2, this.pow);
-        else timeRatio = 1 - 0.5 * Math.pow((1 - timeRatio) * 2, this.pow);
-    
-        this.value = this.begin + timeRatio * (this.end - this.begin);
-        this.time += timeChange;
-        if(this.time > this.duration) this.reset();
-      },
-      
-      reset : function()
-      {
-        this.begin = this.end;
-        this.end = Math.random();
-        this.time = 0;
-        this.duration = Math.sqrt(Math.abs(this.end - this.begin)) * this.maxDuration;
-    
-      }
-    }
+         function Curve(value, pow, duration, timeBegin){
+             this.value = this.begin = this.end = value;
+
+             this.pow = pow;
+
+             this.maxDuration = duration;
+             this.reset();
+             this.time = timeBegin;
+         }
+
+         Curve.prototype = {
+             update : function(timeChange){
+                 if(timeChange == undefined)timeChange = 1;
+                 var timeRatio = this.time / this.duration;
+                 if(timeRatio < 0.5) timeRatio = 0.5 * Math.pow(timeRatio * 2, this.pow);
+                 else timeRatio = 1 - 0.5 * Math.pow((1 - timeRatio) * 2, this.pow);
+
+                 this.value = this.begin + timeRatio * (this.end - this.begin);
+                 this.time += timeChange;
+                 if(this.time > this.duration) this.reset();
+             },
+
+             reset : function(){
+                 this.begin = this.end;
+                 this.end = Math.random();
+                 this.time = 0;
+                 this.duration = Math.sqrt(Math.abs(this.end - this.begin)) * this.maxDuration;
+
+             }
+         }
 
 
-    function Color()
-    {
-      this.r = new Curve(Math.random(), 2, 30, 0);
-      this.g = new Curve(Math.random(), 2, 30, 0);
-      this.b = new Curve(Math.random(), 2, 30, 0);
-    }
+         function Color(){
+             this.r = new Curve(Math.random(), 2, 30, 0);
+             this.g = new Curve(Math.random(), 2, 30, 0);
+             this.b = new Curve(Math.random(), 2, 30, 0);
+         }
 
-    Color.prototype = {
-      getRGB:function()
-      {
-       var r = Math.round(this.r.value * 0xff);
-       var g = Math.round(this.g.value * 0xff);
-       var b = Math.round(this.b.value * 0xff);
-       return "rgb(" + r + ", " + g + ", " + b + ")";
-      },
+         Color.prototype = {
+             getRGB:function(){
+                 var r = Math.round(this.r.value * 0xff);
+                 var g = Math.round(this.g.value * 0xff);
+                 var b = Math.round(this.b.value * 0xff);
+                 return "rgb(" + r + ", " + g + ", " + b + ")";
+             },
 
-      update : function(timeChange)
-      {
-        this.r.update(timeChange);
-        this.g.update(timeChange);
-        this.b.update(timeChange);
-      }
-    }
+             update : function(timeChange){
+                 this.r.update(timeChange);
+                 this.g.update(timeChange);
+                 this.b.update(timeChange);
+             }
+         }
 
 
-    function Tube()
-    {
-      this.c1 = new Color();
-      this.c2 = new Color();
+         function Tube(){
+             this.c1 = new Color();
+             this.c2 = new Color();
 
-      this.posX = new Curve(Math.random(), 2, 30, 0); 
-      this.posY = new Curve(Math.random(), 2, 30, 0); 
-      this.rotation = new Curve(Math.random(), 2, 30, 0);
-      this.radius = new Curve(Math.random(), 2, 30, 0);
-      this.timeChange = 0.1;
-    }
+             this.posX = new Curve(Math.random(), 2, 30, 0);
+             this.posY = new Curve(Math.random(), 2, 30, 0);
+             this.rotation = new Curve(Math.random(), 2, 30, 0);
+             this.radius = new Curve(Math.random(), 2, 30, 0);
+             this.timeChange = 0.1;
+         }
 
-    Tube.prototype = {
-      update:function()
-      {
-          this.c1.update(this.timeChange);
-          this.c2.update(this.timeChange);
-          this.posX.update(this.timeChange);
-          this.posY.update(this.timeChange);
-          this.rotation.update(this.timeChange);
-          this.radius.update(this.timeChange);
-          out.save();
-          var radiusValue = this.radius.value * 100 + 10;
-          out.translate(this.posX.value * w, this.posY.value * h);
-          out.beginPath();
-          out.moveTo(radiusValue, 0);
-          out.rotate(this.rotation.value * Math.PI);
-          out.arc(0, 0, radiusValue, 0, 2 * Math.PI);
-          
-          var gradient = out.createLinearGradient(-radiusValue, 0, radiusValue, 0);
-          gradient.addColorStop(0, this.c1.getRGB());
-          gradient.addColorStop(1, this.c2.getRGB());
-          out.fillStyle = gradient;
-          out.fill();
-          out.restore();
-      }
-    }
+         Tube.prototype = {
+             update:function(){
+                 this.c1.update(this.timeChange);
+                 this.c2.update(this.timeChange);
+                 this.posX.update(this.timeChange);
+                 this.posY.update(this.timeChange);
+                 this.rotation.update(this.timeChange);
+                 this.radius.update(this.timeChange);
+                 out.save();
+                 var radiusValue = this.radius.value * 100 + 10;
+                 out.translate(this.posX.value * w, this.posY.value * h);
+                 out.beginPath();
+                 out.moveTo(radiusValue, 0);
+                 out.rotate(this.rotation.value * Math.PI);
+                 out.arc(0, 0, radiusValue, 0, 2 * Math.PI);
 
-    var tubes = [];
-    var n = 1;
-    for(var i = 0; i < n; i++)
-      tubes[i] = new Tube();
-    new Loop(function()
-    {
-      for(var i = 0; i < n; i++)tubes[i].update();
-    });
-  </script>
-	
-	<script type="text/javascript">
-	  var _gaq = _gaq || [];
-	  _gaq.push(['_setAccount', 'UA-6101672-1']);
-	  _gaq.push(['_trackPageview']);
+                 var gradient = out.createLinearGradient(-radiusValue, 0, radiusValue, 0);
+                 gradient.addColorStop(0, this.c1.getRGB());
+                 gradient.addColorStop(1, this.c2.getRGB());
+                 out.fillStyle = gradient;
+                 out.fill();
+                 out.restore();
+             }
+         }
 
-	  (function() {
-		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-	  })();
-	</script>
-</body>
+         var tubes = [];
+         var n = 1;
+         for(var i = 0; i < n; i++)
+             tubes[i] = new Tube();
+         new Loop(function(){
+                 for(var i = 0; i < n; i++)tubes[i].update();
+         });
+        </script>
+
+    </body>
 </html>

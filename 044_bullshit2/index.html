@@ -1,182 +1,153 @@
 <html>
-<head>
-	<title>bullshit 2</title>
-	<link rel="stylesheet" type="text/css" href="../css/styles.css"/>
-</head>
-<body>
-	<script type="text/javascript" src="../libs/tools.js"></script>
-	<script type="text/javascript">
-		function Node()
-		{
-			this.x, this.y;
-			this.vx = 0, this.vy = 0;
-			this.parent;
-			this.children = [];
-			this.n = 0;
-			this.l;
-		}
-		
-		Node.prototype.addChild = function(child)
-		{
-			this.children[this.n] = child;
-			child.parent = this;
-			this.n++;
-		}
-		
-		var stage = new tools.Stage(700, 700);
-		var out = stage.out;
-		
-		var nodes = [];
-		
-		var n = 1;
-		var spring1 = 0.005;
-		var spring2 = 0.01;
-		var friction = 0.9;
-		var nodeRadius = 2;
-		var radius1 = 50;
-		var radius2 = 100;
-		out.strokeStyle = "black";
-		
-		var node = new Node();
-		node.x = 0.5 * stage.width;
-		node.y = 0.5 * stage.height;
-		node.l = Math.floor(Math.random() * 100);
-		nodes[0] = node;
-		
-		function addNode()
-		{
-			var node = new Node();
-			var parent = nodes[Math.floor(Math.random() * Math.random() * n)];
-			parent.addChild(node);
-			node.x = parent.x + (Math.random() * 2 - 1);
-			node.y = parent.y + (Math.random() * 2 - 1);
-			node.l = Math.floor(Math.random() * 100);
-			nodes[n] = node;
-			n++;
-		}
-		
-		
-		function update()
-		{
-			out.clearRect(0, 0, stage.width, stage.height);
-			updatePositions();
-			drawLinks();
-			drawNodes();
-		}
-		
-		function updatePositions()
-		{
-			var i, node;
-			for(i = 1; i < n; i++)
-			{
-				node = nodes[i];
-				var dx, dy, d;
-				var vx, vy;
-				for(var j = 0; j < i; j++)
-				{
-					var node2 = nodes[j];
-					if(node.parent == node2) continue;
-					dx = node.x - node2.x;
-					dy = node.y - node2.y;
-					var d = dx * dx + dy * dy;
-					if(d < 1) d = 1;
-					if(d < radius2 * radius2)
-					{
-						var r = radius2 / Math.sqrt(d);
-						vx = 0.5 * spring1 * (node2.x + r * dx - node.x);
-						vy = 0.5 * spring1 * (node2.y + r * dy - node.y);
-						node.vx += vx;
-						node.vy += vy;
-						node2.vx -= vx;
-						node2.vy -= vy;
-					}
-				}
-				
-				dx = node.x - node.parent.x;
-				dy = node.y - node.parent.y;
-				var d = dx * dx + dy * dy;
-				if(d < 1) d = 1;
-				var r = radius1 / Math.sqrt(d);
-				vx = 0.5 * spring2 * (node.parent.x + r * dx - node.x);
-				vy = 0.5 * spring2 * (node.parent.y + r * dy - node.y);
-				node.vx += vx;
-				node.vy += vy;
-				node.parent.vx -= vx;
-				node.parent.vy -= vy;
-				
-				
-			}
-			for(i = 0; i < n; i++)
-			{
-				var node = nodes[i];
-				node.vx *= friction;
-				node.vy *= friction;
-				node.x += node.vx;
-				node.y += node.vy;
-				if(node.x < 0)
-				{
-					node.vx = 0;
-					node.x = 0;
-				}
-				else if(node.x > stage.width)
-				{
-					node.vx = 0;
-					node.x = stage.width;
-				}
-				if(node.y < 0)
-				{
-					node.vy = 0;
-					node.y = 0;
-				}
-				else if(node.y > stage.height)
-				{
-					node.vy = 0;
-					node.y = stage.height;
-				}
-			}
-		}
-		
-		function drawLinks()
-		{
-			out.beginPath();
-			for(var i = 1; i < n; i++)
-			{
-				var node = nodes[i];
-				out.moveTo(node.x, node.y);
-				out.lineTo(node.parent.x, node.parent.y);
-			}
-			out.stroke();
-		}
-		
-		function drawNodes()
-		{
-			for(var i = 0; i < n; i++)
-			{
-				var node = nodes[i];
-				out.fillStyle = "hsl(0, 0%, " + node.l + "%)";
-				out.beginPath();
-				out.arc(node.x, node.y, nodeRadius * (node.n + 1), 0, 2 * Math.PI);
-				out.fill();
-			}
-		}
-		
-		setInterval(addNode, 300);
-		
-		
-		new tools.Loop(update, this);
-		
-	</script>
-	
-	<script type="text/javascript">
-	  var _gaq = _gaq || [];
-	  _gaq.push(['_setAccount', 'UA-6101672-1']);
-	  _gaq.push(['_trackPageview']);
+    <head>
+        <title>bullshit 2</title>
+        <link rel="stylesheet" type="text/css" href="../css/styles.css"/>
+    </head>
+    <body>
+        <script type="text/javascript" src="../libs/tools.js"></script>
+        <script type="text/javascript">
+         function Node(){
+             this.x, this.y;
+             this.vx = 0, this.vy = 0;
+             this.parent;
+             this.children = [];
+             this.n = 0;
+             this.l;
+         }
 
-	  (function() {
-		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-	  })();
-	</script>
-</body>
+         Node.prototype.addChild = function(child){
+             this.children[this.n] = child;
+             child.parent = this;
+             this.n++;
+         }
+
+         var stage = new tools.Stage(700, 700);
+         var out = stage.out;
+
+         var nodes = [];
+
+         var n = 1;
+         var spring1 = 0.005;
+         var spring2 = 0.01;
+         var friction = 0.9;
+         var nodeRadius = 2;
+         var radius1 = 50;
+         var radius2 = 100;
+         out.strokeStyle = "black";
+
+         var node = new Node();
+         node.x = 0.5 * stage.width;
+         node.y = 0.5 * stage.height;
+         node.l = Math.floor(Math.random() * 100);
+         nodes[0] = node;
+
+         function addNode(){
+             var node = new Node();
+             var parent = nodes[Math.floor(Math.random() * Math.random() * n)];
+             parent.addChild(node);
+             node.x = parent.x + (Math.random() * 2 - 1);
+             node.y = parent.y + (Math.random() * 2 - 1);
+             node.l = Math.floor(Math.random() * 100);
+             nodes[n] = node;
+             n++;
+         }
+
+
+         function update(){
+             out.clearRect(0, 0, stage.width, stage.height);
+             updatePositions();
+             drawLinks();
+             drawNodes();
+         }
+
+         function updatePositions(){
+             var i, node;
+             for(i = 1; i < n; i++){
+                 node = nodes[i];
+                 var dx, dy, d;
+                 var vx, vy;
+                 for(var j = 0; j < i; j++){
+                     var node2 = nodes[j];
+                     if(node.parent == node2) continue;
+                     dx = node.x - node2.x;
+                     dy = node.y - node2.y;
+                     var d = dx * dx + dy * dy;
+                     if(d < 1) d = 1;
+                     if(d < radius2 * radius2){
+                         var r = radius2 / Math.sqrt(d);
+                         vx = 0.5 * spring1 * (node2.x + r * dx - node.x);
+                         vy = 0.5 * spring1 * (node2.y + r * dy - node.y);
+                         node.vx += vx;
+                         node.vy += vy;
+                         node2.vx -= vx;
+                         node2.vy -= vy;
+                     }
+                 }
+
+                 dx = node.x - node.parent.x;
+                 dy = node.y - node.parent.y;
+                 var d = dx * dx + dy * dy;
+                 if(d < 1) d = 1;
+                 var r = radius1 / Math.sqrt(d);
+                 vx = 0.5 * spring2 * (node.parent.x + r * dx - node.x);
+                 vy = 0.5 * spring2 * (node.parent.y + r * dy - node.y);
+                 node.vx += vx;
+                 node.vy += vy;
+                 node.parent.vx -= vx;
+                 node.parent.vy -= vy;
+
+
+             }
+             for(i = 0; i < n; i++){
+                 var node = nodes[i];
+                 node.vx *= friction;
+                 node.vy *= friction;
+                 node.x += node.vx;
+                 node.y += node.vy;
+                 if(node.x < 0){
+                     node.vx = 0;
+                     node.x = 0;
+                 }
+                 else if(node.x > stage.width){
+                     node.vx = 0;
+                     node.x = stage.width;
+                 }
+                 if(node.y < 0){
+                     node.vy = 0;
+                     node.y = 0;
+                 }
+                 else if(node.y > stage.height){
+                     node.vy = 0;
+                     node.y = stage.height;
+                 }
+             }
+         }
+
+         function drawLinks(){
+             out.beginPath();
+             for(var i = 1; i < n; i++){
+                 var node = nodes[i];
+                 out.moveTo(node.x, node.y);
+                 out.lineTo(node.parent.x, node.parent.y);
+             }
+             out.stroke();
+         }
+
+         function drawNodes(){
+             for(var i = 0; i < n; i++){
+                 var node = nodes[i];
+                 out.fillStyle = "hsl(0, 0%, " + node.l + "%)";
+                 out.beginPath();
+                 out.arc(node.x, node.y, nodeRadius * (node.n + 1), 0, 2 * Math.PI);
+                 out.fill();
+             }
+         }
+
+         setInterval(addNode, 300);
+
+
+         new tools.Loop(update, this);
+
+        </script>
+    </body>
 </html>

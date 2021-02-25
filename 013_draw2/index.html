@@ -1,117 +1,97 @@
 <html>
-<head>
-	<title>draw 2</title>
-	<link rel="stylesheet" type="text/css" href="../css/styles.css"/>
-</head>
-<body>
-	<script type="text/javascript" src="../libs/tools.js"></script>
-	<script type="text/javascript">
-		function Vertex(x, y)
-		{
-			this.x = this.ox = x;
-			this.y = this.oy = y;
-			this.vx = this.vy = 0;
-		}
-		
-		
-		var radius = 150;
-		var radius2 = radius * radius;
-		var fr = 0.95;
-		var spr = 0.001;
-		var spr2 = 0.005;
-		
-		var lines = [];
-		var currentLine;
-		
-		var stage = new tools.Stage(700, 700);
-		stage.out.strokeStyle = "black";
-		var mouse = new tools.Mouse(stage.canvas);
-		mouse.onDown.add(onMouseDown);
-		
-		var keyboard = new tools.Keyboard();
-		keyboard.onUp.add(onKeyUp);
-		
-		function onKeyUp(key)
-		{
-			stage.out.clearRect(0, 0, stage.width, stage.height);
-			lines = [];
-		}
-		
-		
-		function onMouseDown()
-		{
-			currentLine = [];
-			lines.push(currentLine);
-		}
-		
-		
-		function update()
-		{
-			if(mouse.isDown)
-				currentLine.push(new Vertex(mouse.x, mouse.y));
-		
-			var nLines = lines.length;
-			for(var j = 0; j < nLines; j++)
-			{
-				var line = lines[j];
-				var nPts = line.length;
-				for(var i = 0; i < nPts; i++)
-				{
-					var pt = line[i];
-					var dx = mouse.x - pt.x;
-					var dy = mouse.y - pt.y;
-					var dist = dx * dx + dy * dy;
-					if(dist > 0 && dist < radius2)
-					{
-						var r = radius / Math.sqrt(dist);
-						pt.vx += (mouse.x - dx * r - pt.x) * spr2;
-						pt.vy += (mouse.y - dy * r - pt.y) * spr2;
-					}
-		
-					pt.vx = fr * pt.vx + (pt.ox - pt.x) * spr;
-					pt.vy = fr * pt.vy + (pt.oy - pt.y) * spr;
-					pt.x += pt.vx;
-					pt.y += pt.vy;
-				}
-			}
-			drawLines();
-		}
-		
-		
-		function drawLines()
-		{
-			var nLines = lines.length;
-			stage.out.clearRect(0, 0, stage.width, stage.height);
-			stage.out.beginPath();
-			for(var j = 0; j < nLines; j++)
-			{
-				var line = lines[j];
-				var nPts = line.length;
-				stage.out.moveTo(line[0].x, line[0].y);
-				for(var i = 2; i < nPts; i++)
-				{
-					var pt1 = line[i - 1];
-					var pt2 = line[i];
-					stage.out.quadraticCurveTo(pt1.x, pt1.y, 0.5 * (pt1.x + pt2.x), 0.5 * (pt1.y + pt2.y));
-				}
-			}
-			stage.out.stroke();
-		
-		}
-		
-		new tools.Loop(update, this);
-	</script>
-	
-	<script type="text/javascript">
-	  var _gaq = _gaq || [];
-	  _gaq.push(['_setAccount', 'UA-6101672-1']);
-	  _gaq.push(['_trackPageview']);
+    <head>
+        <title>draw 2</title>
+        <link rel="stylesheet" type="text/css" href="../css/styles.css"/>
+    </head>
+    <body>
+        <script type="text/javascript" src="../libs/tools.js"></script>
+        <script type="text/javascript">
+         function Vertex(x, y) {
+             this.x = this.ox = x;
+             this.y = this.oy = y;
+             this.vx = this.vy = 0;
+         }
 
-	  (function() {
-		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-	  })();
-	</script>
-</body>
+
+         var radius = 150;
+         var radius2 = radius * radius;
+         var fr = 0.95;
+         var spr = 0.001;
+         var spr2 = 0.005;
+
+         var lines = [];
+         var currentLine;
+
+         var stage = new tools.Stage(700, 700);
+         stage.out.strokeStyle = "black";
+         var mouse = new tools.Mouse(stage.canvas);
+         mouse.onDown.add(onMouseDown);
+
+         var keyboard = new tools.Keyboard();
+         keyboard.onUp.add(onKeyUp);
+
+         function onKeyUp(key) {
+             stage.out.clearRect(0, 0, stage.width, stage.height);
+             lines = [];
+         }
+
+
+         function onMouseDown() {
+             currentLine = [];
+             lines.push(currentLine);
+         }
+
+
+         function update() {
+             if(mouse.isDown){
+                 currentLine.push(new Vertex(mouse.x, mouse.y));
+             }
+
+             var nLines = lines.length;
+             for(var j = 0; j < nLines; j++) {
+                 var line = lines[j];
+                 var nPts = line.length;
+                 for(var i = 0; i < nPts; i++) {
+                     var pt = line[i];
+                     var dx = mouse.x - pt.x;
+                     var dy = mouse.y - pt.y;
+                     var dist = dx * dx + dy * dy;
+                     if(dist > 0 && dist < radius2) {
+                         var r = radius / Math.sqrt(dist);
+                         pt.vx += (mouse.x - dx * r - pt.x) * spr2;
+                         pt.vy += (mouse.y - dy * r - pt.y) * spr2;
+                     }
+
+                     pt.vx = fr * pt.vx + (pt.ox - pt.x) * spr;
+                     pt.vy = fr * pt.vy + (pt.oy - pt.y) * spr;
+                     pt.x += pt.vx;
+                     pt.y += pt.vy;
+                 }
+             }
+             drawLines();
+         }
+
+
+         function drawLines() {
+             var nLines = lines.length;
+             stage.out.clearRect(0, 0, stage.width, stage.height);
+             stage.out.beginPath();
+             for(var j = 0; j < nLines; j++) {
+                 var line = lines[j];
+                 var nPts = line.length;
+                 stage.out.moveTo(line[0].x, line[0].y);
+                 for(var i = 2; i < nPts; i++)
+                 {
+                     var pt1 = line[i - 1];
+                     var pt2 = line[i];
+                     stage.out.quadraticCurveTo(pt1.x, pt1.y, 0.5 * (pt1.x + pt2.x), 0.5 * (pt1.y + pt2.y));
+                 }
+             }
+             stage.out.stroke();
+
+         }
+
+         new tools.Loop(update, this);
+        </script>
+    </body>
 </html>

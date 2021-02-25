@@ -1,82 +1,66 @@
 <html>
-<head>
-	<title>dimensions 7</title>
-	<link rel="stylesheet" type="text/css" href="../css/styles.css"/>
-</head>
-<body>
-	<script type="text/javascript" src="../libs/tools.js"></script>
-	<script type="text/javascript" src="../libs/threeDimensions.js"></script>
-	<script type="text/javascript">
-		function ConvexHullRenderer(ctx, w, h)
-		{
-			this.ctx = ctx;
-			this.w = w;
-			this.h = h;
-		}
-		
-		ConvexHullRenderer.prototype.render = function(v)
-		{
-			this.ctx.strokeStyle = "black";
-			var n = v.length;
-			this.ctx.beginPath();
-			var ox = 0.5 * this.w;
-			var oy = 0.5 * this.h;
-			var p1, p2
-			for(var i = 0; i < n - 1; i++)
-			{
-				var p1 = v[i];
-				for(var j = 0; j < i; j++)
-				{
-					this.ctx.moveTo(p1.px + ox, p1.py + oy);
-					this.ctx.lineTo(v[j].px + ox, v[j].py + oy);
-				}
-			}
-			this.ctx.stroke();
-			this.ctx.closePath();
-		}
-		
-		
-		var stage = new tools.Stage(700, 700);
-		
-		var engine = new threeDimensions.Engine();
-		engine.translate(0, 0, 300);
-		var convexHullRenderer = new ConvexHullRenderer(stage.out, stage.width, stage.height);
-		
-		var scale = 500;
-		
-		var vertices = [];
-		var n = 20;
-		var ang = 0.5;
-		for(var i = 0; i < n; i ++)
-		{
-			var v = new threeDimensions.Vertex(scale * Math.random() * (Math.random() * 2 - 1),
-												scale * Math.random() * (Math.random() * 2 - 1),
-												scale * Math.random() * (Math.random() * 2 - 1));
-			vertices.push(v);
-		}
-		
-		function update()
-		{
-			stage.out.clearRect(0, 0, stage.width, stage.height);
-			engine.rotationX += 0.01;
-			engine.rotationY += 0.01;
-			engine.computeProjections(vertices);
-			convexHullRenderer.render(vertices);
-		}
-		
-		new tools.Loop(update, this);
-	</script>
-	
-	<script type="text/javascript">
-	  var _gaq = _gaq || [];
-	  _gaq.push(['_setAccount', 'UA-6101672-1']);
-	  _gaq.push(['_trackPageview']);
+    <head>
+        <title>dimensions 7</title>
+        <link rel="stylesheet" type="text/css" href="../css/styles.css"/>
+    </head>
+    <body>
+        <script type="text/javascript" src="../libs/tools.js"></script>
+        <script type="text/javascript" src="../libs/threeDimensions.js"></script>
+        <script type="text/javascript">
+         function ConvexHullRenderer(ctx, w, h){
+             this.ctx = ctx;
+             this.w = w;
+             this.h = h;
+         }
 
-	  (function() {
-		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-	  })();
-	</script>
-</body>
+         ConvexHullRenderer.prototype.render = function(v){
+             this.ctx.strokeStyle = "black";
+             var n = v.length;
+             this.ctx.beginPath();
+             var ox = 0.5 * this.w;
+             var oy = 0.5 * this.h;
+             var p1, p2
+             for(var i = 0; i < n - 1; i++){
+                 var p1 = v[i];
+                 for(var j = 0; j < i; j++){
+                     this.ctx.moveTo(p1.px + ox, p1.py + oy);
+                     this.ctx.lineTo(v[j].px + ox, v[j].py + oy);
+                 }
+             }
+             this.ctx.stroke();
+             this.ctx.closePath();
+         }
+
+
+         var stage = new tools.Stage(700, 700);
+
+         var engine = new threeDimensions.Engine();
+         engine.translate(0, 0, 300);
+         var convexHullRenderer = new ConvexHullRenderer(stage.out, stage.width, stage.height);
+
+         var scale = 500;
+
+         var vertices = [];
+         var n = 20;
+         var ang = 0.5;
+         for(var i = 0; i < n; i ++){
+             var v = new threeDimensions.Vertex(
+                 scale * Math.random() * (Math.random() * 2 - 1),
+                 scale * Math.random() * (Math.random() * 2 - 1),
+                 scale * Math.random() * (Math.random() * 2 - 1)
+             );
+             vertices.push(v);
+         }
+
+         function update(){
+             stage.out.clearRect(0, 0, stage.width, stage.height);
+             engine.rotationX += 0.01;
+             engine.rotationY += 0.01;
+             engine.computeProjections(vertices);
+             convexHullRenderer.render(vertices);
+         }
+
+         new tools.Loop(update, this);
+        </script>
+    </body>
 </html>

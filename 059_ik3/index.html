@@ -1,136 +1,115 @@
 <html>
-<head>
-	<title>lines</title>
-	<link rel="stylesheet" type="text/css" href="../css/styles.css"/>
-</head>
-<body>
-	<script type="text/javascript" src="../libs/tools.js"></script>
-	<script type="text/javascript">
-		var stage = new tools.Stage(700, 700);
-		var mouse = new tools.Mouse(stage.canvas);
-		
-		var tmp1 = new tools.Stage(700, 700, false);
-		var tmp2 = new tools.Stage(700, 700, false);
-		
-		var out = tmp1.out;
-		
-		var friction = 0.99;
-		var vel = 0.5;
-		var hue = Math.floor(Math.random() * 360);
-		
-		function Ribbon()
-		{
-			this.nPts = 15;
-			this.segmentLength = 40;
-			this.pts = [];
-			for(var i = 0; i < this.nPts; i++)
-				this.pts[i] = new Point();
-			this.init();
-		}
-		
-		Ribbon.prototype = {
-			update : function()
-			{
-				for(var i = 1; i < this.nPts; i++)
-				{
-					var pt = this.pts[i];
-					var oPt = this.pts[i - 1];
-					
-					pt.vx = friction * pt.vx + vel * (Math.random() * 2 - 1);
-					pt.vy = friction * pt.vy + vel * (Math.random() * 2 - 1);
-					pt.x += pt.vx;
-					pt.y += pt.vy;
-					
-					var dx = pt.x - oPt.x;
-					var dy = pt.y - oPt.y;
-					var d = Math.sqrt(dx * dx + dy * dy);
-					if(d == 0) d = 1;
-					var ratio = this.segmentLength / d;
-					
-					pt.x = oPt.x + dx * ratio;
-					pt.y = oPt.y + dy * ratio;
-				}
-			},
-			
-			init : function()
-			{
-				this.dx = 20 * (Math.random() * 2 - 1);
-				this.dy = 20 * (Math.random() * 2 - 1);
-				this.color = "hsl(" + hue + ", " + Math.floor(Math.random() * 100) + "%, " + Math.floor(Math.random() * 100) + "%)";
-			},
-			
-			draw : function(out)
-			{
-				out.lineWidth = 10;
-				out.beginPath();
-				var pt = this.pts[0];
-				out.moveTo(pt.x, pt.y);
-				for(var i = 1; i < this.nPts - 1; i++)
-				{
-					pt = this.pts[i];
-					var pt2 = this.pts[i + 1];
-					out.quadraticCurveTo(pt.x, pt.y, 0.5 * (pt.x + pt2.x), 0.5 * (pt.y + pt2.y));
-				}
-				out.stroke();
-			}
-		}
-		
-		function Point(x, y)
-		{
-			this.vx = this.vy = 0;
-			this.x = x || 0;
-			this.y = y || 0;
-		}
-		
-		var time = 0;
-		var nRibbons = 10;
-		var duration = 50;
-		var ribbons = [];
-		for(var i = 0; i < nRibbons; i++)
-			ribbons[i] = new Ribbon();
-			
-		function update()
-		{
-			time++;
-			stage.clear();
-			tmp1.clear();
-			tmp1.out.shadowBlur = 3;
-			tmp1.out.shadowColor="black";
-			for(var i = 0; i < nRibbons; i++)
-			{
-				var ribbon = ribbons[i];
-				
-				var pt = ribbon.pts[0];
-				pt.x = mouse.x + ribbon.dx;
-				pt.y = mouse.y + ribbon.dy;
-				ribbon.update();
-			
-				
-				var ctx = out;
-				var isTime = ((Math.floor(duration * i / nRibbons))  == (time % duration))
-				if(isTime) ctx = tmp2.out;
-				ctx.strokeStyle = ribbon.color;
-				ribbon.draw(ctx);
-				if(isTime)ribbon.init();
-			}
-			
-			stage.out.drawImage(tmp2.canvas, 0, 0);
-			stage.out.drawImage(tmp1.canvas, 0, 0);
-		}
-		
-		new tools.Loop(update, this);
-	</script>
-	
-	<script type="text/javascript">
-	  var _gaq = _gaq || [];
-	  _gaq.push(['_setAccount', 'UA-6101672-1']);
-	  _gaq.push(['_trackPageview']);
+    <head>
+        <title>lines</title>
+        <link rel="stylesheet" type="text/css" href="../css/styles.css"/>
+    </head>
+    <body>
+        <script type="text/javascript" src="../libs/tools.js"></script>
+        <script type="text/javascript">
+         var stage = new tools.Stage(700, 700);
+         var mouse = new tools.Mouse(stage.canvas);
 
-	  (function() {
-		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-	  })();
-	</script>
-</body>
+         var tmp1 = new tools.Stage(700, 700, false);
+         var tmp2 = new tools.Stage(700, 700, false);
+
+         var out = tmp1.out;
+
+         var friction = 0.99;
+         var vel = 0.5;
+         var hue = Math.floor(Math.random() * 360);
+
+         function Ribbon(){
+             this.nPts = 15;
+             this.segmentLength = 40;
+             this.pts = [];
+             for(var i = 0; i < this.nPts; i++)
+                 this.pts[i] = new Point();
+             this.init();
+         }
+
+         Ribbon.prototype = {
+             update : function(){
+                 for(var i = 1; i < this.nPts; i++){
+                     var pt = this.pts[i];
+                     var oPt = this.pts[i - 1];
+
+                     pt.vx = friction * pt.vx + vel * (Math.random() * 2 - 1);
+                     pt.vy = friction * pt.vy + vel * (Math.random() * 2 - 1);
+                     pt.x += pt.vx;
+                     pt.y += pt.vy;
+
+                     var dx = pt.x - oPt.x;
+                     var dy = pt.y - oPt.y;
+                     var d = Math.sqrt(dx * dx + dy * dy);
+                     if(d == 0) d = 1;
+                     var ratio = this.segmentLength / d;
+
+                     pt.x = oPt.x + dx * ratio;
+                     pt.y = oPt.y + dy * ratio;
+                 }
+             },
+
+             init : function(){
+                 this.dx = 20 * (Math.random() * 2 - 1);
+                 this.dy = 20 * (Math.random() * 2 - 1);
+                 this.color = "hsl(" + hue + ", " + Math.floor(Math.random() * 100) + "%, " + Math.floor(Math.random() * 100) + "%)";
+             },
+
+             draw : function(out){
+                 out.lineWidth = 10;
+                 out.beginPath();
+                 var pt = this.pts[0];
+                 out.moveTo(pt.x, pt.y);
+                 for(var i = 1; i < this.nPts - 1; i++){
+                     pt = this.pts[i];
+                     var pt2 = this.pts[i + 1];
+                     out.quadraticCurveTo(pt.x, pt.y, 0.5 * (pt.x + pt2.x), 0.5 * (pt.y + pt2.y));
+                 }
+                 out.stroke();
+             }
+         }
+
+         function Point(x, y){
+             this.vx = this.vy = 0;
+             this.x = x || 0;
+             this.y = y || 0;
+         }
+
+         var time = 0;
+         var nRibbons = 10;
+         var duration = 50;
+         var ribbons = [];
+         for(var i = 0; i < nRibbons; i++)
+             ribbons[i] = new Ribbon();
+
+         function update(){
+             time++;
+             stage.clear();
+             tmp1.clear();
+             tmp1.out.shadowBlur = 3;
+             tmp1.out.shadowColor="black";
+             for(var i = 0; i < nRibbons; i++){
+                 var ribbon = ribbons[i];
+
+                 var pt = ribbon.pts[0];
+                 pt.x = mouse.x + ribbon.dx;
+                 pt.y = mouse.y + ribbon.dy;
+                 ribbon.update();
+
+
+                 var ctx = out;
+                 var isTime = ((Math.floor(duration * i / nRibbons))  == (time % duration))
+                 if(isTime) ctx = tmp2.out;
+                 ctx.strokeStyle = ribbon.color;
+                 ribbon.draw(ctx);
+                 if(isTime)ribbon.init();
+             }
+
+             stage.out.drawImage(tmp2.canvas, 0, 0);
+             stage.out.drawImage(tmp1.canvas, 0, 0);
+         }
+
+         new tools.Loop(update, this);
+        </script>
+    </body>
 </html>

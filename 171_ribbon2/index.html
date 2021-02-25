@@ -1,90 +1,87 @@
 <html>
-<head>
-	<title>ribbon</title>
-	<link rel="stylesheet" type="text/css" href="../css/styles.css"/>
-</head>
-<body>
-	<script type="text/javascript" src="../libs/tools.js"></script>
-  <script type="text/javascript">
+    <head>
+        <title>ribbon</title>
+        <link rel="stylesheet" type="text/css" href="../css/styles.css"/>
+    </head>
+    <body>
+        <script type="text/javascript" src="../libs/tools.js"></script>
+        <script type="text/javascript">
 
 
-    var w = 700;
-    var h = 700;
+         var w = 700;
+         var h = 700;
 
-    tools.mixin(tools, this);
-    var stage = new Stage(w, h);
-    var out = stage.out;
-    var stage2 = new Stage(w, h, false);
-    var out2 = stage2.out;
+         tools.mixin(tools, this);
+         var stage = new Stage(w, h);
+         var out = stage.out;
+         var stage2 = new Stage(w, h, false);
+         var out2 = stage2.out;
 
-    var maxDist = 150;
+         var maxDist = 150;
 
-    var pts = [{x:0.5 * w + maxDist * (Math.random() * 2 - 1), y:0.5 * h + maxDist * (Math.random() * 2 - 1)},
-      {x:0.5 * w + maxDist * (Math.random() * 2 - 1), y:0.5 * h + maxDist * (Math.random() * 2 - 1)},
-      {x:0.5 * w + maxDist * (Math.random() * 2 - 1), y:0.5 * h + maxDist * (Math.random() * 2 - 1)}];
+         var pts = [
+             {
+                 x:0.5 * w + maxDist * (Math.random() * 2 - 1),
+                 y:0.5 * h + maxDist * (Math.random() * 2 - 1)
+             },
+             {
+                 x:0.5 * w + maxDist * (Math.random() * 2 - 1),
+                 y:0.5 * h + maxDist * (Math.random() * 2 - 1)
+             },
+             {
+                 x:0.5 * w + maxDist * (Math.random() * 2 - 1),
+                 y:0.5 * h + maxDist * (Math.random() * 2 - 1)
+             }
+         ];
 
 
-    var currId = 0;
-    var begin = {};
-    var end = {alpha:Math.random()};
-    var time = 0;
-    var maxTime = 40;
-    next();
-    var loop = new Loop(update, this);
+         var currId = 0;
+         var begin = {};
+         var end = {alpha:Math.random()};
+         var time = 0;
+         var maxTime = 40;
+         next();
+         var loop = new Loop(update, this);
 
-    function update()
-    {
-      out.clearRect(0, 0, w, h);
-      out.drawImage(out2.canvas, 0, 0);
-      var timeRatio = 1 - time / maxTime;
-      var p = pts[currId];
-      p.x = lerp(begin.x, end.x, timeRatio);
-      p.y = lerp(begin.y, end.y, timeRatio);
-      drawTriangle(out, lerp(begin.alpha, end.alpha, timeRatio));
+         function update(){
+             out.clearRect(0, 0, w, h);
+             out.drawImage(out2.canvas, 0, 0);
+             var timeRatio = 1 - time / maxTime;
+             var p = pts[currId];
+             p.x = lerp(begin.x, end.x, timeRatio);
+             p.y = lerp(begin.y, end.y, timeRatio);
+             drawTriangle(out, lerp(begin.alpha, end.alpha, timeRatio));
 
-      if(--time <= 0)next();
-    }
+             if(--time <= 0)next();
+         }
 
-    function next()
-    {
-      drawTriangle(out2, end.alpha);
-      begin.alpha = end.alpha;
-      end.alpha = Math.random();
-      var opt = pts[currId];
-      currId = (currId + 1) % pts.length;
-      var pt = pts[currId];
-      begin.x = pt.x;
-      begin.y = pt.y;
-      end.x = opt.x + maxDist * (Math.random() * 2 - 1);
-      end.y = opt.y + maxDist * (Math.random() * 2 - 1);
-      time = maxTime;
-    }
-    
-    function drawTriangle(out, alpha)
-    {
-      out.beginPath();
-      out.moveTo(pts[0].x, pts[0].y);
-      out.lineTo(pts[1].x, pts[1].y);
-      out.lineTo(pts[2].x, pts[2].y);
-      out.lineTo(pts[0].x, pts[0].y);
-      out.fillStyle = "rgba(0, 0, 0, " + alpha + ")";
-      out.fill();
-    }
+         function next(){
+             drawTriangle(out2, end.alpha);
+             begin.alpha = end.alpha;
+             end.alpha = Math.random();
+             var opt = pts[currId];
+             currId = (currId + 1) % pts.length;
+             var pt = pts[currId];
+             begin.x = pt.x;
+             begin.y = pt.y;
+             end.x = opt.x + maxDist * (Math.random() * 2 - 1);
+             end.y = opt.y + maxDist * (Math.random() * 2 - 1);
+             time = maxTime;
+         }
 
-    function lerp(a, b, t){return a + t * (b - a);}
+         function drawTriangle(out, alpha){
+             out.beginPath();
+             out.moveTo(pts[0].x, pts[0].y);
+             out.lineTo(pts[1].x, pts[1].y);
+             out.lineTo(pts[2].x, pts[2].y);
+             out.lineTo(pts[0].x, pts[0].y);
+             out.fillStyle = "rgba(0, 0, 0, " + alpha + ")";
+             out.fill();
+         }
 
-  </script>
-	
-	<script type="text/javascript">
-	  var _gaq = _gaq || [];
-	  _gaq.push(['_setAccount', 'UA-6101672-1']);
-	  _gaq.push(['_trackPageview']);
+         function lerp(a, b, t){return a + t * (b - a);}
 
-	  (function() {
-		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-	  })();
-	</script>
-</body>
+        </script>
+
+    </body>
 </html>

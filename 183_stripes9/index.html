@@ -1,82 +1,67 @@
 <html>
-<head>
-	<title>stripes</title>
-	<link rel="stylesheet" type="text/css" href="../css/styles.css"/>
-</head>
-<body>
-	<script type="text/javascript" src="../libs/tools.js"></script>
-	<script type="text/javascript">
-    var w = 700;
-    var h = 700;
-		var stage = new tools.Stage(w, h);
-		
-		var out = stage.out;
+    <head>
+        <title>stripes</title>
+        <link rel="stylesheet" type="text/css" href="../css/styles.css"/>
+    </head>
+    <body>
+        <script type="text/javascript" src="../libs/tools.js"></script>
+        <script type="text/javascript">
+         var w = 700;
+         var h = 700;
+         var stage = new tools.Stage(w, h);
 
-    function drawBackground(out, w, h, step)
-    {
-      var n = w / step;
-      out.translate(0, -0.5 * step);
-      out.beginPath();
-      for(var i = 0; i < n; i++)
-      {
-        var posX = i * 2 * step - w;
-        out.moveTo(posX, 0);
-        out.lineTo(w + posX + 0.5 * step, h + 0.5 * step);
-        out.lineTo(w + posX + 1.5 * step, h + 0.5 * step);
-        out.lineTo(posX + step, 0);
-      }
-    }
+         var out = stage.out;
+
+         function drawBackground(out, w, h, step){
+             var n = w / step;
+             out.translate(0, -0.5 * step);
+             out.beginPath();
+             for(var i = 0; i < n; i++){
+                 var posX = i * 2 * step - w;
+                 out.moveTo(posX, 0);
+                 out.lineTo(w + posX + 0.5 * step, h + 0.5 * step);
+                 out.lineTo(w + posX + 1.5 * step, h + 0.5 * step);
+                 out.lineTo(posX + step, 0);
+             }
+         }
 
 
 
-    var step = 10;
-    out.save();
-    drawBackground(out, w, h, step);
-    out.fill();
-    out.restore();
-    out.save();
+         var step = 10;
+         out.save();
+         drawBackground(out, w, h, step);
+         out.fill();
+         out.restore();
+         out.save();
 
-    var tempStage = new tools.Stage(w, h, false);
-    tempOut = tempStage.out;
+         var tempStage = new tools.Stage(w, h, false);
+         tempOut = tempStage.out;
 
-    tempOut.fillStyle = "white";
-    for(var i = 0; i < 500; i++)
-    {
-      var x = Math.floor(Math.random() * 100) * step;
-      var y = Math.floor(Math.random() * 100) * step;
-      var tw = Math.floor(Math.random() * 10) * step;
-      var th = Math.floor(Math.random() * 10) * step;
-      //tempOut.fillStyle = Math.random() < 0.5 ? "white" : "rgba(0, 0, 0, 0)";
-      tempOut.fillRect(x, y, tw, th);
-      //tempOut.fillRect(step, step, 5 * step, 5 * step);
-    }
+         tempOut.fillStyle = "white";
+         for(var i = 0; i < 500; i++){
+             var x = Math.floor(Math.random() * 100) * step;
+             var y = Math.floor(Math.random() * 100) * step;
+             var tw = Math.floor(Math.random() * 10) * step;
+             var th = Math.floor(Math.random() * 10) * step;
+             //tempOut.fillStyle = Math.random() < 0.5 ? "white" : "rgba(0, 0, 0, 0)";
+             tempOut.fillRect(x, y, tw, th);
+             //tempOut.fillRect(step, step, 5 * step, 5 * step);
+         }
 
-    out.drawImage(tempStage.canvas, 0, 0);
+         out.drawImage(tempStage.canvas, 0, 0);
 
-    tempOut.fillStyle = "black";
-    tempOut.globalCompositeOperation = "source-atop";
-    tempOut.translate(w, 0);
-    tempOut.scale(-1, 1);
-    drawBackground(tempOut, w, h, step);
-    tempOut.fill();
-    tempOut.restore();
+         tempOut.fillStyle = "black";
+         tempOut.globalCompositeOperation = "source-atop";
+         tempOut.translate(w, 0);
+         tempOut.scale(-1, 1);
+         drawBackground(tempOut, w, h, step);
+         tempOut.fill();
+         tempOut.restore();
 
 
-    out.drawImage(tempStage.canvas, 0, 0);
+         out.drawImage(tempStage.canvas, 0, 0);
 
-	</script>
-	
-	<script type="text/javascript">
-	  var _gaq = _gaq || [];
-	  _gaq.push(['_setAccount', 'UA-6101672-1']);
-	  _gaq.push(['_trackPageview']);
+        </script>
 
-	  (function() {
-		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-	  })();
-	</script>
-</body>
+    </body>
 </html>
-

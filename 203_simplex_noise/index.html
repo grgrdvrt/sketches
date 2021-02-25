@@ -1,59 +1,47 @@
 <html>
-<head>
-	<title>Simplex Noise</title>
-	<link rel="stylesheet" type="text/css" href="../css/styles.css"/>
-</head>
-<body>
-	<script type="text/javascript" src="../libs/perlin-noise-simplex.js"></script>
-	<script type="text/javascript" src="../libs/tools.js"></script>
-	<script type="text/javascript">
-		tools.mixin(tools, this);
+    <head>
+        <title>Simplex Noise</title>
+        <link rel="stylesheet" type="text/css" href="../css/styles.css"/>
+    </head>
+    <body>
+        <script type="text/javascript" src="../libs/perlin-noise-simplex.js"></script>
+        <script type="text/javascript" src="../libs/tools.js"></script>
+        <script type="text/javascript">
+         tools.mixin(tools, this);
 
-		var w = 700;
-		var h = 700;
+         var w = 700;
+         var h = 700;
 
-		var stage = new Stage(w, h);
-		var out = stage.out;
-
-
-   var noise = new SimplexNoise();
-
-   var sampleSize = 6;
-   var scale = 0.005;
-   var nSteps = 200;
-   var time = nSteps;
+         var stage = new Stage(w, h);
+         var out = stage.out;
 
 
-   var time = 0;
-   new Loop(function(){
-       if(--time <= 0)reset();
-       for(var i = 0; i < 1000; i++){
-        var x = Math.random() * w;
-        var y = Math.random() * h;
-        var value = noise.noise(x * scale, y * scale);
-        var gs = Math.ceil(0.5 * (value + 1) * 100);
-        out.fillStyle = "hsl(0, 0%, " + gs + "%)";
-        var size = 1 + Math.pow(time / nSteps, 0.2) * (sampleSize - 1);
-        out.fillRect(x - 0.5 * size, y - 0.5 * size, size, size);
-       }
-   });
+         var noise = new SimplexNoise();
 
-   function reset()
-   {
-       scale = Math.random() * 0.04 + 0.001;
-       time = nSteps;
-   }
-		</script>
-	<script type="text/javascript">
-	  var _gaq = _gaq || [];
-	  _gaq.push(['_setAccount', 'UA-6101672-1']);
-	  _gaq.push(['_trackPageview']);
+         var sampleSize = 6;
+         var scale = 0.005;
+         var nSteps = 200;
+         var time = nSteps;
 
-	  (function() {
-		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-	  })();
-	</script>
-</body>
+
+         var time = 0;
+         new Loop(function(){
+             if(--time <= 0)reset();
+             for(var i = 0; i < 1000; i++){
+                 var x = Math.random() * w;
+                 var y = Math.random() * h;
+                 var value = noise.noise(x * scale, y * scale);
+                 var gs = Math.ceil(0.5 * (value + 1) * 100);
+                 out.fillStyle = "hsl(0, 0%, " + gs + "%)";
+                 var size = 1 + Math.pow(time / nSteps, 0.2) * (sampleSize - 1);
+                 out.fillRect(x - 0.5 * size, y - 0.5 * size, size, size);
+             }
+         });
+
+         function reset(){
+             scale = Math.random() * 0.04 + 0.001;
+             time = nSteps;
+         }
+        </script>
+    </body>
 </html>

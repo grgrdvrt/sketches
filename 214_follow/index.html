@@ -1,114 +1,101 @@
 <html>
-<head>
-	<title>follow</title>
-	<link rel="stylesheet" type="text/css" href="../css/styles.css"/>
-</head>
-<body>
-	<script type="text/javascript" src="../libs/tools.js"></script>
-	<script type="text/javascript">
-		tools.mixin(tools, this);
+    <head>
+        <title>follow</title>
+        <link rel="stylesheet" type="text/css" href="../css/styles.css"/>
+    </head>
+    <body>
+        <script type="text/javascript" src="../libs/tools.js"></script>
+        <script type="text/javascript">
+         tools.mixin(tools, this);
 
-		var w = 700;
-		var h = 700;
+         var w = 700;
+         var h = 700;
 
-		var stage = new Stage(w, h);
-		var out = stage.out;
+         var stage = new Stage(w, h);
+         var out = stage.out;
 
-    out.lineCap = out.lineJoint = "round";
+         out.lineCap = out.lineJoint = "round";
 
-    var particles = [];
-
-
-    var n = 150;
-
-    for(var i = 0; i < n; i++) {
-      particles[i] = {
-        //x:(Math.random()) * w,
-        //y:(Math.random()) * h,
-        x:(Math.random() * 2 - 0.5) * w,
-        y:(Math.random() * 2 - 0.5) * h,
-        v:Math.random() * 0.5 + 0.5,
-        size:1
-      }
-    }
-
-    particles.forEach(function(p, i){
-      var target = particles[(i + 1) % n]; 
-      p.target = target;
-      target.follower = p;
-    });
+         var particles = [];
 
 
-    var loop = new Loop(update)
-    function update(){
-      var i, p;
-      for(i = 0; i < n; i++){
-        p = particles[i];
-        var dx = p.target.x - p.x;
-        var dy = p.target.y - p.y;
-        var dist2 = dx * dx + dy * dy;
-        if(dist2 < 1){
-          p.follower.target = p.target;
-          p.target.follower = p.follower;
-          p.target.size += p.size;
-          //p.target.size = 0.75 * (p.target.size + p.size);
-          particles.splice(i, 1);
-          n--;
-          i--;
+         var n = 150;
 
-          if(n === 1){
-            loop.pause();
-            return;
-          }
-        }
-        else {
-          var v = p.v / Math.sqrt(dist2);
-          p.vx = v * dx;
-          p.vy = v * dy;
-        }
-      }
+         for(var i = 0; i < n; i++) {
+             particles[i] = {
+                 //x:(Math.random()) * w,
+                 //y:(Math.random()) * h,
+                 x:(Math.random() * 2 - 0.5) * w,
+                 y:(Math.random() * 2 - 0.5) * h,
+                 v:Math.random() * 0.5 + 0.5,
+                 size:1
+             }
+         }
+
+         particles.forEach(function(p, i){
+             var target = particles[(i + 1) % n];
+             p.target = target;
+             target.follower = p;
+         });
 
 
-      //out.strokeStyle = "rgba(0, 0, 0, 0.5)";
-      //out.strokeStyle = "rgba(255, 255, 255, 0.75)";
+         var loop = new Loop(update)
+         function update(){
+             var i, p;
+             for(i = 0; i < n; i++){
+                 p = particles[i];
+                 var dx = p.target.x - p.x;
+                 var dy = p.target.y - p.y;
+                 var dist2 = dx * dx + dy * dy;
+                 if(dist2 < 1){
+                     p.follower.target = p.target;
+                     p.target.follower = p.follower;
+                     p.target.size += p.size;
+                     //p.target.size = 0.75 * (p.target.size + p.size);
+                     particles.splice(i, 1);
+                     n--;
+                     i--;
 
-      out.beginPath();
-      p = particles[0];
-      out.moveTo(p.x, p.y);
-      for(i = 1 ; i < n; i++){
-        p = particles[i];
-        out.lineTo(p.x, p.y);
-      }
-      out.closePath();
-      out.strokeStyle = "rgba(0, 0, 0, 0.01)";
-      out.lineWidth = 1;
-      out.stroke();
-
-      out.strokeStyle = "white";
-      particles.forEach(function(p){
-        out.beginPath();
-        out.moveTo(p.x, p.y);
-        p.x += p.vx;
-        p.y += p.vy;
-        out.lineTo(p.x, p.y);
-        out.lineWidth = Math.sqrt(p.size);
-        out.stroke();
-      });
-
-    };
+                     if(n === 1){
+                         loop.pause();
+                         return;
+                     }
+                 }
+                 else {
+                     var v = p.v / Math.sqrt(dist2);
+                     p.vx = v * dx;
+                     p.vy = v * dy;
+                 }
+             }
 
 
-		</script>
-	<script type="text/javascript">
-	  var _gaq = _gaq || [];
-	  _gaq.push(['_setAccount', 'UA-6101672-1']);
-	  _gaq.push(['_trackPageview']);
+             //out.strokeStyle = "rgba(0, 0, 0, 0.5)";
+             //out.strokeStyle = "rgba(255, 255, 255, 0.75)";
 
-	  (function() {
-		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-	  })();
-	</script>
-</body>
+             out.beginPath();
+             p = particles[0];
+             out.moveTo(p.x, p.y);
+             for(i = 1 ; i < n; i++){
+                 p = particles[i];
+                 out.lineTo(p.x, p.y);
+             }
+             out.closePath();
+             out.strokeStyle = "rgba(0, 0, 0, 0.01)";
+             out.lineWidth = 1;
+             out.stroke();
+
+             out.strokeStyle = "white";
+             particles.forEach(function(p){
+                 out.beginPath();
+                 out.moveTo(p.x, p.y);
+                 p.x += p.vx;
+                 p.y += p.vy;
+                 out.lineTo(p.x, p.y);
+                 out.lineWidth = Math.sqrt(p.size);
+                 out.stroke();
+             });
+
+         };
+        </script>
+    </body>
 </html>

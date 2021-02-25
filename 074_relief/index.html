@@ -1,118 +1,96 @@
 <html>
-<head>
-	<title>relief</title>
-	<link rel="stylesheet" type="text/css" href="../css/styles.css"/>
-</head>
-<body>
-	<script type="text/javascript" src="../libs/tools.js"></script>
-	<script type="text/javascript">
-		tools.mixin(tools, this);
-		var stage = new Stage(700, 700);
-		var out = stage.out;
-		
-		var center = {x:0.5 * stage.width, y:0.5 * stage.height};
-		var radius = 0.4 * stage.width;
-		var offset = -50;
-		var vel = 1;
-		
-		function drawLine(out, p0, p1)
-		{
-			var n = 100;
-			var dx = p1.x - p0.x;
-			var dy = p1.y - p0.y;
-			var sx = dx / n;
-			var sy = dy / n;
-			var rx = center.x - p0.x;
-			var ry = center.y - p0.y;
-			var posX = p0.x;
-			var posY = p0.y;
-			if(rx * rx + ry * ry < radius * radius)
-				posY += offset;
-			out.moveTo(posX, posY);
-			for(var i = 0; i < n; i++)
-			{
-				posX = i * sx + p0.x;
-				posY = i * sy + p0.y;
-				rx = center.x - posX;
-				ry = center.y - posY;
-				if(rx * rx + ry * ry < radius * radius)
-					posY += offset;
-				out.lineTo(posX, posY);
-			}
-		}
-		
-		var points = [];
-		var nPoints = 500;
-		for(var i = 0; i < nPoints; i++)
-		{
-			var p0 = {};
-			var p1 = {};
-			p0.x = Math.random() * stage.width;
-			p0.y = Math.random() * stage.height;
-			p1.x = Math.random() * stage.width;
-			p1.y = Math.random() * stage.height;
-			p0.vx = vel * (Math.random() * 2 - 1);
-			p0.vy = vel * (Math.random() * 2 - 1);
-			p1.vx = vel * (Math.random() * 2 - 1);
-			p1.vy = vel * (Math.random() * 2 - 1);
-			points[2 * i] = p0;
-			points[2 * i + 1] = p1;
-		}
-		
-		function update()
-		{
-			stage.clear();
-			out.beginPath();
-			for(var i = 0; i < nPoints; i++)
-			{
-				var p0 = points[2 * i];
-				var p1 = points[2 * i + 1];
-				updatePoint(p0);
-				updatePoint(p1);
-				drawLine(out, p0, p1);
-			}
-			out.strokeStyle = "black";
-			out.stroke();
-		}
-		
-		function updatePoint(p)
-		{
-			p.x += p.vx;
-			p.y += p.vy;
-			if(p.x < 0)
-			{
-				p.x = 0;
-				p.vx *= -1;
-			}
-			else if(p.x > stage.width)
-			{
-				p.x = stage.width;
-				p.vx *= -1;
-			}
-			if(p.y < 0)
-			{
-				p.y = 0;
-				p.vy *= -1;
-			}
-			else if(p.y > stage.height)
-			{
-				p.y = stage.height;
-				p.vy *= -1;
-			}
-		}
-		
-		new Loop(update, this);</script>
-	
-	<script type="text/javascript">
-	  var _gaq = _gaq || [];
-	  _gaq.push(['_setAccount', 'UA-6101672-1']);
-	  _gaq.push(['_trackPageview']);
+    <head>
+        <title>relief</title>
+        <link rel="stylesheet" type="text/css" href="../css/styles.css"/>
+    </head>
+    <body>
+        <script type="text/javascript" src="../libs/tools.js"></script>
+        <script type="text/javascript">
+         tools.mixin(tools, this);
+         var stage = new Stage(700, 700);
+         var out = stage.out;
 
-	  (function() {
-		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-	  })();
-	</script>
-</body>
+         var center = {x:0.5 * stage.width, y:0.5 * stage.height};
+         var radius = 0.4 * stage.width;
+         var offset = -50;
+         var vel = 1;
+
+         function drawLine(out, p0, p1){
+             var n = 100;
+             var dx = p1.x - p0.x;
+             var dy = p1.y - p0.y;
+             var sx = dx / n;
+             var sy = dy / n;
+             var rx = center.x - p0.x;
+             var ry = center.y - p0.y;
+             var posX = p0.x;
+             var posY = p0.y;
+             if(rx * rx + ry * ry < radius * radius)
+                 posY += offset;
+             out.moveTo(posX, posY);
+             for(var i = 0; i < n; i++){
+                 posX = i * sx + p0.x;
+                 posY = i * sy + p0.y;
+                 rx = center.x - posX;
+                 ry = center.y - posY;
+                 if(rx * rx + ry * ry < radius * radius)
+                     posY += offset;
+                 out.lineTo(posX, posY);
+             }
+         }
+
+         var points = [];
+         var nPoints = 500;
+         for(var i = 0; i < nPoints; i++){
+             var p0 = {};
+             var p1 = {};
+             p0.x = Math.random() * stage.width;
+             p0.y = Math.random() * stage.height;
+             p1.x = Math.random() * stage.width;
+             p1.y = Math.random() * stage.height;
+             p0.vx = vel * (Math.random() * 2 - 1);
+             p0.vy = vel * (Math.random() * 2 - 1);
+             p1.vx = vel * (Math.random() * 2 - 1);
+             p1.vy = vel * (Math.random() * 2 - 1);
+             points[2 * i] = p0;
+             points[2 * i + 1] = p1;
+         }
+
+         function update(){
+             stage.clear();
+             out.beginPath();
+             for(var i = 0; i < nPoints; i++){
+                 var p0 = points[2 * i];
+                 var p1 = points[2 * i + 1];
+                 updatePoint(p0);
+                 updatePoint(p1);
+                 drawLine(out, p0, p1);
+             }
+             out.strokeStyle = "black";
+             out.stroke();
+         }
+
+         function updatePoint(p){
+             p.x += p.vx;
+             p.y += p.vy;
+             if(p.x < 0){
+                 p.x = 0;
+                 p.vx *= -1;
+             }
+             else if(p.x > stage.width){
+                 p.x = stage.width;
+                 p.vx *= -1;
+             }
+             if(p.y < 0){
+                 p.y = 0;
+                 p.vy *= -1;
+             }
+             else if(p.y > stage.height){
+                 p.y = stage.height;
+                 p.vy *= -1;
+             }
+         }
+
+         new Loop(update, this);</script>
+    </body>
 </html>

@@ -1,103 +1,83 @@
 <html>
-<head>
-	<title>radial waves</title>
-	<link rel="stylesheet" type="text/css" href="../css/styles.css"/>
-</head>
-<body>
-	<script type="text/javascript" src="../libs/tools.js"></script>
-	<script type="text/javascript">
-		
-		
-		function Particle()
-		{
-			this.x = this.y = 0;
-			this.ox = this.oy = 0;
-		}
-		
-		Particle.prototype = {
-			update : function()
-			{
-				var dx = this.x - this.ox;
-				var dy = this.y - this.oy;
-				this.ox = this.x;
-				this.oy = this.y;
-				this.x += dx;
-				this.y += dy;
-			},
-		
-			scaleVel : function(scale)
-			{
-				var dx = scale * (this.x - this.ox);
-				var dy = scale * (this.y - this.oy);
-			}
-		}
-		
-		
-		var stage = new tools.Stage(700, 700);
-		var out = stage.out;
-		
-		var nCoords = 200;
-		var step = 2 * Math.PI / nCoords;
-		var radius = 150;
-		var coords = [];
-		out.lineWidth = 1;
-		
-		var time = 0;
-		function update()
-		{
-			stage.clear();
-			out.strokeStyle = "black";
-			generateCoords();
-			out.save();
-			out.translate(0.5 * stage.width, 0.5 * stage.height);
-			
-			out.beginPath();
-			out.moveTo(coords[0], coords[1]);
-			for(var i = 1; i < nCoords; i++)
-				out.lineTo(coords[2 * i], coords[2 * i + 1]);
-			out.lineTo(coords[0], coords[1]);
-			out.stroke();
-			out.restore();
-			time+=0.5;
-		}
-		
-		
-		function generateCoords()
-		{
-			//x, y
-			var s = 1;
-			for(var i = 0; i < nCoords; i++)
-			{
-				var ang = i * step;
-				ang += 0.1 * Math.cos(0.01 * time + ang);
-				ang += 0.25 * Math.cos(0.05 * time + ang);
-				var r = radius;
-				r += s * 15 * Math.cos(5 * ang + 0.1 * time);
-				r -= s * 15 * Math.cos(2 * ang - 0.1 * time);
-				r += s * 10 * Math.sin(5 * ang + 0.02 * time);
-				r -= s * 15 * Math.sin(2 * ang - 0.01 * time);
-				r += s * 10 * Math.cos(2 * ang + 0.01 * time) * Math.sin(5 * ang + 0.1 * time);
-				r += s * 10 * Math.sin(5 * ang - 0.1 * time) * Math.sin(ang + 0.1 * time);
-		
-				coords[2 * i] = r * Math.cos(ang);
-				coords[2 * i + 1] = r * Math.sin(ang);
-			}
-		}
-		
-		
-		
-		new tools.Loop(update, this);</script>
-	
-	<script type="text/javascript">
-	  var _gaq = _gaq || [];
-	  _gaq.push(['_setAccount', 'UA-6101672-1']);
-	  _gaq.push(['_trackPageview']);
+    <head>
+        <title>radial waves</title>
+        <link rel="stylesheet" type="text/css" href="../css/styles.css"/>
+    </head>
+    <body>
+        <script type="text/javascript" src="../libs/tools.js"></script>
+        <script type="text/javascript">
 
-	  (function() {
-		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-	  })();
-	</script>
-</body>
+
+         function Particle(){
+             this.x = this.y = 0;
+             this.ox = this.oy = 0;
+         }
+
+         Particle.prototype = {
+             update : function(){
+                 var dx = this.x - this.ox;
+                 var dy = this.y - this.oy;
+                 this.ox = this.x;
+                 this.oy = this.y;
+                 this.x += dx;
+                 this.y += dy;
+             },
+
+             scaleVel : function(scale){
+                 var dx = scale * (this.x - this.ox);
+                 var dy = scale * (this.y - this.oy);
+             }
+         }
+
+
+         var stage = new tools.Stage(700, 700);
+         var out = stage.out;
+
+         var nCoords = 200;
+         var step = 2 * Math.PI / nCoords;
+         var radius = 150;
+         var coords = [];
+         out.lineWidth = 1;
+
+         var time = 0;
+         function update(){
+             stage.clear();
+             out.strokeStyle = "black";
+             generateCoords();
+             out.save();
+             out.translate(0.5 * stage.width, 0.5 * stage.height);
+
+             out.beginPath();
+             out.moveTo(coords[0], coords[1]);
+             for(var i = 1; i < nCoords; i++)
+                 out.lineTo(coords[2 * i], coords[2 * i + 1]);
+             out.lineTo(coords[0], coords[1]);
+             out.stroke();
+             out.restore();
+             time+=0.5;
+         }
+
+
+         function generateCoords(){
+             //x, y
+             var s = 1;
+             for(var i = 0; i < nCoords; i++){
+                 var ang = i * step;
+                 ang += 0.1 * Math.cos(0.01 * time + ang);
+                 ang += 0.25 * Math.cos(0.05 * time + ang);
+                 var r = radius;
+                 r += s * 15 * Math.cos(5 * ang + 0.1 * time);
+                 r -= s * 15 * Math.cos(2 * ang - 0.1 * time);
+                 r += s * 10 * Math.sin(5 * ang + 0.02 * time);
+                 r -= s * 15 * Math.sin(2 * ang - 0.01 * time);
+                 r += s * 10 * Math.cos(2 * ang + 0.01 * time) * Math.sin(5 * ang + 0.1 * time);
+                 r += s * 10 * Math.sin(5 * ang - 0.1 * time) * Math.sin(ang + 0.1 * time);
+
+                 coords[2 * i] = r * Math.cos(ang);
+                 coords[2 * i + 1] = r * Math.sin(ang);
+             }
+         }
+
+         new tools.Loop(update, this);</script>
+    </body>
 </html>

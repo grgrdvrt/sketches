@@ -1,116 +1,103 @@
 <html>
-<head>
-	<title>Vorono&iuml;</title>
-	<link rel="stylesheet" type="text/css" href="../css/styles.css"/>
-</head>
-<body>
-	<script type="text/javascript" src="../libs/tools.js"></script>
-	<script type="text/javascript" src="../libs/rhill-voronoi-core.js"></script>
-	<script type="text/javascript">
-		tools.mixin(tools, this);
-		
-		var w = 700;
-		var h = 700;
-		
-		var stage = new Stage(w, h);
-		var out = stage.out;
-    out.strokeStyle = "black";
-    out.fillStyle = "black";
-		
-		var bbox = {xl:0, xr:w, yt:0, yb:h};
-		
-		var nSites = 40;
-		
-		var sites = [];
-    for(var i = 0; i < nSites; i++) {
-      sites[i] = {
-        x : Math.random() * w,
-        y : Math.random() * h,
-        vx:0, vy:0
-      };
-    }
+    <head>
+        <title>Vorono&iuml;</title>
+        <link rel="stylesheet" type="text/css" href="../css/styles.css"/>
+    </head>
+    <body>
+        <script type="text/javascript" src="../libs/tools.js"></script>
+        <script type="text/javascript" src="../libs/rhill-voronoi-core.js"></script>
+        <script type="text/javascript">
+         tools.mixin(tools, this);
 
-    sites[0].x = 0.5 * w;
-    sites[0].y = 0.5 * h;
-		
-		var time = 0;
-		var maxTime = 50;
-    var fr = 0.995;
-    var randomness = 0.25;
-		
-    var voronoi = new Voronoi();
-  
-    var diagram = voronoi.compute(sites, bbox);
-    new Loop(function(){
-      out.clearRect(0, 0, w, h);
-      out.beginPath();
-      //var ratio = 0.5 * Math.random() + 0.5;
-      time += 0.01;
-      var ratio = 0.5 + 0.25 * (Math.cos(time) + 1);
-    
-      diagram.edges.forEach(function(e){
-        var p1 = e.lSite;
-        var p2 = e.rSite;
-        if(!p1 || !p2)return;
-        var dx = p2.x - p1.x;
-        var dy = p2.y - p1.y;
-        out.moveTo(p1.x + ratio * dx, p1.y + ratio * dy);
-        out.lineTo(p2.x - ratio * dx, p2.y - ratio * dy);
-      });
-      diagram.cells.forEach(function(c){
-        var pts = c.halfedges.map(function(he){
-          var s = he.edge.lSite.voronoiId === c.site.voronoiId ? he.edge.rSite : he.edge.lSite;
-          if(!s) return {x:0.5 * (he.edge.va.x + he.edge.vb.x), y:0.5 * (he.edge.va.y + he.edge.vb.y)}
-          var dx = s.x - c.site.x;
-          var dy = s.y - c.site.y;
-          return {
-            x:c.site.x + ratio * dx,
-            y:c.site.y + ratio * dy
-          }
-        });
-        drawPoly(pts)
-      });
-      out.stroke()
-		
-    });
-    function drawPoly(pts){
-      var pt = pts[pts.length - 1];
-      if(pt)out.moveTo(pt.x, pt.y);
-      pts.forEach(function(pt){
-        if(pt)out.lineTo(pt.x, pt.y);
-      });
-    }	
-		function drawCell(cell, out)
-		{
-			out.beginPath();
-			var x = cell.site.x;
-			var y = cell.site.y;
-		
-			var n = cell.halfedges.length;
-			var he = cell.halfedges[0];
-			var p = he.getStartpoint();
-			out.moveTo(p.x, p.y);
-			for(var i = 0; i < n; i++)
-			{
-				he = cell.halfedges[i];
-				p = he.getEndpoint();
-        out.lineTo(p.x, p.y);
-			}
-			out.closePath();
-			out.stroke();
-		}
-		
-	</script>
-	<script type="text/javascript">
-	  var _gaq = _gaq || [];
-	  _gaq.push(['_setAccount', 'UA-6101672-1']);
-	  _gaq.push(['_trackPageview']);
+         var w = 700;
+         var h = 700;
 
-	  (function() {
-		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-	  })();
-	</script>
-</body>
+         var stage = new Stage(w, h);
+         var out = stage.out;
+         out.strokeStyle = "black";
+         out.fillStyle = "black";
+
+         var bbox = {xl:0, xr:w, yt:0, yb:h};
+
+         var nSites = 40;
+
+         var sites = [];
+         for(var i = 0; i < nSites; i++) {
+             sites[i] = {
+                 x : Math.random() * w,
+                 y : Math.random() * h,
+                 vx:0, vy:0
+             };
+         }
+
+         sites[0].x = 0.5 * w;
+         sites[0].y = 0.5 * h;
+
+         var time = 0;
+         var maxTime = 50;
+         var fr = 0.995;
+         var randomness = 0.25;
+
+         var voronoi = new Voronoi();
+
+         var diagram = voronoi.compute(sites, bbox);
+         new Loop(function(){
+             out.clearRect(0, 0, w, h);
+             out.beginPath();
+             //var ratio = 0.5 * Math.random() + 0.5;
+             time += 0.01;
+             var ratio = 0.5 + 0.25 * (Math.cos(time) + 1);
+
+             diagram.edges.forEach(function(e){
+                 var p1 = e.lSite;
+                 var p2 = e.rSite;
+                 if(!p1 || !p2)return;
+                 var dx = p2.x - p1.x;
+                 var dy = p2.y - p1.y;
+                 out.moveTo(p1.x + ratio * dx, p1.y + ratio * dy);
+                 out.lineTo(p2.x - ratio * dx, p2.y - ratio * dy);
+             });
+             diagram.cells.forEach(function(c){
+                 var pts = c.halfedges.map(function(he){
+                     var s = he.edge.lSite.voronoiId === c.site.voronoiId ? he.edge.rSite : he.edge.lSite;
+                     if(!s) return {x:0.5 * (he.edge.va.x + he.edge.vb.x), y:0.5 * (he.edge.va.y + he.edge.vb.y)}
+                     var dx = s.x - c.site.x;
+                     var dy = s.y - c.site.y;
+                     return {
+                         x:c.site.x + ratio * dx,
+                         y:c.site.y + ratio * dy
+                     }
+                 });
+                 drawPoly(pts)
+             });
+             out.stroke()
+
+         });
+         function drawPoly(pts){
+             var pt = pts[pts.length - 1];
+             if(pt)out.moveTo(pt.x, pt.y);
+             pts.forEach(function(pt){
+                 if(pt)out.lineTo(pt.x, pt.y);
+             });
+         }
+         function drawCell(cell, out){
+             out.beginPath();
+             var x = cell.site.x;
+             var y = cell.site.y;
+
+             var n = cell.halfedges.length;
+             var he = cell.halfedges[0];
+             var p = he.getStartpoint();
+             out.moveTo(p.x, p.y);
+             for(var i = 0; i < n; i++){
+                 he = cell.halfedges[i];
+                 p = he.getEndpoint();
+                 out.lineTo(p.x, p.y);
+             }
+             out.closePath();
+             out.stroke();
+         }
+
+        </script>
+    </body>
 </html>

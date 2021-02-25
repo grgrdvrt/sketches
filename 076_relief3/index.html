@@ -1,84 +1,67 @@
 <html>
-<head>
-	<title>relief</title>
-	<link rel="stylesheet" type="text/css" href="../css/styles.css"/>
-</head>
-<body>
-	<script type="text/javascript" src="../libs/tools.js"></script>
-	<script type="text/javascript">
-		tools.mixin(tools, this);
-		var stage = new Stage(700, 700);
-		var out = stage.out;
-		
-		var center = {x:0.5 * stage.width, y:0.5 * stage.height};
-		var radius = 0.4 * stage.width;
-		var offset = -50;
-		var vel = 1;
-		
-		function drawLine(out, p0, p1)
-		{
-			var n = 50;
-			var dx = p1.x - p0.x;
-			var dy = p1.y - p0.y;
-			var sx = dx / n;
-			var sy = dy / n;
-			var rx = center.x - p0.x;
-			var ry = center.y - p0.y;
-			var posX = p0.x;
-			var posY = p0.y;
-			out.strokeStyle = "black";
-			for(var i = 0; i < n; i++)
-			{
-				out.beginPath();
-				out.moveTo(posX, posY);
-				posX = i * sx + p0.x;
-				posY = i * sy + p0.y;
-				out.lineWidth = getLineWidth(posX, posY);
-				out.lineTo(posX, posY);
-				out.stroke();
-			}
-		}
-		
-		var points = [];
-		var nPoints = 500;
-		for(var i = 0; i < nPoints; i++)
-		{
-			drawLine(out, createPoint(), createPoint());
-		}
-		
-		
-		function getLineWidth(x, y)
-		{
-			var dx = center.x - x;
-			var dy = center.y - y;
-			var r = Math.sqrt(dx * dx + dy * dy);
-			var w = 0.5 * stage.width;
-			var h = 0.5 * stage.height;
-			var max = Math.sqrt(w * w + h * h);
-		
-			return Math.pow(1 + (1 + Math.cos(0.1 * r)) * (1 - Math.sqrt(r / h)), 1.1);
-		}
-		
-		function createPoint()
-		{
-			var p = {};
-			p.x = Math.random() * stage.width;
-			p.y = Math.random() * stage.height;
-			return p;
-		}
-		
-		new Loop(update, this);</script>
-	
-	<script type="text/javascript">
-	  var _gaq = _gaq || [];
-	  _gaq.push(['_setAccount', 'UA-6101672-1']);
-	  _gaq.push(['_trackPageview']);
+    <head>
+        <title>relief</title>
+        <link rel="stylesheet" type="text/css" href="../css/styles.css"/>
+    </head>
+    <body>
+        <script type="text/javascript" src="../libs/tools.js"></script>
+        <script type="text/javascript">
+         tools.mixin(tools, this);
+         var stage = new Stage(700, 700);
+         var out = stage.out;
 
-	  (function() {
-		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-	  })();
-	</script>
-</body>
+         var center = {x:0.5 * stage.width, y:0.5 * stage.height};
+         var radius = 0.4 * stage.width;
+         var offset = -50;
+         var vel = 1;
+
+         function drawLine(out, p0, p1){
+             var n = 50;
+             var dx = p1.x - p0.x;
+             var dy = p1.y - p0.y;
+             var sx = dx / n;
+             var sy = dy / n;
+             var rx = center.x - p0.x;
+             var ry = center.y - p0.y;
+             var posX = p0.x;
+             var posY = p0.y;
+             out.strokeStyle = "black";
+             for(var i = 0; i < n; i++){
+                 out.beginPath();
+                 out.moveTo(posX, posY);
+                 posX = i * sx + p0.x;
+                 posY = i * sy + p0.y;
+                 out.lineWidth = getLineWidth(posX, posY);
+                 out.lineTo(posX, posY);
+                 out.stroke();
+             }
+         }
+
+         var points = [];
+         var nPoints = 500;
+         for(var i = 0; i < nPoints; i++){
+             drawLine(out, createPoint(), createPoint());
+         }
+
+
+         function getLineWidth(x, y){
+             var dx = center.x - x;
+             var dy = center.y - y;
+             var r = Math.sqrt(dx * dx + dy * dy);
+             var w = 0.5 * stage.width;
+             var h = 0.5 * stage.height;
+             var max = Math.sqrt(w * w + h * h);
+
+             return Math.pow(1 + (1 + Math.cos(0.1 * r)) * (1 - Math.sqrt(r / h)), 1.1);
+         }
+
+         function createPoint(){
+             var p = {};
+             p.x = Math.random() * stage.width;
+             p.y = Math.random() * stage.height;
+             return p;
+         }
+
+         new Loop(update, this);</script>
+    </body>
 </html>

@@ -1,135 +1,116 @@
 <html>
-<head>
-	<title>dla 5</title>
-	<link rel="stylesheet" type="text/css" href="../css/styles.css"/>
-</head>
-<body>
-	<script type="text/javascript" src="../libs/tools.js"></script>
-	<script type="text/javascript">
-		tools.mixin(tools, this);
-		
-
-    function setCircleTarget(c, closest)
-    {
-      var dx = closest.x - c.x;
-      var dy = closest.y - c.y;
-      var ratio = (c.r + closest.r) / Math.sqrt(dx * dx + dy * dy);
-      c.x = closest.x - dx * ratio;
-      c.y = closest.y - dy * ratio;
-    }
+    <head>
+        <title>dla 5</title>
+        <link rel="stylesheet" type="text/css" href="../css/styles.css"/>
+    </head>
+    <body>
+        <script type="text/javascript" src="../libs/tools.js"></script>
+        <script type="text/javascript">
+         tools.mixin(tools, this);
 
 
-    function createCircle()
-    {
-      return {r:Math.pow(Math.random(), 3) * 100, x:0, y:0};
-    }
+         function setCircleTarget(c, closest){
+             var dx = closest.x - c.x;
+             var dy = closest.y - c.y;
+             var ratio = (c.r + closest.r) / Math.sqrt(dx * dx + dy * dy);
+             c.x = closest.x - dx * ratio;
+             c.y = closest.y - dy * ratio;
+         }
 
 
-    function setCircleOnEdges(c, w, h)
-    {
-      if(Math.random() < 0.5) {
-        c.x = -c.r + Math.random() * (w + 2 * c.r);
-        c.y = Math.random() < 0.5 ? -c.r : h + c.r;
-      }
-      else {
-        c.x = Math.random() < 0.5 ? -c.r : w + c.r;
-        c.y = -c.r + Math.random() * (h + 2 * c.r);
-      }
-    }
+         function createCircle(){
+             return {r:Math.pow(Math.random(), 3) * 100, x:0, y:0};
+         }
 
 
-    function getBoundingRect(circles)
-    {
-      return circles.reduce(function(bounds, c) {
-        var top = c.y - c.r;
-        var bottom = c.y + c.r;
-        var left = c.x - c.r;
-        var right = c.x + c.r;
-
-        if(top < bounds.top) bounds.top = top;
-        if(bottom < bounds.bottom) bounds.bottom = bottom;
-        if(left < bounds.left) bounds.left = left;
-        if(right < bounds.right) bounds.right = right;
-
-        return bounds;
-      }, {top:max, bottom:-max, left:max, right:-max});
-    }
+         function setCircleOnEdges(c, w, h){
+             if(Math.random() < 0.5) {
+                 c.x = -c.r + Math.random() * (w + 2 * c.r);
+                 c.y = Math.random() < 0.5 ? -c.r : h + c.r;
+             }
+             else {
+                 c.x = Math.random() < 0.5 ? -c.r : w + c.r;
+                 c.y = -c.r + Math.random() * (h + 2 * c.r);
+             }
+         }
 
 
-    function draw(out, circles)
-    {
-      out.beginPath();
-      out.strokeStyle = "black";
-      circles.forEach(function(c) {
-        out.moveTo(c.x + c.r, c.y);
-        out.arc(c.x, c.y, c.r, 0, 2 * Math.PI);
-      });
-      out.stroke();
-    }
+         function getBoundingRect(circles){
+             return circles.reduce(function(bounds, c) {
+                 var top = c.y - c.r;
+                 var bottom = c.y + c.r;
+                 var left = c.x - c.r;
+                 var right = c.x + c.r;
+
+                 if(top < bounds.top) bounds.top = top;
+                 if(bottom < bounds.bottom) bounds.bottom = bottom;
+                 if(left < bounds.left) bounds.left = left;
+                 if(right < bounds.right) bounds.right = right;
+
+                 return bounds;
+             }, {top:max, bottom:-max, left:max, right:-max});
+         }
 
 
-    function getClosest(c, circles)
-    {
-      return circles.reduce(function(closest, c2) {
-        var dist = getDist(c, c2);
-        if(dist < closest.dist) {
-          closest.c = c2;
-          closest.dist = dist;
-        }
-        return closest;
-      }, {c:null, dist:max}).c;
-    }
+         function draw(out, circles){
+             out.beginPath();
+             out.strokeStyle = "black";
+             circles.forEach(function(c) {
+                 out.moveTo(c.x + c.r, c.y);
+                 out.arc(c.x, c.y, c.r, 0, 2 * Math.PI);
+             });
+             out.stroke();
+         }
 
 
-    function getDist(c1, c2)
-    {
-      var dx = c2.x - c1.x;
-      var dy = c2.y - c1.y;
-      return Math.sqrt(dx * dx + dy * dy) - (c1.r + c2.r);
-    }
+         function getClosest(c, circles){
+             return circles.reduce(function(closest, c2) {
+                 var dist = getDist(c, c2);
+                 if(dist < closest.dist) {
+                     closest.c = c2;
+                     closest.dist = dist;
+                 }
+                 return closest;
+             }, {c:null, dist:max}).c;
+         }
 
 
-		var w = 700;
-		var h = 700;
-		var stage = new tools.Stage(w, h);
-		var out = stage.out;
-    var max = Number.MAX_VALUE;
+         function getDist(c1, c2){
+             var dx = c2.x - c1.x;
+             var dy = c2.y - c1.y;
+             return Math.sqrt(dx * dx + dy * dy) - (c1.r + c2.r);
+         }
 
 
-    var circles = [];
-    var c = createCircle();
-    c.x = 0.5 * w;
-    c.y = 0.5 * h;
-    circles[0] = c;
+         var w = 700;
+         var h = 700;
+         var stage = new tools.Stage(w, h);
+         var out = stage.out;
+         var max = Number.MAX_VALUE;
 
-    function update()
-    {
-      var c = createCircle();
-      
-      setCircleOnEdges(c, w, h);
-      var closest = getClosest(c, circles);
-      setCircleTarget(c, closest);
-      circles.push(c);
-      out.clearRect(0, 0, w, h);
-      out.save();
-      draw(out, circles);
-      out.restore();
-    }
 
-    setInterval(update, 100);
-  
-  </script>
-	
-	<script type="text/javascript">
-	  var _gaq = _gaq || [];
-	  _gaq.push(['_setAccount', 'UA-6101672-1']);
-	  _gaq.push(['_trackPageview']);
+         var circles = [];
+         var c = createCircle();
+         c.x = 0.5 * w;
+         c.y = 0.5 * h;
+         circles[0] = c;
 
-	  (function() {
-		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-	  })();
-	</script>
-</body>
+         function update(){
+             var c = createCircle();
+
+             setCircleOnEdges(c, w, h);
+             var closest = getClosest(c, circles);
+             setCircleTarget(c, closest);
+             circles.push(c);
+             out.clearRect(0, 0, w, h);
+             out.save();
+             draw(out, circles);
+             out.restore();
+         }
+
+         setInterval(update, 100);
+
+        </script>
+
+    </body>
 </html>

@@ -1,160 +1,141 @@
 <html>
-<head>
-	<title>Particles</title>
-	<link rel="stylesheet" type="text/css" href="../css/styles.css"/>
-</head>
-<body>
-	<script type="text/javascript" src="../libs/tools.js"></script>
-	<script type="text/javascript">
-		tools.mixin(tools, this);
-		
-		var w = 700;
-		var h = 700;
-		var stage = new tools.Stage(w, h);
-		var out = stage.out;
-		var offStage2 = new tools.Stage(w, h, false);
-		var offOut2 = offStage2.out;
-		var offStage = new tools.Stage(w, h, false);
-		var offOut = offStage2.out;
-		
-		var friction = 0.97;
-		var vMax = 15;
-		
-		var particleSize = 3;
-		
-		var nParticles = 300;
-		
-		var vRotationMax = 0.05;
-		var vRotation;
-		var rotation;
-		
-		var hue = 0;
-		var sat = 0;
-		var lig = 0;
-			hue = Math.floor(Math.random() * 360);
-		
-		function Point(x, y)
-		{
-			this.x = x;
-			this.y = y;
-		}
-		
-		function rand(){return Math.random() * 2 - 1;}
-		
-		
-		function Particle()
-		{
-			this.p1 = new Point(particleSize * rand(), particleSize * rand());
-			this.p2 = new Point(particleSize * rand(), particleSize * rand());
-			this.p3 = new Point(particleSize * rand(), particleSize * rand());
-		
-			this.x = 0;
-			this.y = 0;
-			this.vx = 0;
-			this.vy = 0;
-		
-			this.scale = 2 + Math.random() * 5;
-		
-			this.rotation = rand();
-			this.vRotation = 0;
-		}
-		
-		Particle.prototype = {
-			draw : function(out)
-			{
-				out.save();
-				out.translate(this.x, this.y);
-				out.rotate(this.rotation);
-				out.scale(this.scale, this.scale);
-				out.moveTo(this.p1.x, this.p1.y);
-				out.lineTo(this.p2.x, this.p2.y);
-				out.lineTo(this.p3.x, this.p3.y);
-				out.lineTo(this.p1.x, this.p1.y);
-				out.restore();
-			}
-		}
-		
-		var particles = [];
-		for(var i = 0; i < nParticles; i++)
-			particles[i] = new Particle();
-		
-		resetParticles();
-		
-		
-		function reset()
-		{
-			offOut2.drawImage(offStage.canvas, 0, 0, w, h);
-			resetParticles();
-			lig = 0;
-		}
-		
-		function resetParticles()
-		{
-			var x = Math.random() * w;
-			var y = Math.random() * h;
-			for(var i = 0; i < nParticles; i++)
-			{
-				var p = particles[i];
-				p.x = x;
-				p.y = y;
-				p.vx = rand();
-				p.vy = rand();
-				var r = Math.sqrt(Math.random()) * vMax / Math.sqrt(p.vx * p.vx + p.vy * p.vy);
-				p.vx *= r;
-				p.vy *= r;
-				p.vRotation = 0.1 * (rand());
-				particles[i] = p;
-			}
-		
-			vRotation = rand() * vRotationMax
-			rotation = 0;
-			sat = Math.round(Math.random() * 100);
-		
-		}
-		
-		
-		new Loop(function(){
-			//out.clearRect(0, 0, w, h);
-			offOut.save();
-			offOut.translate(0.5 * w, 0.5 * h);
-			vRotation *= friction;
-			rotation += vRotation;
-			offOut.rotate(rotation);
-			offOut.translate(-0.5 * w, -0.5 * h);
-			offOut.beginPath();
-			for(var i = 0; i < nParticles; i++)
-			{
-				var p = particles[i];
-				p.vx *= friction;
-				p.vy *= friction;
-				p.x += p.vx;
-				p.y += p.vy;
-				p.vRotation *= friction;
-				p.rotation += p.vRotation;
-				p.draw(offOut);
-			}
-			lig++;
-			//offOut.fillStyle = "hsl(" + hue + ", " + sat + "%, " + lig + "%)";
-			offOut.fillStyle = "hsl(" + hue + ", " + 0 + "%, " + lig + "%)";
-			offOut.fill();
-			offOut.restore();
-		
-			out.drawImage(offStage2.canvas, 0, 0, w, h);
-			out.drawImage(offStage.canvas, 0, 0, w, h);
-		});
-		
-		setInterval(reset, 1500);</script>
-	
-	<script type="text/javascript">
-	  var _gaq = _gaq || [];
-	  _gaq.push(['_setAccount', 'UA-6101672-1']);
-	  _gaq.push(['_trackPageview']);
+    <head>
+        <title>Particles</title>
+        <link rel="stylesheet" type="text/css" href="../css/styles.css"/>
+    </head>
+    <body>
+        <script type="text/javascript" src="../libs/tools.js"></script>
+        <script type="text/javascript">
+         tools.mixin(tools, this);
 
-	  (function() {
-		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-	  })();
-	</script>
-</body>
+         var w = 700;
+         var h = 700;
+         var stage = new tools.Stage(w, h);
+         var out = stage.out;
+         var offStage2 = new tools.Stage(w, h, false);
+         var offOut2 = offStage2.out;
+         var offStage = new tools.Stage(w, h, false);
+         var offOut = offStage2.out;
+
+         var friction = 0.97;
+         var vMax = 15;
+
+         var particleSize = 3;
+
+         var nParticles = 300;
+
+         var vRotationMax = 0.05;
+         var vRotation;
+         var rotation;
+
+         var hue = 0;
+         var sat = 0;
+         var lig = 0;
+         hue = Math.floor(Math.random() * 360);
+
+         function Point(x, y){
+             this.x = x;
+             this.y = y;
+         }
+
+         function rand(){return Math.random() * 2 - 1;}
+
+
+         function Particle(){
+             this.p1 = new Point(particleSize * rand(), particleSize * rand());
+             this.p2 = new Point(particleSize * rand(), particleSize * rand());
+             this.p3 = new Point(particleSize * rand(), particleSize * rand());
+
+             this.x = 0;
+             this.y = 0;
+             this.vx = 0;
+             this.vy = 0;
+
+             this.scale = 2 + Math.random() * 5;
+
+             this.rotation = rand();
+             this.vRotation = 0;
+         }
+
+         Particle.prototype = {
+             draw : function(out){
+                 out.save();
+                 out.translate(this.x, this.y);
+                 out.rotate(this.rotation);
+                 out.scale(this.scale, this.scale);
+                 out.moveTo(this.p1.x, this.p1.y);
+                 out.lineTo(this.p2.x, this.p2.y);
+                 out.lineTo(this.p3.x, this.p3.y);
+                 out.lineTo(this.p1.x, this.p1.y);
+                 out.restore();
+             }
+         }
+
+         var particles = [];
+         for(var i = 0; i < nParticles; i++)
+             particles[i] = new Particle();
+
+         resetParticles();
+
+
+         function reset(){
+             offOut2.drawImage(offStage.canvas, 0, 0, w, h);
+             resetParticles();
+             lig = 0;
+         }
+
+         function resetParticles(){
+             var x = Math.random() * w;
+             var y = Math.random() * h;
+             for(var i = 0; i < nParticles; i++){
+                 var p = particles[i];
+                 p.x = x;
+                 p.y = y;
+                 p.vx = rand();
+                 p.vy = rand();
+                 var r = Math.sqrt(Math.random()) * vMax / Math.sqrt(p.vx * p.vx + p.vy * p.vy);
+                 p.vx *= r;
+                 p.vy *= r;
+                 p.vRotation = 0.1 * (rand());
+                 particles[i] = p;
+             }
+
+             vRotation = rand() * vRotationMax
+             rotation = 0;
+             sat = Math.round(Math.random() * 100);
+
+         }
+
+
+         new Loop(function(){
+             //out.clearRect(0, 0, w, h);
+             offOut.save();
+             offOut.translate(0.5 * w, 0.5 * h);
+             vRotation *= friction;
+             rotation += vRotation;
+             offOut.rotate(rotation);
+             offOut.translate(-0.5 * w, -0.5 * h);
+             offOut.beginPath();
+             for(var i = 0; i < nParticles; i++){
+                 var p = particles[i];
+                 p.vx *= friction;
+                 p.vy *= friction;
+                 p.x += p.vx;
+                 p.y += p.vy;
+                 p.vRotation *= friction;
+                 p.rotation += p.vRotation;
+                 p.draw(offOut);
+             }
+             lig++;
+             //offOut.fillStyle = "hsl(" + hue + ", " + sat + "%, " + lig + "%)";
+             offOut.fillStyle = "hsl(" + hue + ", " + 0 + "%, " + lig + "%)";
+             offOut.fill();
+             offOut.restore();
+
+             out.drawImage(offStage2.canvas, 0, 0, w, h);
+             out.drawImage(offStage.canvas, 0, 0, w, h);
+         });
+
+         setInterval(reset, 1500);</script>
+    </body>
 </html>

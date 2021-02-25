@@ -1,42 +1,30 @@
 <html>
-<head>
-	<title>polygons 1</title>
-	<link rel="stylesheet" type="text/css" href="../css/styles.css"/>
-</head>
-<body>
-	<script type="text/javascript" src="../libs/tools.js"></script>
-	<script type="text/javascript">
-		var stage = new tools.Stage(700, 700);
-		
-		var pts = [];
-		var n = 7;
-		
-		stage.out.strokeStyle = "black";
-		stage.out.beginPath();
-		for(var i = 0; i < n; i++)
-		{
-			var pt = pts[i] = {x:Math.random() * stage.width,
-					 		   y:Math.random() * stage.height};
-			for(var j = 0; j < i; j++)
-			{
-				stage.out.moveTo(pt.x, pt.y);
-				stage.out.lineTo(pts[j].x, pts[j].y);
-			}
-		}
-		stage.out.stroke();
-		stage.out.closePath();
-	</script>
-	
-	<script type="text/javascript">
-	  var _gaq = _gaq || [];
-	  _gaq.push(['_setAccount', 'UA-6101672-1']);
-	  _gaq.push(['_trackPageview']);
+    <head>
+        <title>polygons 1</title>
+        <link rel="stylesheet" type="text/css" href="../css/styles.css"/>
+    </head>
+    <body>
+        <script type="text/javascript" src="../libs/tools.js"></script>
+        <script type="text/javascript">
+         var stage = new tools.Stage(700, 700);
 
-	  (function() {
-		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-	  })();
-	</script>
-</body>
+         var pts = [];
+         var n = 7;
+
+         stage.out.strokeStyle = "black";
+         stage.out.beginPath();
+         for(var i = 0; i < n; i++){
+             var pt = pts[i] = {
+                 x:Math.random() * stage.width,
+                 y:Math.random() * stage.height
+             };
+             for(var j = 0; j < i; j++){
+                 stage.out.moveTo(pt.x, pt.y);
+                 stage.out.lineTo(pts[j].x, pts[j].y);
+             }
+         }
+         stage.out.stroke();
+         stage.out.closePath();
+        </script>
+    </body>
 </html>

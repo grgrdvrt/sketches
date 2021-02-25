@@ -1,128 +1,109 @@
 <html>
-<head>
-	<title>dimensions 2</title>
-	<link rel="stylesheet" type="text/css" href="../css/styles.css"/>
-</head>
-<body>
-	<script type="text/javascript" src="../libs/tools.js"></script>
-	<script type="text/javascript" src="../libs/threeDimensions.js"></script>
-	<script type="text/javascript">
-		
-		
-		
-		
-		
-		function CurveRenderer(ctx, w, h)
-		{
-			this.ctx = ctx;
-			this.w = w;
-			this.h = h;
-		}
-		
-		CurveRenderer.prototype.render = function(v)
-		{
-			this.ctx.strokeStyle = "black";
-			var n = v.length;
-			this.ctx.beginPath();
-			var ox = 0.5 * this.w;
-			var oy = 0.5 * this.h;
-			this.ctx.moveTo(v[0].px + ox, v[0].py + oy);
-			var p1, p2
-			for(var i = 2; i < n-1; i++)
-			{
-				p1 = v[i - 1];
-				p2 = v[i];
-				this.ctx.quadraticCurveTo(p1.px + ox, p1.py + oy, 0.5 * (p1.px + p2.px) + ox, 0.5 * (p1.py + p2.py) + oy);
-		
-			}
-			p1 = v[n - 2];
-			p2 = v[n - 1];
-			this.ctx.quadraticCurveTo(p1.px + ox, p1.py + oy, p2.px + ox, p2.py + oy);
-			this.ctx.stroke();
-			this.ctx.closePath();
-		
-			this.ctx.strokeStyle = "rgb(200, 200, 200)";
-			this.ctx.beginPath();
-			this.ctx.moveTo(v[0].px + ox, v[0].py + oy);
-			for(i = 1; i < n; i++)
-				this.ctx.lineTo(v[i].px + ox, v[i].py + oy);
-		
-			this.ctx.stroke();
-			this.ctx.closePath();
-		}
-		
-		function DotsRenderer(ctx, w, h)
-		{
-			this.ctx = ctx;
-			this.w = w;
-			this.h = h;
-		}
-		
-		DotsRenderer.prototype.render = function(v)
-		{
-			this.ctx.fillStyle = "black";
-			var n = v.length;
-			this.ctx.beginPath();
-			var ox = 0.5 * this.w;
-			var oy = 0.5 * this.h;
-			for(var i = 0; i < n-1; i++)
-			{
-				this.ctx.rect(v[i].px + ox, v[i].py + oy, 2, 2);
-			}
-			this.ctx.fill();
-			this.ctx.closePath();
-		}
-		
-		var stage = new tools.Stage(700, 700);
-		
-		var engine = new threeDimensions.Engine();
-		engine.translate(0, 0, 300);
-		var curveRenderer = new CurveRenderer(stage.out, stage.width, stage.height);
-		var dotsRenderer = new DotsRenderer(stage.out, stage.width, stage.height);
-		
-		var scale = 300;
-		
-		var vertices1 = [];
-		for(var i = 0; i < 30; i ++)
-		{
-			vertices1.push(new threeDimensions.Vertex(scale * (Math.random() * 2 - 1),
-													scale * (Math.random() * 2 - 1),
-													scale * (Math.random() * 2 - 1)));
-		}
-		
-		var vertices2 = [];
-		for(var i = 0; i < 200; i ++)
-		{
-			vertices2.push(new threeDimensions.Vertex(scale * (Math.random() * 2 - 1),
-													scale * (Math.random() * 2 - 1),
-													scale * (Math.random() * 2 - 1)));
-		}
-		
-		
-		function update()
-		{
-			stage.out.clearRect(0, 0, stage.width, stage.height);
-			engine.rotationX += 0.01;
-			engine.rotationY += 0.01;
-			engine.computeProjections(vertices1);
-			curveRenderer.render(vertices1);
-			engine.computeProjections(vertices2);
-			dotsRenderer.render(vertices2);
-		}
-		
-		new tools.Loop(update, this);
-	</script>
-	
-	<script type="text/javascript">
-	  var _gaq = _gaq || [];
-	  _gaq.push(['_setAccount', 'UA-6101672-1']);
-	  _gaq.push(['_trackPageview']);
+    <head>
+        <title>dimensions 2</title>
+        <link rel="stylesheet" type="text/css" href="../css/styles.css"/>
+    </head>
+    <body>
+        <script type="text/javascript" src="../libs/tools.js"></script>
+        <script type="text/javascript" src="../libs/threeDimensions.js"></script>
+        <script type="text/javascript">
 
-	  (function() {
-		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-	  })();
-	</script>
-</body>
+         function CurveRenderer(ctx, w, h) {
+             this.ctx = ctx;
+             this.w = w;
+             this.h = h;
+         }
+
+         CurveRenderer.prototype.render = function(v) {
+             this.ctx.strokeStyle = "black";
+             var n = v.length;
+             this.ctx.beginPath();
+             var ox = 0.5 * this.w;
+             var oy = 0.5 * this.h;
+             this.ctx.moveTo(v[0].px + ox, v[0].py + oy);
+             var p1, p2
+             for(var i = 2; i < n-1; i++)
+             {
+                 p1 = v[i - 1];
+                 p2 = v[i];
+                 this.ctx.quadraticCurveTo(p1.px + ox, p1.py + oy, 0.5 * (p1.px + p2.px) + ox, 0.5 * (p1.py + p2.py) + oy);
+
+             }
+             p1 = v[n - 2];
+             p2 = v[n - 1];
+             this.ctx.quadraticCurveTo(p1.px + ox, p1.py + oy, p2.px + ox, p2.py + oy);
+             this.ctx.stroke();
+             this.ctx.closePath();
+
+             this.ctx.strokeStyle = "rgb(200, 200, 200)";
+             this.ctx.beginPath();
+             this.ctx.moveTo(v[0].px + ox, v[0].py + oy);
+             for(i = 1; i < n; i++)
+                 this.ctx.lineTo(v[i].px + ox, v[i].py + oy);
+
+             this.ctx.stroke();
+             this.ctx.closePath();
+         }
+
+         function DotsRenderer(ctx, w, h) {
+             this.ctx = ctx;
+             this.w = w;
+             this.h = h;
+         }
+
+         DotsRenderer.prototype.render = function(v) {
+             this.ctx.fillStyle = "black";
+             var n = v.length;
+             this.ctx.beginPath();
+             var ox = 0.5 * this.w;
+             var oy = 0.5 * this.h;
+             for(var i = 0; i < n-1; i++)
+             {
+                 this.ctx.rect(v[i].px + ox, v[i].py + oy, 2, 2);
+             }
+             this.ctx.fill();
+             this.ctx.closePath();
+         }
+
+         var stage = new tools.Stage(700, 700);
+
+         var engine = new threeDimensions.Engine();
+         engine.translate(0, 0, 300);
+         var curveRenderer = new CurveRenderer(stage.out, stage.width, stage.height);
+         var dotsRenderer = new DotsRenderer(stage.out, stage.width, stage.height);
+
+         var scale = 300;
+
+         var vertices1 = [];
+         for(var i = 0; i < 30; i ++) {
+             vertices1.push(new threeDimensions.Vertex(
+                 scale * (Math.random() * 2 - 1),
+                 scale * (Math.random() * 2 - 1),
+                 scale * (Math.random() * 2 - 1)
+             ));
+         }
+
+         var vertices2 = [];
+         for(var i = 0; i < 200; i ++) {
+             vertices2.push(new threeDimensions.Vertex(
+                 scale * (Math.random() * 2 - 1),
+                 scale * (Math.random() * 2 - 1),
+                 scale * (Math.random() * 2 - 1)
+             ));
+         }
+
+
+         function update() {
+             stage.out.clearRect(0, 0, stage.width, stage.height);
+             engine.rotationX += 0.01;
+             engine.rotationY += 0.01;
+             engine.computeProjections(vertices1);
+             curveRenderer.render(vertices1);
+             engine.computeProjections(vertices2);
+             dotsRenderer.render(vertices2);
+         }
+
+         new tools.Loop(update, this);
+        </script>
+    </body>
 </html>

@@ -1,78 +1,62 @@
 <html>
-<head>
-	<title>Circles</title>
-	<link rel="stylesheet" type="text/css" href="../css/styles.css"/>
-</head>
-<body>
-	<script type="text/javascript" src="../libs/tools.js"></script>
-	<script type="text/javascript">
-		tools.mixin(tools, this);
-		
-		var w = 700;
-		var h = 700;
-		var stage = new Stage(w, h);
-		var out = stage.out;
-		var mouse = new Mouse(stage.canvas);
-		
-		
-		var nCircles = 5;
-		var distances = [];
-		var circles = [];
-		
-		var interval;
-		
-		new Loop(function()
-		{
-			var p1 = {x : mouse.x, y : mouse.y};
-		
-			stage.clear();
-		
-			var n = circles.length;
-		
-			for(var i = 0; i < n; i++)
-			{
-				var c = circles[i];
-				var dx = c.x - mouse.x;
-				var dy = c.y - mouse.y;
-				var radius = Math.sqrt(dx * dx + dy * dy);
-		
-				drawPoint(out, c);
-				out.beginPath();
-				out.moveTo(c.x + radius, c.y);
-				out.arc(c.x, c.y, radius, 0, 2 * Math.PI);
-				out.stroke();
-			}
-		});
-		
-		function drawPoint(out, pt)
-		{
-			var r = 3;
-			out.beginPath();
-			out.moveTo(pt.x + r, pt.y);
-			out.arc(pt.x, pt.y, r, 0, 2 * Math.PI);
-			out.fillStyle = "black";
-			out.fill();
-		}
-		
-		function addCircle()
-		{
-			circles.push({x : Math.random() * w, y : Math.random() * h});
-			if(circles.length > 150)
-				clearInterval(interval);
-		}
-		
-		interval = setInterval(addCircle.bind(this), 500);</script>
-	
-	<script type="text/javascript">
-	  var _gaq = _gaq || [];
-	  _gaq.push(['_setAccount', 'UA-6101672-1']);
-	  _gaq.push(['_trackPageview']);
+    <head>
+        <title>Circles</title>
+        <link rel="stylesheet" type="text/css" href="../css/styles.css"/>
+    </head>
+    <body>
+        <script type="text/javascript" src="../libs/tools.js"></script>
+        <script type="text/javascript">
+         tools.mixin(tools, this);
 
-	  (function() {
-		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-	  })();
-	</script>
-</body>
+         var w = 700;
+         var h = 700;
+         var stage = new Stage(w, h);
+         var out = stage.out;
+         var mouse = new Mouse(stage.canvas);
+
+
+         var nCircles = 5;
+         var distances = [];
+         var circles = [];
+
+         var interval;
+
+         new Loop(function(){
+                 var p1 = {x : mouse.x, y : mouse.y};
+
+                 stage.clear();
+
+                 var n = circles.length;
+
+                 for(var i = 0; i < n; i++){
+                     var c = circles[i];
+                     var dx = c.x - mouse.x;
+                     var dy = c.y - mouse.y;
+                     var radius = Math.sqrt(dx * dx + dy * dy);
+
+                     drawPoint(out, c);
+                     out.beginPath();
+                     out.moveTo(c.x + radius, c.y);
+                     out.arc(c.x, c.y, radius, 0, 2 * Math.PI);
+                     out.stroke();
+                 }
+         });
+
+         function drawPoint(out, pt){
+             var r = 3;
+             out.beginPath();
+             out.moveTo(pt.x + r, pt.y);
+             out.arc(pt.x, pt.y, r, 0, 2 * Math.PI);
+             out.fillStyle = "black";
+             out.fill();
+         }
+
+         function addCircle(){
+             circles.push({x : Math.random() * w, y : Math.random() * h});
+             if(circles.length > 150)
+                 clearInterval(interval);
+         }
+
+         interval = setInterval(addCircle.bind(this), 500);</script>
+    </body>
 </html>

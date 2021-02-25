@@ -4,8 +4,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports["default"] = create;
-
+exports.default = create;
 function create(nSites, w, h) {
   var w2 = 0.5 * w;
   var h2 = 0.5 * h;
@@ -40,16 +39,13 @@ function create(nSites, w, h) {
   return cells;
 }
 
-module.exports = exports["default"];
-
 },{}],2:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports["default"] = create;
-
+exports.default = create;
 function create(cells) {
   var nPts = cells.reduce(function (nPts, cell) {
     return nPts + cell.halfedges.length;
@@ -126,16 +122,13 @@ function create(cells) {
   return geometry;
 }
 
-module.exports = exports["default"];
-
 },{}],3:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports["default"] = create;
-
+exports.default = create;
 function create(nLights, w, h) {
   var pointLights = [];
 
@@ -171,12 +164,8 @@ function create(nLights, w, h) {
   };
 }
 
-module.exports = exports["default"];
-
 },{}],4:[function(require,module,exports){
 "use strict";
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
 var _cells = require("./cells");
 
@@ -193,6 +182,8 @@ var _lightning2 = _interopRequireDefault(_lightning);
 var _material = require("./material");
 
 var _material2 = _interopRequireDefault(_material);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var w = 100;
 var h = 100;
@@ -212,7 +203,7 @@ scene.add(group);
 
 var controls = new THREE.OrbitControls(camera, renderer.element);
 
-var lights = (0, _lightning2["default"])(10, w, h);
+var lights = (0, _lightning2.default)(10, w, h);
 var pointLights = lights.pointLights;
 pointLights.forEach(function (light) {
   group.add(light);
@@ -226,13 +217,13 @@ renderer.setClearColor(globalColor);
 scene.fog = new THREE.FogExp2(globalColor, 0.04);
 
 function createMesh(geometry) {
-  var material = (0, _material2["default"])();
+  var material = (0, _material2.default)();
   var mesh = new THREE.Mesh(geometry, material);
   group.add(mesh);
   return mesh;
 }
 
-var mesh = createMesh((0, _geometry2["default"])((0, _cells2["default"])(10000, w, h)));
+var mesh = createMesh((0, _geometry2.default)((0, _cells2.default)(10000, w, h)));
 
 var time = 0;
 var oldTime = Date.now();
@@ -255,42 +246,38 @@ update();
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
-  value: true
+	value: true
 });
-exports["default"] = create;
+exports.default = create;
 
 var lib = function lib(name) {
-  return THREE.UniformsLib[name];
+	return THREE.UniformsLib[name];
 };
 var chunk = function chunk(name) {
-  return THREE.ShaderChunk[name];
+	return THREE.ShaderChunk[name];
 };
 
 var uniforms = THREE.UniformsUtils.merge([lib("common"), lib("aomap"), lib("lightmap"), lib("emissivemap"), lib("bumpmap"), lib("normalmap"), lib("displacementmap"), lib("fog"), lib("lights"), lib("shadowmap"), {
-  "emissive": { type: "c", value: new THREE.Color(0x000000) },
-  "specular": { type: "c", value: new THREE.Color(0x111111) },
-  "shininess": { type: "f", value: 30 },
-  "time": { type: "f", value: 0 }
+	"emissive": { type: "c", value: new THREE.Color(0x000000) },
+	"specular": { type: "c", value: new THREE.Color(0x111111) },
+	"shininess": { type: "f", value: 30 },
+	"time": { type: "f", value: 0 }
 }]);
 
-var vertexShader = ["#define PHONG", "varying vec3 vViewPosition;", "#ifndef FLAT_SHADED", "	varying vec3 vNormal;", "#endif", "	uniform float time;", "	attribute vec3 center;", chunk("common"), chunk("uv_pars_vertex"), chunk("uv2_pars_vertex"), chunk("displacementmap_pars_vertex"), chunk("envmap_pars_vertex"), chunk("lights_phong_pars_vertex"), chunk("color_pars_vertex"), chunk("morphtarget_pars_vertex"), chunk("skinning_pars_vertex"), chunk("shadowmap_pars_vertex"), chunk("logdepthbuf_pars_vertex"), "void main() {", chunk("uv_vertex"), chunk("uv2_vertex"), chunk("color_vertex"), chunk("beginnormal_vertex"), chunk("morphnormal_vertex"), chunk("skinbase_vertex"), chunk("skinnormal_vertex"), chunk("defaultnormal_vertex"), "#ifndef FLAT_SHADED", // Normal computed with derivatives when FLAT_SHADED
+var vertexShader = "\n  #define PHONG\n\nvarying vec3 vViewPosition;\nattribute vec3 center;\nuniform float time;\n\n#ifndef FLAT_SHADED\n\n\tvarying vec3 vNormal;\n\n#endif\n\n" + chunk("common") + "\n" + chunk("uv_pars_vertex") + "\n" + chunk("uv2_pars_vertex") + "\n" + chunk("displacementmap_pars_vertex") + "\n" + chunk("envmap_pars_vertex") + "\n" + chunk("color_pars_vertex") + "\n" + chunk("fog_pars_vertex") + "\n" + chunk("morphtarget_pars_vertex") + "\n" + chunk("skinning_pars_vertex") + "\n" + chunk("shadowmap_pars_vertex") + "\n" + chunk("logdepthbuf_pars_vertex") + "\n" + chunk("clipping_planes_pars_vertex") + "\n\nvoid main() {\n\n\t" + chunk("uv_vertex") + "\n\t" + chunk("uv2_vertex") + "\n\t" + chunk("color_vertex") + "\n\n\t" + chunk("beginnormal_vertex") + "\n\t" + chunk("morphnormal_vertex") + "\n\t" + chunk("skinbase_vertex") + "\n\t" + chunk("skinnormal_vertex") + "\n\t " + chunk("defaultnormal_vertex") + "\n\n#ifndef FLAT_SHADED // Normal computed with derivatives when FLAT_SHADED\n\n\tvNormal = normalize( transformedNormal );\n\n#endif\n\n\t" + chunk("begin_vertex") + "\n\t" + chunk("morphtarget_vertex") + "\n\t" + chunk("skinning_vertex") + "\n\t" + chunk("displacementmap_vertex") + "\n\t" + chunk("project_vertex") + "\n\t" + chunk("logdepthbuf_vertex") + "\n\t" + chunk("clipping_planes_vertex") + "\n\n  float dist = length(vec3(0.0) - center);\n  transformed.y = transformed.y * 0.5 * (cos(0.005 * time - 0.2 * dist) + 1.0);\n\tmvPosition = modelViewMatrix * vec4( transformed, 1.0 );\n  gl_Position = projectionMatrix * mvPosition;\n\n\tvViewPosition = - mvPosition.xyz;\n\n\t" + chunk("worldpos_vertex") + "\n\t" + chunk("envmap_vertex") + "\n\t" + chunk("shadowmap_vertex") + "\n\t" + chunk("fog_vertex") + "\n\n} ";
 
-"	vNormal = normalize( transformedNormal );", "#endif", chunk("begin_vertex"), chunk("displacementmap_vertex"), chunk("morphtarget_vertex"), chunk("skinning_vertex"), " float dist = length(vec3(0.0) - center);", " transformed.y = transformed.y * 0.5 * (cos(0.005 * time - 0.2 * dist) + 1.0);", " vec4 mvPosition = modelViewMatrix * vec4( transformed, 1.0 );", " gl_Position = projectionMatrix * mvPosition;", chunk("logdepthbuf_vertex"), "	vViewPosition = - mvPosition.xyz;", chunk("worldpos_vertex"), chunk("envmap_vertex"), chunk("lights_phong_vertex"), chunk("shadowmap_vertex"), "}"].join("\n");
-
-var fragmentShader = ["#define PHONG", "uniform vec3 diffuse;", "uniform vec3 emissive;", "uniform vec3 specular;", "uniform float shininess;", "uniform float opacity;", chunk("common"), chunk("color_pars_fragment"), chunk("uv_pars_fragment"), chunk("uv2_pars_fragment"), chunk("map_pars_fragment"), chunk("alphamap_pars_fragment"), chunk("aomap_pars_fragment"), chunk("lightmap_pars_fragment"), chunk("emissivemap_pars_fragment"), chunk("envmap_pars_fragment"), chunk("fog_pars_fragment"), chunk("lights_phong_pars_fragment"), chunk("shadowmap_pars_fragment"), chunk("bumpmap_pars_fragment"), chunk("normalmap_pars_fragment"), chunk("specularmap_pars_fragment"), chunk("logdepthbuf_pars_fragment"), "void main() {", "	vec3 outgoingLight = vec3( 0.0 );", "	vec4 diffuseColor = vec4( diffuse, opacity );", "	vec3 totalAmbientLight = ambientLightColor;", "	vec3 totalEmissiveLight = emissive;", "	vec3 shadowMask = vec3( 1.0 );", chunk("logdepthbuf_fragment"), chunk("map_fragment"), chunk("color_fragment"), chunk("alphamap_fragment"), chunk("alphatest_fragment"), chunk("specularmap_fragment"), chunk("normal_phong_fragment"), chunk("lightmap_fragment"), chunk("hemilight_fragment"), chunk("aomap_fragment"), chunk("emissivemap_fragment"), chunk("lights_phong_fragment"), chunk("shadowmap_fragment"), "totalDiffuseLight *= shadowMask;", "totalSpecularLight *= shadowMask;", "#ifdef METAL", "	outgoingLight += diffuseColor.rgb * ( totalDiffuseLight + totalAmbientLight ) * specular + totalSpecularLight + totalEmissiveLight;", "#else", "	outgoingLight += diffuseColor.rgb * ( totalDiffuseLight + totalAmbientLight ) + totalSpecularLight + totalEmissiveLight;", "#endif", chunk("envmap_fragment"), chunk("linear_to_gamma_fragment"), chunk("fog_fragment"), "	gl_FragColor = vec4( outgoingLight, diffuseColor.a );", "}"].join("\n");
+var fragmentShader = "\n  #define PHONG\n\nuniform vec3 diffuse;\nuniform vec3 emissive;\nuniform vec3 specular;\nuniform float shininess;\nuniform float opacity;\n\n" + chunk("common") + "\n" + chunk("packing") + "\n" + chunk("dithering_pars_fragment") + "\n" + chunk("color_pars_fragment") + "\n" + chunk("uv_pars_fragment") + "\n" + chunk("uv2_pars_fragment") + "\n" + chunk("map_pars_fragment") + "\n" + chunk("alphamap_pars_fragment") + "\n" + chunk("aomap_pars_fragment") + "\n" + chunk("lightmap_pars_fragment") + "\n" + chunk("emissivemap_pars_fragment") + "\n" + chunk("envmap_pars_fragment") + "\n" + chunk("gradientmap_pars_fragment") + "\n" + chunk("fog_pars_fragment") + "\n" + chunk("bsdfs") + "\n" + chunk("lights_pars") + "\n" + chunk("lights_phong_pars_fragment") + "\n" + chunk("shadowmap_pars_fragment") + "\n" + chunk("bumpmap_pars_fragment") + "\n" + chunk("normalmap_pars_fragment") + "\n" + chunk("specularmap_pars_fragment") + "\n" + chunk("logdepthbuf_pars_fragment") + "\n" + chunk("clipping_planes_pars_fragment") + "\n\nvoid main() {\n\n\t" + chunk("clipping_planes_fragment") + "\n\n\tvec4 diffuseColor = vec4( diffuse, opacity );\n\tReflectedLight reflectedLight = ReflectedLight( vec3( 0.0 ), vec3( 0.0 ), vec3( 0.0 ), vec3( 0.0 ) );\n\tvec3 totalEmissiveRadiance = emissive;\n\n\t" + chunk("logdepthbuf_fragment") + "\n\t" + chunk("map_fragment") + "\n\t" + chunk("color_fragment") + "\n\t" + chunk("alphamap_fragment") + "\n\t" + chunk("alphatest_fragment") + "\n\t" + chunk("specularmap_fragment") + "\n\t" + chunk("normal_fragment") + "\n\t" + chunk("emissivemap_fragment") + "\n\n\t// accumulation\n\t" + chunk("lights_phong_fragment") + "\n\t" + chunk("lights_template") + "\n\n\t// modulation\n\t" + chunk("aomap_fragment") + "\n\n\tvec3 outgoingLight = reflectedLight.directDiffuse + reflectedLight.indirectDiffuse + reflectedLight.directSpecular + reflectedLight.indirectSpecular + totalEmissiveRadiance;\n\n\t" + chunk("envmap_fragment") + "\n\n\tgl_FragColor = vec4( outgoingLight, diffuseColor.a );\n\n\t" + chunk("tonemapping_fragment") + "\n\t" + chunk("encodings_fragment") + "\n\t" + chunk("fog_fragment") + "\n\t" + chunk("premultiplied_alpha_fragment") + "\n\t" + chunk("dithering_fragment") + "\n\n}\n";
 
 function create() {
-  var material = new THREE.ShaderMaterial({
-    uniforms: uniforms,
-    vertexShader: vertexShader,
-    fragmentShader: fragmentShader,
-    lights: true,
-    fog: true,
-    shading: THREE.FlatShading
-  });
-  return material;
+	var material = new THREE.ShaderMaterial({
+		uniforms: uniforms,
+		vertexShader: vertexShader,
+		fragmentShader: fragmentShader,
+		lights: true,
+		fog: true,
+		shading: THREE.FlatShading
+	});
+	return material;
 }
-
-module.exports = exports["default"];
 
 },{}]},{},[4]);

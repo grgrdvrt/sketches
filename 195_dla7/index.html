@@ -1,239 +1,219 @@
 <html>
-<head>
-	<title>dla 7</title>
-	<link rel="stylesheet" type="text/css" href="../css/styles.css"/>
-</head>
-<body>
-	<script type="text/javascript" src="Matrix4.js"></script>
-	<script type="text/javascript" src="Vector4.js"></script>
-	<script type="text/javascript" src="../libs/tools.js"></script>
-	<script>
+    <head>
+        <title>dla 7</title>
+        <link rel="stylesheet" type="text/css" href="../css/styles.css"/>
+    </head>
+    <body>
+        <script type="text/javascript" src="Matrix4.js"></script>
+        <script type="text/javascript" src="Vector4.js"></script>
+        <script type="text/javascript" src="../libs/tools.js"></script>
+        <script>
 
-    function Main()
-    {
-      this.width = 700;
-      this.height = 700;
+         function Main(){
+             this.width = 700;
+             this.height = 700;
 
-      var stage = new tools.Stage(this.width, this.height);
-      this.out = stage.out;
+             var stage = new tools.Stage(this.width, this.height);
+             this.out = stage.out;
 
-      this.scale = 0.03;
-      
-      this.renderer = new Matrix4();
-      this.renderer.scale(this.scale, this.scale, this.scale);
-      this.renderer.translate(0, 0, 1);
-      this.renderer.appendTransform(Matrix4.projection(70, this.width / this.height, 1, 1000));
-      this.renderer.appendTransform(Matrix4.getToScreen(this.width, this.height, 0, 0));
-      
-      this.rotation = new Matrix4();
-      this.transform = new Matrix4();
+             this.scale = 0.03;
 
+             this.renderer = new Matrix4();
+             this.renderer.scale(this.scale, this.scale, this.scale);
+             this.renderer.translate(0, 0, 1);
+             this.renderer.appendTransform(Matrix4.projection(70, this.width / this.height, 1, 1000));
+             this.renderer.appendTransform(Matrix4.getToScreen(this.width, this.height, 0, 0));
 
-      var ballInit = {
-        pos:new Vector4(0, 0, 0, 1),
-        proj:new Vector4(),
-        radius:Math.random()
-      };
-      this.balls = [ballInit];
-
-      for(var i = 0; i < 550; i++) {
-        this.addBall();
-      }
-
-      new tools.Loop(this.update, this);
-    }
+             this.rotation = new Matrix4();
+             this.transform = new Matrix4();
 
 
-    Main.prototype = {
+             var ballInit = {
+                 pos:new Vector4(0, 0, 0, 1),
+                 proj:new Vector4(),
+                 radius:Math.random()
+             };
+             this.balls = [ballInit];
 
-      addBall : function()
-      {
-        var bbox = this.computeBBox();
-        var ball = this.createBall(bbox);
-        this.setPositionOutsideBBox(ball, bbox);
+             for(var i = 0; i < 550; i++) {
+                 this.addBall();
+             }
 
-        var closest = this.getClosest(ball);
-        this.setBallTarget(ball, closest);
-
-        console.log(ball.pos.toString());
-        this.balls.push(ball);
-      },
-
-
-      setPositionOutsideBBox : function(ball, bbox)
-      {
-        var rand = Math.floor(Math.random() * 3);
-        switch(rand) {
-          case 0 : 
-            if(ball.pos.x < 0.5 * (bbox.minX + bbox.maxX)) {
-              ball.pos.x = bbox.minX - ball.radius;
-            } 
-            else { ball.pos.x = bbox.maxX + ball.radius; }
-            break;
-          case 1 : 
-            if(ball.pos.y < 0.5 * (bbox.minY + bbox.maxY)) {
-              ball.pos.y = bbox.minY - ball.radius;
-            } 
-            else { ball.pos.y = bbox.maxY + ball.radius; }
-            break;
-          case 2 : 
-            if(ball.pos.z < 0.5 * (bbox.minZ + bbox.maxZ)) {
-              ball.pos.z = bbox.minZ - ball.radius;
-            } 
-            else { ball.pos.z = bbox.maxZ + ball.radius; }
-            break;
-          default : break;
-        }
-      },
+             new tools.Loop(this.update, this);
+         }
 
 
-      createBall : function(bbox)
-      {
-        var ball = {
-          pos:new Vector4(
-            bbox.minX + Math.random() * (bbox.maxX - bbox.minX),
-            bbox.minY + Math.random() * (bbox.maxY - bbox.minY),
-            bbox.minZ + Math.random() * (bbox.maxZ - bbox.minZ)
-          ),
-          proj:new Vector4(),
-          radius:0.5 + 0.5 * Math.random()
-        };
-        return ball;
-      },
+         Main.prototype = {
+
+             addBall : function(){
+                 var bbox = this.computeBBox();
+                 var ball = this.createBall(bbox);
+                 this.setPositionOutsideBBox(ball, bbox);
+
+                 var closest = this.getClosest(ball);
+                 this.setBallTarget(ball, closest);
+
+                 console.log(ball.pos.toString());
+                 this.balls.push(ball);
+             },
 
 
-      checkCollision : function(ball)
-      {
-        var collisions = this.balls.filter(function(b) {
-          var dx = b.pos.x - ball.pos.x;
-          var dy = b.pos.y - ball.pos.y;
-          var dz = b.pos.z - ball.pos.z;
-          var dist2 = dx * dx + dy * dy + dz * dz;
-          var minDist = ball.radius + b.radius;
-          return dist2 < minDist * minDist;
-        });
-        return collisions.length > 0;
-      },
+             setPositionOutsideBBox : function(ball, bbox){
+                 var rand = Math.floor(Math.random() * 3);
+                 switch(rand) {
+                     case 0 :
+                         if(ball.pos.x < 0.5 * (bbox.minX + bbox.maxX)) {
+                             ball.pos.x = bbox.minX - ball.radius;
+                         }
+                         else { ball.pos.x = bbox.maxX + ball.radius; }
+                         break;
+                     case 1 :
+                         if(ball.pos.y < 0.5 * (bbox.minY + bbox.maxY)) {
+                             ball.pos.y = bbox.minY - ball.radius;
+                         }
+                         else { ball.pos.y = bbox.maxY + ball.radius; }
+                         break;
+                     case 2 :
+                         if(ball.pos.z < 0.5 * (bbox.minZ + bbox.maxZ)) {
+                             ball.pos.z = bbox.minZ - ball.radius;
+                         }
+                         else { ball.pos.z = bbox.maxZ + ball.radius; }
+                         break;
+                     default : break;
+                 }
+             },
 
 
-      getClosest : function(ball)
-      {
-        var closest = this.balls.reduce(function(closest, b) {
-          var dx = b.pos.x - ball.pos.x;
-          var dy = b.pos.y - ball.pos.y;
-          var dz = b.pos.z - ball.pos.z;
-          var dist = dx * dx + dy * dy + dz * dz;
-          if(dist < closest.dist) {
-            closest.dist = dist;
-            closest.ball = b;
-          }
-          return closest;
-        }, {dist:Number.MAX_VALUE, ball:undefined});
-        return closest.ball;
-      },
+             createBall : function(bbox){
+                 var ball = {
+                     pos:new Vector4(
+                         bbox.minX + Math.random() * (bbox.maxX - bbox.minX),
+                         bbox.minY + Math.random() * (bbox.maxY - bbox.minY),
+                         bbox.minZ + Math.random() * (bbox.maxZ - bbox.minZ)
+                     ),
+                     proj:new Vector4(),
+                     radius:0.5 + 0.5 * Math.random()
+                 };
+                 return ball;
+             },
 
 
-      setBallTarget : function(ball, target)
-      {
-        var dx = target.pos.x - ball.pos.x;
-        var dy = target.pos.y - ball.pos.y;
-        var dz = target.pos.z - ball.pos.z;
-
-        var dist = ball.radius + target.radius;
-        var ratio = dist / Math.sqrt(dx * dx + dy * dy + dz * dz);
-        ball.pos.x = target.pos.x - dx * ratio;
-        ball.pos.y = target.pos.y - dy * ratio;
-        ball.pos.z = target.pos.z - dz * ratio;
-        ball.target = target;
-      },
+             checkCollision : function(ball){
+                 var collisions = this.balls.filter(function(b) {
+                     var dx = b.pos.x - ball.pos.x;
+                     var dy = b.pos.y - ball.pos.y;
+                     var dz = b.pos.z - ball.pos.z;
+                     var dist2 = dx * dx + dy * dy + dz * dz;
+                     var minDist = ball.radius + b.radius;
+                     return dist2 < minDist * minDist;
+                 });
+                 return collisions.length > 0;
+             },
 
 
-      computeBBox : function()
-      {
-        var max = Number.MAX_VALUE;
-        return this.balls.reduce(function(bbox, ball) {
-          var minX = ball.pos.x - ball.radius;
-          var maxX = ball.pos.x + ball.radius;
-          var minY = ball.pos.y - ball.radius;
-          var maxY = ball.pos.y + ball.radius;
-          var minZ = ball.pos.z - ball.radius;
-          var maxZ = ball.pos.z + ball.radius;
-
-          if(minX < bbox.minX) bbox.minX = minX;
-          if(maxX > bbox.maxX) bbox.maxX = maxX;
-          if(minY < bbox.minY) bbox.minY = minY;
-          if(maxY > bbox.maxY) bbox.maxY = maxY;
-          if(minZ < bbox.minZ) bbox.minZ = minZ;
-          if(maxZ > bbox.maxZ) bbox.maxZ = maxZ;
-          return bbox;
-        }, {
-          minX : max,
-          maxX : -max,
-          minY : max,
-          maxY : -max,
-          minZ : max,
-          maxZ : -max
-        });
-      },
+             getClosest : function(ball){
+                 var closest = this.balls.reduce(function(closest, b) {
+                     var dx = b.pos.x - ball.pos.x;
+                     var dy = b.pos.y - ball.pos.y;
+                     var dz = b.pos.z - ball.pos.z;
+                     var dist = dx * dx + dy * dy + dz * dz;
+                     if(dist < closest.dist) {
+                         closest.dist = dist;
+                         closest.ball = b;
+                     }
+                     return closest;
+                 }, {dist:Number.MAX_VALUE, ball:undefined});
+                 return closest.ball;
+             },
 
 
-      update : function()
-      {
-        this.rotation.rotate(0, 1, 0, 0.005);
-      
-        this.transform.identity();
-        this.transform.appendTransform(this.rotation);
-        this.transform.appendTransform(this.renderer);
+             setBallTarget : function(ball, target){
+                 var dx = target.pos.x - ball.pos.x;
+                 var dy = target.pos.y - ball.pos.y;
+                 var dz = target.pos.z - ball.pos.z;
 
-        this.balls.forEach(function(ball) {
-          this.transform.transformVector(ball.pos, ball.proj);
-          ball.proj.reciprocalDivide();
-        }, this);
+                 var dist = ball.radius + target.radius;
+                 var ratio = dist / Math.sqrt(dx * dx + dy * dy + dz * dz);
+                 ball.pos.x = target.pos.x - dx * ratio;
+                 ball.pos.y = target.pos.y - dy * ratio;
+                 ball.pos.z = target.pos.z - dz * ratio;
+                 ball.target = target;
+             },
 
-        var sortedBalls = this.balls.sort(function(ballA, ballB) {
-          return ballB.proj.z - ballA.proj.z;
-        });
 
-        var out = this.out;
-        out.fillStyle = "lightblue";
-        out.fillRect(0, 0, this.width, this.height);
-        out.fillStyle = "white";
+             computeBBox : function(){
+                 var max = Number.MAX_VALUE;
+                 return this.balls.reduce(function(bbox, ball) {
+                     var minX = ball.pos.x - ball.radius;
+                     var maxX = ball.pos.x + ball.radius;
+                     var minY = ball.pos.y - ball.radius;
+                     var maxY = ball.pos.y + ball.radius;
+                     var minZ = ball.pos.z - ball.radius;
+                     var maxZ = ball.pos.z + ball.radius;
 
-        sortedBalls.forEach(function(ball) {
-          out.beginPath();
-          var radius = 1.1 * 40 * ball.radius * (1 - ball.proj.z);
-          if(radius < 0) return;
-          out.moveTo(ball.proj.x + radius, ball.proj.y);
-          out.arc(ball.proj.x, ball.proj.y, radius, 0, 2 * Math.PI);
-          /*if(ball.target !== undefined) {
-            out.moveTo(ball.proj.x, ball.proj.y);
-            out.lineTo(ball.target.proj.x, ball.target.proj.y);
-          }*/
-         var cx = ball.proj.x - 0.5 * radius;
-         var cy = ball.proj.y - 0.5 * radius;
-         var gradient = out.createRadialGradient(cx, cy, 0, cx, cy, 1.5 * radius);
-         gradient.addColorStop(0.5, "white");
-         gradient.addColorStop(1, "HSL(195, 53%, 89%)");
-         out.fillStyle = gradient;
-          out.fill();
-          //out.stroke();
-        }, this);
+                     if(minX < bbox.minX) bbox.minX = minX;
+                     if(maxX > bbox.maxX) bbox.maxX = maxX;
+                     if(minY < bbox.minY) bbox.minY = minY;
+                     if(maxY > bbox.maxY) bbox.maxY = maxY;
+                     if(minZ < bbox.minZ) bbox.minZ = minZ;
+                     if(maxZ > bbox.maxZ) bbox.maxZ = maxZ;
+                     return bbox;
+                 }, {
+                     minX : max,
+                     maxX : -max,
+                     minY : max,
+                     maxY : -max,
+                     minZ : max,
+                     maxZ : -max
+                 });
+             },
 
-      }
-    };
-    new Main();
-	</script>
-	
-	<script type="text/javascript">
-	  var _gaq = _gaq || [];
-	  _gaq.push(['_setAccount', 'UA-6101672-1']);
-	  _gaq.push(['_trackPageview']);
 
-	  (function() {
-		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-	  })();
-	</script>
-</body>
+             update : function(){
+                 this.rotation.rotate(0, 1, 0, 0.005);
+
+                 this.transform.identity();
+                 this.transform.appendTransform(this.rotation);
+                 this.transform.appendTransform(this.renderer);
+
+                 this.balls.forEach(function(ball) {
+                     this.transform.transformVector(ball.pos, ball.proj);
+                     ball.proj.reciprocalDivide();
+                 }, this);
+
+                 var sortedBalls = this.balls.sort(function(ballA, ballB) {
+                     return ballB.proj.z - ballA.proj.z;
+                 });
+
+                 var out = this.out;
+                 out.fillStyle = "lightblue";
+                 out.fillRect(0, 0, this.width, this.height);
+                 out.fillStyle = "white";
+
+                 sortedBalls.forEach(function(ball) {
+                     out.beginPath();
+                     var radius = 1.1 * 40 * ball.radius * (1 - ball.proj.z);
+                     if(radius < 0) return;
+                     out.moveTo(ball.proj.x + radius, ball.proj.y);
+                     out.arc(ball.proj.x, ball.proj.y, radius, 0, 2 * Math.PI);
+                     /*if(ball.target !== undefined) {
+                        out.moveTo(ball.proj.x, ball.proj.y);
+                        out.lineTo(ball.target.proj.x, ball.target.proj.y);
+                        }*/
+                     var cx = ball.proj.x - 0.5 * radius;
+                     var cy = ball.proj.y - 0.5 * radius;
+                     var gradient = out.createRadialGradient(cx, cy, 0, cx, cy, 1.5 * radius);
+                     gradient.addColorStop(0.5, "white");
+                     gradient.addColorStop(1, "HSL(195, 53%, 89%)");
+                     out.fillStyle = gradient;
+                     out.fill();
+                     //out.stroke();
+                 }, this);
+
+             }
+         };
+         new Main();
+        </script>
+
+    </body>
 </html>

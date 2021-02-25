@@ -1,111 +1,98 @@
 <html>
-<head>
-	<title>Simplex Noise</title>
-	<link rel="stylesheet" type="text/css" href="../css/styles.css"/>
-</head>
-<body>
-	<script type="text/javascript" src="../libs/tools.js"></script>
-	<script type="text/javascript">
-		tools.mixin(tools, this);
+    <head>
+        <title>Simplex Noise</title>
+        <link rel="stylesheet" type="text/css" href="../css/styles.css"/>
+    </head>
+    <body>
+        <script type="text/javascript" src="../libs/tools.js"></script>
+        <script type="text/javascript">
+         tools.mixin(tools, this);
 
-		var w = 700;
-		var h = 700;
+         var w = 700;
+         var h = 700;
 
-		var stage = new Stage(w, h);
-		var out = stage.out;
-    out.fillStyle = "black";
-    out.fillRect(0, 0, w, h);
+         var stage = new Stage(w, h);
+         var out = stage.out;
+         out.fillStyle = "black";
+         out.fillRect(0, 0, w, h);
 
-    var particles = [];
+         var particles = [];
 
-    function drawParticle(p)
-    {
-      out.beginPath();
-      var radius = Math.pow(Math.log(p.mass) + 1, 2) / 5;
-      out.moveTo(p.x + radius, p.y);
-      out.arc(p.x, p.y, radius, 0, 2 * Math.PI);
-      out.fillStyle = p.color;
-      out.fill();
-    }
+         function drawParticle(p){
+             out.beginPath();
+             var radius = Math.pow(Math.log(p.mass) + 1, 2) / 5;
+             out.moveTo(p.x + radius, p.y);
+             out.arc(p.x, p.y, radius, 0, 2 * Math.PI);
+             out.fillStyle = p.color;
+             out.fill();
+         }
 
-    function createParticle()
-    {
-      return {
-        color:"#" + Math.round(Math.random() * 0xffffff).toString(16),
-        x:Math.random() * w,
-        y:Math.random() * h,
-        mass:Math.pow(Math.random(), 3) * 500,
-        //mass:0.1 * Math.random(),
-        vx:0,
-        vy:0,
-        fx:0,
-        fy:0,
-      }
-    }
+         function createParticle(){
+             return {
+                 color:"#" + Math.round(Math.random() * 0xffffff).toString(16),
+                 x:Math.random() * w,
+                 y:Math.random() * h,
+                 mass:Math.pow(Math.random(), 3) * 500,
+                 //mass:0.1 * Math.random(),
+                 vx:0,
+                 vy:0,
+                 fx:0,
+                 fy:0,
+             }
+         }
 
-    for(var i = 0; i < 200; i++){
-      particles[i] = createParticle();
-    }
+         for(var i = 0; i < 200; i++){
+             particles[i] = createParticle();
+         }
 
-    new Loop(function(){
+         new Loop(function(){
 
-      out.fillStyle = "black";
-      //out.fillRect(0, 0, w, h);
-      var i, j, n, p;
-      n = particles.length;
-      for(i = 0; i < n; i++) {
-        p = particles[i];
-        p.fx = p.fy = 0;
-      }
-      for(var i = 0; i < n; i++) {
-        var p0 = particles[i];
-        for(var j = i + 1; j < n; j++) {
-          var p1 = particles[j];
-          var dx = p1.x - p0.x;
-          var dy = p1.y - p0.y;
-          var dist2 = dx * dx + dy * dy;
-          if(dist2 < 25){
-            p0.vx *= 0.1;
-            p0.vy *= 0.1;
-            p1.vx *= 0.1;
-            p1.vy *= 0.1;
-          }
-          else {
-            var forceMag = (p0.mass * p1.mass) / dist2;
-            var r = forceMag / Math.sqrt(dist2);
-            p0.fx += dx * r;
-            p0.fy += dy * r;
+             out.fillStyle = "black";
+             //out.fillRect(0, 0, w, h);
+             var i, j, n, p;
+             n = particles.length;
+             for(i = 0; i < n; i++) {
+                 p = particles[i];
+                 p.fx = p.fy = 0;
+             }
+             for(var i = 0; i < n; i++) {
+                 var p0 = particles[i];
+                 for(var j = i + 1; j < n; j++) {
+                     var p1 = particles[j];
+                     var dx = p1.x - p0.x;
+                     var dy = p1.y - p0.y;
+                     var dist2 = dx * dx + dy * dy;
+                     if(dist2 < 25){
+                         p0.vx *= 0.1;
+                         p0.vy *= 0.1;
+                         p1.vx *= 0.1;
+                         p1.vy *= 0.1;
+                     }
+                     else {
+                         var forceMag = (p0.mass * p1.mass) / dist2;
+                         var r = forceMag / Math.sqrt(dist2);
+                         p0.fx += dx * r;
+                         p0.fy += dy * r;
 
-            p1.fx -= dx * r;
-            p1.fy -= dy * r;
-          }
-        }
-      }
+                         p1.fx -= dx * r;
+                         p1.fy -= dy * r;
+                     }
+                 }
+             }
 
-      for(i = 0; i < n; i++){
-        p = particles[i];
-        p.vx += p.fx / p.mass;
-        p.vy += p.fy / p.mass;
-        p.x += p.vx / 10;
-        p.y += p.vy / 10;
-        //console.log(p.x, p.y, p.vx, p.vy);
-        drawParticle(p);
-      }
+             for(i = 0; i < n; i++){
+                 p = particles[i];
+                 p.vx += p.fx / p.mass;
+                 p.vy += p.fy / p.mass;
+                 p.x += p.vx / 10;
+                 p.y += p.vy / 10;
+                 //console.log(p.x, p.y, p.vx, p.vy);
+                 drawParticle(p);
+             }
 
-    });
+         });
 
 
-		</script>
-	<script type="text/javascript">
-	  var _gaq = _gaq || [];
-	  _gaq.push(['_setAccount', 'UA-6101672-1']);
-	  _gaq.push(['_trackPageview']);
-
-	  (function() {
-		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-	  })();
-	</script>
-</body>
+        </script>
+    </body>
 </html>

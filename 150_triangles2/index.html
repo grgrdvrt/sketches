@@ -1,54 +1,41 @@
 <html>
-<head>
-	<title>Triangles</title>
-	<link rel="stylesheet" type="text/css" href="../css/styles.css"/>
-</head>
-<body>
-	<script type="text/javascript" src="../libs/tools.js"></script>
-	<script type="text/javascript">
-		tools.mixin(tools, this);
-		
-		var w = 700;
-		var h = 700;
-		var stage = new Stage(w, h);
-		var out = stage.out;
-		
-		
-		var n = 10000;
-		var maxDist = Math.sqrt(w * w + h * h);
-		out.translate(0.5 * w, 0.5 * h);
-		for(var i = 0; i < n; i++)
-		{
-			var ratio = 1 - i / n;
-			out.save();
-		
-			out.rotate(Math.random() * 2 * Math.PI);
-			out.translate(0, ratio * maxDist);
-			var scale = 200 * ratio + 10;
-			out.scale(Math.random() * 0.75 * scale, scale);
-		
-			out.beginPath();
-			out.moveTo(-1, 0);
-			out.lineTo(0, -1);
-			out.lineTo(1, 0);
-			out.closePath();
-			var l = Math.random() * 0.1 + Math.pow(ratio, 0.6);
-			out.fillStyle = "hsl(0, 0%, " + Math.round(l * 100) + "%)";
-			out.fill();
-		
-			out.restore();
-		}</script>
-	
-	<script type="text/javascript">
-	  var _gaq = _gaq || [];
-	  _gaq.push(['_setAccount', 'UA-6101672-1']);
-	  _gaq.push(['_trackPageview']);
+    <head>
+        <title>Triangles</title>
+        <link rel="stylesheet" type="text/css" href="../css/styles.css"/>
+    </head>
+    <body>
+        <script type="text/javascript" src="../libs/tools.js"></script>
+        <script type="text/javascript">
+         tools.mixin(tools, this);
 
-	  (function() {
-		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-	  })();
-	</script>
-</body>
+         var w = 700;
+         var h = 700;
+         var stage = new Stage(w, h);
+         var out = stage.out;
+
+
+         var n = 10000;
+         var maxDist = Math.sqrt(w * w + h * h);
+         out.translate(0.5 * w, 0.5 * h);
+         for(var i = 0; i < n; i++){
+             var ratio = 1 - i / n;
+             out.save();
+
+             out.rotate(Math.random() * 2 * Math.PI);
+             out.translate(0, ratio * maxDist);
+             var scale = 200 * ratio + 10;
+             out.scale(Math.random() * 0.75 * scale, scale);
+
+             out.beginPath();
+             out.moveTo(-1, 0);
+             out.lineTo(0, -1);
+             out.lineTo(1, 0);
+             out.closePath();
+             var l = Math.random() * 0.1 + Math.pow(ratio, 0.6);
+             out.fillStyle = "hsl(0, 0%, " + Math.round(l * 100) + "%)";
+             out.fill();
+
+             out.restore();
+         }</script>
+    </body>
 </html>

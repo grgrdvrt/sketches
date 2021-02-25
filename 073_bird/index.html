@@ -1,93 +1,78 @@
 <html>
-<head>
-	<title>bird</title>
-	<link rel="stylesheet" type="text/css" href="../css/styles.css"/>
-</head>
-<body>
-	<script type="text/javascript" src="../libs/tools.js"></script>
-	<script type="text/javascript">
-		var stage = new tools.Stage(700, 700);
-		var out = stage.out;
-		var mouse = new tools.Mouse(stage.canvas);
-		
-		var amplitude1 = 0.9;
-		var amplitude2 = 1.15;
-		
-		var amplitude1Offset = 0.2;
-		var amplitude2Offset = 0.2;
-		
-		var radius1 = 125;
-		var radius2 = 200;
-		var radius3 = 20;
-		
-		var angle1 = 0;
-		var angle2 = angle1 + 0.1 * Math.PI;
-		var angle3 = 0;
-		
-		var time = 0;
-		var speed = 0.1;
-		
-		function update()
-		{
-			stage.clear();
-			out.save();
-			var offset = radius3 * Math.sin(angle3);
-			out.translate(0.5 * stage.width, 0.5 * stage.height + offset);
-			var x1 = radius1 * Math.cos(angle1);
-			var y1 = radius1 * Math.sin(angle1);
-			var x2 = radius2 * Math.cos(angle2);
-			var y2 = radius2 * Math.sin(angle2);
-			out.beginPath();
-		
-			out.moveTo(0, 0);
-			out.quadraticCurveTo(x1, y1, x2, y2);
-			out.moveTo(0, 0);
-			out.quadraticCurveTo(-x1, y1, -x2, y2);
-		
-			if(mouse.isDown)
-			{
-				drawPoint(0, 0);
-				drawPoint(x1, y1);
-				drawPoint(x2, y2);
-				drawPoint(-x1, y1);
-				drawPoint(-x2, y2);
-		
-				out.moveTo(0, 0);
-				out.lineTo(x1, y1);
-				out.lineTo(x2, y2);
-				out.moveTo(0, 0);
-				out.lineTo(-x1, y1);
-				out.lineTo(-x2, y2);
-			}
-		
-			out.stroke();
-			out.restore();
-		
-			var speed = 0.3 * mouse.x / stage.width;
-			angle1 = Math.cos(time) + amplitude1Offset;
-			angle2 = amplitude2 * Math.cos(time - 0.2 * Math.PI) + amplitude2Offset;
-			angle3 = Math.cos(time + 0.6 * Math.PI);
-			time += speed;
-		}
-		
-		function drawPoint(x, y)
-		{
-			out.moveTo(x + 5, y);
-			out.arc(x, y, 5, 0, 2 * Math.PI);
-		}
-		
-		new tools.Loop(update, this);</script>
-	
-	<script type="text/javascript">
-	  var _gaq = _gaq || [];
-	  _gaq.push(['_setAccount', 'UA-6101672-1']);
-	  _gaq.push(['_trackPageview']);
+    <head>
+        <title>bird</title>
+        <link rel="stylesheet" type="text/css" href="../css/styles.css"/>
+    </head>
+    <body>
+        <script type="text/javascript" src="../libs/tools.js"></script>
+        <script type="text/javascript">
+         var stage = new tools.Stage(700, 700);
+         var out = stage.out;
+         var mouse = new tools.Mouse(stage.canvas);
 
-	  (function() {
-		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-	  })();
-	</script>
-</body>
+         var amplitude1 = 0.9;
+         var amplitude2 = 1.15;
+
+         var amplitude1Offset = 0.2;
+         var amplitude2Offset = 0.2;
+
+         var radius1 = 125;
+         var radius2 = 200;
+         var radius3 = 20;
+
+         var angle1 = 0;
+         var angle2 = angle1 + 0.1 * Math.PI;
+         var angle3 = 0;
+
+         var time = 0;
+         var speed = 0.1;
+
+         function update(){
+             stage.clear();
+             out.save();
+             var offset = radius3 * Math.sin(angle3);
+             out.translate(0.5 * stage.width, 0.5 * stage.height + offset);
+             var x1 = radius1 * Math.cos(angle1);
+             var y1 = radius1 * Math.sin(angle1);
+             var x2 = radius2 * Math.cos(angle2);
+             var y2 = radius2 * Math.sin(angle2);
+             out.beginPath();
+
+             out.moveTo(0, 0);
+             out.quadraticCurveTo(x1, y1, x2, y2);
+             out.moveTo(0, 0);
+             out.quadraticCurveTo(-x1, y1, -x2, y2);
+
+             if(mouse.isDown){
+                 drawPoint(0, 0);
+                 drawPoint(x1, y1);
+                 drawPoint(x2, y2);
+                 drawPoint(-x1, y1);
+                 drawPoint(-x2, y2);
+
+                 out.moveTo(0, 0);
+                 out.lineTo(x1, y1);
+                 out.lineTo(x2, y2);
+                 out.moveTo(0, 0);
+                 out.lineTo(-x1, y1);
+                 out.lineTo(-x2, y2);
+             }
+
+             out.stroke();
+             out.restore();
+
+             var speed = 0.3 * mouse.x / stage.width;
+             angle1 = Math.cos(time) + amplitude1Offset;
+             angle2 = amplitude2 * Math.cos(time - 0.2 * Math.PI) + amplitude2Offset;
+             angle3 = Math.cos(time + 0.6 * Math.PI);
+             time += speed;
+         }
+
+         function drawPoint(x, y){
+             out.moveTo(x + 5, y);
+             out.arc(x, y, 5, 0, 2 * Math.PI);
+         }
+
+         new tools.Loop(update, this);</script>
+    </body>
 </html>

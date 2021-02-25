@@ -1,191 +1,166 @@
 <html>
-<head>
-	<title>lines</title>
-	<link rel="stylesheet" type="text/css" href="../css/styles.css"/>
-</head>
-<body>
-	<script type="text/javascript" src="../libs/tools.js"></script>
-	<script type="text/javascript">
-    var w = 700;
-    var h = 700;
-		var stage = new tools.Stage(700, 700);
-		var mouse = new tools.Mouse(stage.canvas);
-		
-		var out = stage.out;
-		out.lineCap = "round";
-		out.lineWidth = 150;
-		
+    <head>
+        <title>lines</title>
+        <link rel="stylesheet" type="text/css" href="../css/styles.css"/>
+    </head>
+    <body>
+        <script type="text/javascript" src="../libs/tools.js"></script>
+        <script type="text/javascript">
+         var w = 700;
+         var h = 700;
+         var stage = new tools.Stage(700, 700);
+         var mouse = new tools.Mouse(stage.canvas);
 
-    function Curve(value, pow, duration, timeBegin)
-    {
-      this.value = this.begin = this.end = value;
-    
-      this.pow = pow;
-    
-      this.maxDuration = duration;
-      this.reset();
-      this.time = timeBegin;
-    }
-    
-    Curve.prototype = {
-      update : function(timeChange)
-      {
-        if(timeChange == undefined)timeChange = 1;
-        var timeRatio = this.time / this.duration;
-        if(timeRatio < 0.5) timeRatio = 0.5 * Math.pow(timeRatio * 2, this.pow);
-        else timeRatio = 1 - 0.5 * Math.pow((1 - timeRatio) * 2, this.pow);
-    
-        this.value = this.begin + timeRatio * (this.end - this.begin);
-        this.time += timeChange;
-        if(this.time > this.duration) this.reset();
-      },
-      
-      reset : function()
-      {
-        this.begin = this.end;
-        this.end = Math.random();
-        this.time = 0;
-        this.duration = Math.sqrt(Math.abs(this.end - this.begin)) * this.maxDuration;
-    
-      }
-    }
+         var out = stage.out;
+         out.lineCap = "round";
+         out.lineWidth = 150;
+
+
+         function Curve(value, pow, duration, timeBegin){
+             this.value = this.begin = this.end = value;
+
+             this.pow = pow;
+
+             this.maxDuration = duration;
+             this.reset();
+             this.time = timeBegin;
+         }
+
+         Curve.prototype = {
+             update : function(timeChange){
+                 if(timeChange == undefined)timeChange = 1;
+                 var timeRatio = this.time / this.duration;
+                 if(timeRatio < 0.5) timeRatio = 0.5 * Math.pow(timeRatio * 2, this.pow);
+                 else timeRatio = 1 - 0.5 * Math.pow((1 - timeRatio) * 2, this.pow);
+
+                 this.value = this.begin + timeRatio * (this.end - this.begin);
+                 this.time += timeChange;
+                 if(this.time > this.duration) this.reset();
+             },
+
+             reset : function(){
+                 this.begin = this.end;
+                 this.end = Math.random();
+                 this.time = 0;
+                 this.duration = Math.sqrt(Math.abs(this.end - this.begin)) * this.maxDuration;
+
+             }
+         }
 
 
 
 
-		function Ribbon(segmentLength)
-		{
-			this.nPts = 15;
-			this.segmentLength = segmentLength;
-			this.pts = [];
-			for(var i = 0; i < this.nPts; i++)
-				this.pts[i] = new Point();
+         function Ribbon(segmentLength){
+             this.nPts = 15;
+             this.segmentLength = segmentLength;
+             this.pts = [];
+             for(var i = 0; i < this.nPts; i++)
+                 this.pts[i] = new Point();
 
-      this.sat = new Curve(Math.random(), 2, 30, Math.random());
-      this.lig = new Curve(Math.random(), 2, 30, Math.random());
-		}
-		
-		Ribbon.prototype = {
+             this.sat = new Curve(Math.random(), 2, 30, Math.random());
+             this.lig = new Curve(Math.random(), 2, 30, Math.random());
+         }
 
-			update : function(timeChange)
-			{
-        this.sat.update(timeChange);
-        this.lig.update(timeChange);
+         Ribbon.prototype = {
 
-				for(var i = 1; i < this.nPts; i++)
-				{
-					var pt = this.pts[i];
-					var oPt = this.pts[i - 1];
-					
-					pt.vx += vel * (Math.random() * 2 - 1);
-					pt.vy += vel * (Math.random() * 2 - 1);
-          pt.vx *= friction;
-          pt.vy *= friction;
-					pt.x += pt.vx;
-					pt.y += pt.vy;
-					
-					var dx = pt.x - oPt.x;
-					var dy = pt.y - oPt.y;
-					var d = Math.sqrt(dx * dx + dy * dy);
-					if(d == 0) d = 1;
-					var ratio = this.segmentLength / d;
-					
-					pt.x = oPt.x + dx * ratio;
-					pt.y = oPt.y + dy * ratio;
-				}
-			},
-			
-			draw : function(out)
-			{
-				out.beginPath();
-				var pt = this.pts[0];
-				out.moveTo(pt.x, pt.y);
-				for(var i = 1; i < this.nPts - 1; i++)
-				{
-					pt = this.pts[i];
-					var pt2 = this.pts[i + 1];
-					out.quadraticCurveTo(pt.x, pt.y, 0.5 * (pt.x + pt2.x), 0.5 * (pt.y + pt2.y));
-				}
-				out.stroke();
-			}
-		}
-		
-		function Point(x, y)
-		{
-			this.vx = this.vy = 0;
-			this.x = x || 0;
-			this.y = y || 0;
-		}
-		
+             update : function(timeChange){
+                 this.sat.update(timeChange);
+                 this.lig.update(timeChange);
+
+                 for(var i = 1; i < this.nPts; i++){
+                     var pt = this.pts[i];
+                     var oPt = this.pts[i - 1];
+
+                     pt.vx += vel * (Math.random() * 2 - 1);
+                     pt.vy += vel * (Math.random() * 2 - 1);
+                     pt.vx *= friction;
+                     pt.vy *= friction;
+                     pt.x += pt.vx;
+                     pt.y += pt.vy;
+
+                     var dx = pt.x - oPt.x;
+                     var dy = pt.y - oPt.y;
+                     var d = Math.sqrt(dx * dx + dy * dy);
+                     if(d == 0) d = 1;
+                     var ratio = this.segmentLength / d;
+
+                     pt.x = oPt.x + dx * ratio;
+                     pt.y = oPt.y + dy * ratio;
+                 }
+             },
+
+             draw : function(out){
+                 out.beginPath();
+                 var pt = this.pts[0];
+                 out.moveTo(pt.x, pt.y);
+                 for(var i = 1; i < this.nPts - 1; i++){
+                     pt = this.pts[i];
+                     var pt2 = this.pts[i + 1];
+                     out.quadraticCurveTo(pt.x, pt.y, 0.5 * (pt.x + pt2.x), 0.5 * (pt.y + pt2.y));
+                 }
+                 out.stroke();
+             }
+         }
+
+         function Point(x, y){
+             this.vx = this.vy = 0;
+             this.x = x || 0;
+             this.y = y || 0;
+         }
 
 
 
-		var friction = 0.99;
-		var vel = 0.5;
-    var timeChange = 0.13;
-    var timeChangePos = 0.03;
-    var hueTimeChange = 0.1;
-		var nRibbons = 1;
-		var ribbons = [];
-		
-		var head = {x:new Curve(Math.random() , 2, 30, Math.random()),
-                y:new Curve(Math.random(), 2, 30, Math.random())};
-		
-    var baseHue = Math.random() * 360;
-    var hueChange = new Curve(Math.random(), 2, 30, Math.random());
-		for(var i = 0; i < nRibbons; i++)
-		{
-			var r = new Ribbon(Math.random() * 25 + 25);
-			for(var j = 0; j < r.nPts; j++)
-			{
-				r.pts[j].x = head.x.value * w;
-				r.pts[j].y = head.y.value * h;
-			}
-			ribbons[i] = r;
-		}
-			
-			
-		function update()
-		{
-      head.x.update(timeChangePos);
-      head.y.update(timeChangePos);
-      var hx = head.x.value * w;
-      var hy = head.y.value * h;
 
-      hueChange.update(hueTimeChange);
-      var hueValue = Math.round(hueChange.value * 60 + baseHue);
+         var friction = 0.99;
+         var vel = 0.5;
+         var timeChange = 0.13;
+         var timeChangePos = 0.03;
+         var hueTimeChange = 0.1;
+         var nRibbons = 1;
+         var ribbons = [];
 
-			for(var i = 0; i < nRibbons; i++)
-			{
-				var ribbon = ribbons[i];
-				
-				var pt = ribbon.pts[0];
-				pt.x = hx;
-				pt.y = hy;
-				ribbon.update(timeChange);
-		
-        var s = Math.round(ribbon.sat.value * 100);
-        var l = Math.round(ribbon.lig.value * 100);
-        out.strokeStyle = "hsl(" + hueValue + ", " + s + "%, " + l + "%)";
-				ribbon.draw(out);
-			}
-		}
-		
-		
-		new tools.Loop(update, this);
-	</script>
-	
-	<script type="text/javascript">
-	  var _gaq = _gaq || [];
-	  _gaq.push(['_setAccount', 'UA-6101672-1']);
-	  _gaq.push(['_trackPageview']);
+         var head = {x:new Curve(Math.random() , 2, 30, Math.random()),
+                     y:new Curve(Math.random(), 2, 30, Math.random())};
 
-	  (function() {
-		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-	  })();
-	</script>
-</body>
+         var baseHue = Math.random() * 360;
+         var hueChange = new Curve(Math.random(), 2, 30, Math.random());
+         for(var i = 0; i < nRibbons; i++){
+             var r = new Ribbon(Math.random() * 25 + 25);
+             for(var j = 0; j < r.nPts; j++){
+                 r.pts[j].x = head.x.value * w;
+                 r.pts[j].y = head.y.value * h;
+             }
+             ribbons[i] = r;
+         }
+
+
+         function update(){
+             head.x.update(timeChangePos);
+             head.y.update(timeChangePos);
+             var hx = head.x.value * w;
+             var hy = head.y.value * h;
+
+             hueChange.update(hueTimeChange);
+             var hueValue = Math.round(hueChange.value * 60 + baseHue);
+
+             for(var i = 0; i < nRibbons; i++){
+                 var ribbon = ribbons[i];
+
+                 var pt = ribbon.pts[0];
+                 pt.x = hx;
+                 pt.y = hy;
+                 ribbon.update(timeChange);
+
+                 var s = Math.round(ribbon.sat.value * 100);
+                 var l = Math.round(ribbon.lig.value * 100);
+                 out.strokeStyle = "hsl(" + hueValue + ", " + s + "%, " + l + "%)";
+                 ribbon.draw(out);
+             }
+         }
+
+
+         new tools.Loop(update, this);
+        </script>
+
+    </body>
 </html>
-

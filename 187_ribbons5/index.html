@@ -1,200 +1,176 @@
 <html>
-<head>
-	<title>Ribbons</title>
-	<link rel="stylesheet" type="text/css" href="../css/styles.css"/>
-</head>
-<body>
-	<script type="text/javascript" src="../libs/tools.js"></script>
-	<script type="text/javascript">
-		tools.mixin(tools, this);
-		
-		var w = 700;
-		var h = 700;
-		var stage = new Stage(w, h);
-		var out = stage.out;
-		
-    out.lineJoin = "bevel";
-		
-		function Point(x, y)
-		{
-			this.x = x;
-			this.y = y;
-		}
-		
-		Point.prototype = {
-			setPos : function(x, y)
-			{
-				this.x = x;
-				this.y = y;
-			},
-			setPt : function(pt)
-			{
-				this.x = pt.x;
-				this.y = pt.y;
-			}
-		}
-		
-		function Wanderer(value, spr, fr, force, randomness, minTime, maxTime)
-		{
-			this.value = this.target = value;
-			this.vel = 0;
-			this.spr = spr;
-			this.fr = fr;
-			this.force = force;
-		
-			this.randomness = randomness;
-			this.minTime = minTime;
-			this.maxTime = maxTime;
-			this.time = 0;
-			this.reset();
-		}
-		
-		Wanderer.prototype = {
-			update : function()
-			{
-				this.vel += this.spr * (this.target - this.value);
-				this.vel += this.randomness * (Math.random() * 2 - 1);
-				this.vel *= this.fr;
-				this.value += this.vel;
-				if(this.value < 0)
-					this.vel += this.force;
-				else if(this.value > 1)
-					this.vel -= this.force;
-		
-				if(--this.time < 0)this.reset();
-			},
-			
-			reset : function()
-			{
-				this.target = Math.random();
-				this.time = this.minTime + Math.random() * (this.maxTime - this.minTime);
-			}
-		}
-		
-		function Ribbon()
-		{
-		
-			this.oPos = new Point();
-			this.left0 = new Point();
-			this.right0 = new Point();
-			this.left1 = new Point();
-			this.right1 = new Point();
-			this.left = new Point();
-			this.right = new Point();
-		
-			this.thickness = new Wanderer(Math.random(), 0.2, 0.7, 0.1, 0.05, 0, 10);
-			this.posX = new Wanderer(Math.random(), 0.001, 0.95, 0.001, 0.002, 10, 40);
-			this.posY = new Wanderer(Math.random(), 0.001, 0.95, 0.001, 0.002, 10, 40);
-		
-			this.vt = 0;
-			this.t = 1;
-      this.lightness = Math.round(Math.random() * 100);
-		}
-		
-		Ribbon.prototype = {
-			update : function(out)
-			{
-				this.thickness.update();
-				this.posX.update();
-				this.posY.update();
-				var x = this.posX.value * w;
-				var y = this.posY.value * h;
-		
-				var t = this.thickness.value;
-				if(t < 0)t = 0;
-				else if(t > 1)t = 1;
-				t = 5 + 5 * t;
-				var vx = x - this.oPos.x;
-				var vy = y - this.oPos.y;
-				var vel = Math.sqrt(vx * vx + vy * vy);
-				var r = t / vel;
-				this.left.x = x + vy * r;
-				this.left.y = y - vx * r;
-				this.right.x = x - vy * r;
-				this.right.y = y + vx * r;
-		
-		
-				this.draw(out);
-		
-				this.oPos.setPos(x, y);
-				this.left0.setPt(this.left1);
-				this.right0.setPt(this.right1);
-				this.left1.setPt(this.left);
-				this.right1.setPt(this.right);
-			},
-		
-			draw : function(out)
-			{
+    <head>
+        <title>Ribbons</title>
+        <link rel="stylesheet" type="text/css" href="../css/styles.css"/>
+    </head>
+    <body>
+        <script type="text/javascript" src="../libs/tools.js"></script>
+        <script type="text/javascript">
+         tools.mixin(tools, this);
 
-				this.drawSegment(out, this.left0, this.right0,
-                              this.left1, this.right1,
-                              this.left, this.right);
+         var w = 700;
+         var h = 700;
+         var stage = new Stage(w, h);
+         var out = stage.out;
+
+         out.lineJoin = "bevel";
+
+         function Point(x, y){
+             this.x = x;
+             this.y = y;
+         }
+
+         Point.prototype = {
+             setPos : function(x, y){
+                 this.x = x;
+                 this.y = y;
+             },
+             setPt : function(pt){
+                 this.x = pt.x;
+                 this.y = pt.y;
+             }
+         }
+
+         function Wanderer(value, spr, fr, force, randomness, minTime, maxTime){
+             this.value = this.target = value;
+             this.vel = 0;
+             this.spr = spr;
+             this.fr = fr;
+             this.force = force;
+
+             this.randomness = randomness;
+             this.minTime = minTime;
+             this.maxTime = maxTime;
+             this.time = 0;
+             this.reset();
+         }
+
+         Wanderer.prototype = {
+             update : function(){
+                 this.vel += this.spr * (this.target - this.value);
+                 this.vel += this.randomness * (Math.random() * 2 - 1);
+                 this.vel *= this.fr;
+                 this.value += this.vel;
+                 if(this.value < 0)
+                     this.vel += this.force;
+                 else if(this.value > 1)
+                     this.vel -= this.force;
+
+                 if(--this.time < 0)this.reset();
+             },
+
+             reset : function(){
+                 this.target = Math.random();
+                 this.time = this.minTime + Math.random() * (this.maxTime - this.minTime);
+             }
+         }
+
+         function Ribbon(){
+
+             this.oPos = new Point();
+             this.left0 = new Point();
+             this.right0 = new Point();
+             this.left1 = new Point();
+             this.right1 = new Point();
+             this.left = new Point();
+             this.right = new Point();
+
+             this.thickness = new Wanderer(Math.random(), 0.2, 0.7, 0.1, 0.05, 0, 10);
+             this.posX = new Wanderer(Math.random(), 0.001, 0.95, 0.001, 0.002, 10, 40);
+             this.posY = new Wanderer(Math.random(), 0.001, 0.95, 0.001, 0.002, 10, 40);
+
+             this.vt = 0;
+             this.t = 1;
+             this.lightness = Math.round(Math.random() * 100);
+         }
+
+         Ribbon.prototype = {
+             update : function(out){
+                 this.thickness.update();
+                 this.posX.update();
+                 this.posY.update();
+                 var x = this.posX.value * w;
+                 var y = this.posY.value * h;
+
+                 var t = this.thickness.value;
+                 if(t < 0)t = 0;
+                 else if(t > 1)t = 1;
+                 t = 5 + 5 * t;
+                 var vx = x - this.oPos.x;
+                 var vy = y - this.oPos.y;
+                 var vel = Math.sqrt(vx * vx + vy * vy);
+                 var r = t / vel;
+                 this.left.x = x + vy * r;
+                 this.left.y = y - vx * r;
+                 this.right.x = x - vy * r;
+                 this.right.y = y + vx * r;
 
 
-        var minX = Math.min(this.left0.x, this.right0.x,
-                            this.left.x, this.right.y);
-        var maxX = Math.max(this.left0.x, this.right0.x,
-                            this.left.x, this.right.y);
-        var minY = Math.min(this.left0.y, this.right0.y,
-                            this.left.y, this.right.y);
-        var maxY = Math.max(this.left0.y, this.right0.y,
-                            this.left.y, this.right.y);
+                 this.draw(out);
 
-        var mx = 0.5 * (minX + maxX);
-        try
-        {
-          //var gradient = out.createLinearGradient(mx, minY, mx, maxY);
-          var gradient = out.createLinearGradient(0.5 * (this.left0.x + this.left.x), 0.5 * (this.left0.y + this.left.y),
-             0.5 * (this.right0.x + this.right.x), 0.5 * (this.right0.y + this.right.y) );
-          gradient.addColorStop(0, "hsl(0, 0%, " + Math.round(0.5 * this.lightness) + "%)");
-          gradient.addColorStop(1, "hsl(0, 0%, " + Math.round(0.5 * (100 + this.lightness)) + "%)");
-        }
-        catch(e)
-        {
-          var gradient = "hsl(0, 0%, " + this.lightness + "%)";
-        }
-        out.fillStyle = out.strokeStyle = gradient;
-				out.fill();
-        out.lineWidth = 2;
-				out.stroke();
-			},
+                 this.oPos.setPos(x, y);
+                 this.left0.setPt(this.left1);
+                 this.right0.setPt(this.right1);
+                 this.left1.setPt(this.left);
+                 this.right1.setPt(this.right);
+             },
 
-		
-			drawSegment : function(out, l0, r0, l1, r1, l2, r2)
-			{
-				out.beginPath();
-				out.moveTo(0.5 * (l0.x + l1.x), 0.5 * (l0.y + l1.y));
-				out.quadraticCurveTo(l1.x, l1.y, 0.5 * (l1.x + l2.x), 0.5 * (l1.y + l2.y));
-				out.lineTo(0.5 * (r1.x + r2.x), 0.5 * (r1.y + r2.y));
-				out.quadraticCurveTo(r1.x, r1.y, 0.5 * (r0.x + r1.x), 0.5 * (r0.y + r1.y));
-				out.closePath();
-			}
-		}
-		
-    var nRibbons = 5 + Math.random() * 10;
-    var ribbons = [];
-    for(var i = 0; i < nRibbons; i++)
-      ribbons[i] = new Ribbon();
-		
-		var loop = new Loop(update);
-		function update()
-    {
-      for(var i = 0; i < nRibbons; i++)
-        ribbons[i].update(out);
-		}
-		
-		</script>
-	
-	<script type="text/javascript">
-	  var _gaq = _gaq || [];
-	  _gaq.push(['_setAccount', 'UA-6101672-1']);
-	  _gaq.push(['_trackPageview']);
+             draw : function(out){
 
-	  (function() {
-		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-	  })();
-	</script>
-</body>
+                 this.drawSegment(out, this.left0, this.right0,
+                                  this.left1, this.right1,
+                                  this.left, this.right);
+
+
+                 var minX = Math.min(this.left0.x, this.right0.x,
+                                     this.left.x, this.right.y);
+                 var maxX = Math.max(this.left0.x, this.right0.x,
+                                     this.left.x, this.right.y);
+                 var minY = Math.min(this.left0.y, this.right0.y,
+                                     this.left.y, this.right.y);
+                 var maxY = Math.max(this.left0.y, this.right0.y,
+                                     this.left.y, this.right.y);
+
+                 var mx = 0.5 * (minX + maxX);
+                 try{
+                     //var gradient = out.createLinearGradient(mx, minY, mx, maxY);
+                     var gradient = out.createLinearGradient(0.5 * (this.left0.x + this.left.x), 0.5 * (this.left0.y + this.left.y),
+                                                             0.5 * (this.right0.x + this.right.x), 0.5 * (this.right0.y + this.right.y) );
+                     gradient.addColorStop(0, "hsl(0, 0%, " + Math.round(0.5 * this.lightness) + "%)");
+                     gradient.addColorStop(1, "hsl(0, 0%, " + Math.round(0.5 * (100 + this.lightness)) + "%)");
+                 }
+                 catch(e){
+                     var gradient = "hsl(0, 0%, " + this.lightness + "%)";
+                 }
+                 out.fillStyle = out.strokeStyle = gradient;
+                 out.fill();
+                 out.lineWidth = 2;
+                 out.stroke();
+             },
+
+
+             drawSegment : function(out, l0, r0, l1, r1, l2, r2){
+                 out.beginPath();
+                 out.moveTo(0.5 * (l0.x + l1.x), 0.5 * (l0.y + l1.y));
+                 out.quadraticCurveTo(l1.x, l1.y, 0.5 * (l1.x + l2.x), 0.5 * (l1.y + l2.y));
+                 out.lineTo(0.5 * (r1.x + r2.x), 0.5 * (r1.y + r2.y));
+                 out.quadraticCurveTo(r1.x, r1.y, 0.5 * (r0.x + r1.x), 0.5 * (r0.y + r1.y));
+                 out.closePath();
+             }
+         }
+
+         var nRibbons = 5 + Math.random() * 10;
+         var ribbons = [];
+         for(var i = 0; i < nRibbons; i++)
+             ribbons[i] = new Ribbon();
+
+         var loop = new Loop(update);
+         function update(){
+             for(var i = 0; i < nRibbons; i++)
+                 ribbons[i].update(out);
+         }
+
+        </script>
+
+    </body>
 </html>

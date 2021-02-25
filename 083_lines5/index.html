@@ -1,125 +1,101 @@
 <html>
-<head>
-	<title>Lines</title>
-	<link rel="stylesheet" type="text/css" href="../css/styles.css"/>
-</head>
-<body>
-	<script type="text/javascript" src="../libs/tools.js"></script>
-	<script type="text/javascript">
-		tools.mixin(tools, this);
-		var stage = new Stage(700, 700);
-		var out = stage.out;
-		out.strokeStyle = "rgba(0, 0, 0, 0.5)";
-		var mouse = new Mouse(stage.canvas);
-		
-		function Line()
-		{
-			this.pts = [];
-			this.nPts = 20;
-			this.segment = 30;
-			this.vx = 0;
-			this.vy = 0;
-		
-			for(var i = 0; i < this.nPts; i++)
-			{
-				this.pts[i] = {x:0, y:0};
-			}
-		}
-		
-		Line.prototype = {
-			update : function()
-			{
-				this.vx = 0.8 * this.vx + 0.005 * (mouse.x - this.pts[0].x);
-				this.vy = 0.8 * this.vy + 0.005 * (mouse.y - this.pts[0].y);
-				this.vx += 2 * (Math.random() * 2 - 1);
-				this.vy += 2 * (Math.random() * 2 - 1);
-				this.pts[0].x += this.vx;
-				this.pts[0].y += this.vy;
-				for(var i = 1; i < this.nPts; i++)
-				{
-					var p0 = this.pts[i - 1];
-					var p1 = this.pts[i];
-					var dx = p1.x - p0.x;
-					var dy = p1.y - p0.y;
-					var dist = dx * dx + dy * dy;
-					if(dist > this.segment * this.segment)
-					{
-						dist = Math.sqrt(dist);
-						var r = -(dist - this.segment) / dist;
-						p1.x += r * dx;
-						p1.y += r * dy;
-					}
-				}
-			},
-		
-			draw : function(out)
-			{
-				var x = this.pts[0].x;
-				var y = this.pts[0].y;
-				var p0, p1;
-				for(var i = 2; i < this.nPts - 1; i++)
-				{
-					p0 = this.pts[i - 1];
-					p1 = this.pts[i];
-					out.beginPath();
-					out.moveTo(x, y);
-					x = 0.5 * (p0.x + p1.x);
-					y = 0.5 * (p0.y + p1.y);
-					out.quadraticCurveTo(p0.x, p0.y, x, y);
-					out.stroke();
-				}
-				p0 = this.pts[this.nPts - 2];
-				p1 = this.pts[this.nPts - 1];
-				out.beginPath();
-				out.moveTo(x, y);
-				out.quadraticCurveTo(p0.x, p0.y, p1.x, p1.y);
-				out.stroke();
-			},
-		
-			initPosition : function(x, y)
-			{
-				for(var i = 0; i < this.nPts; i++)
-				{
-					var p = this.pts[i];
-					p.x = x;
-					p.y = y;
-				}
-			}
-		}
-		
-		
-		var lines = [];
-		var nLines = 100;
-		for(var i = 0; i < nLines; i++)
-		{
-			var line = new Line();
-			line.initPosition(Math.random() * stage.width, Math.random() * stage.height);
-			lines[i] = line;
-		}
-		
-		function update()
-		{
-			stage.clear();
-			for(var i = 0; i < nLines; i++)
-			{
-				var line = lines[i];
-				line.update();
-				line.draw(out);
-			}
-		}
-		
-		new Loop(update);</script>
-	
-	<script type="text/javascript">
-	  var _gaq = _gaq || [];
-	  _gaq.push(['_setAccount', 'UA-6101672-1']);
-	  _gaq.push(['_trackPageview']);
+    <head>
+        <title>Lines</title>
+        <link rel="stylesheet" type="text/css" href="../css/styles.css"/>
+    </head>
+    <body>
+        <script type="text/javascript" src="../libs/tools.js"></script>
+        <script type="text/javascript">
+         tools.mixin(tools, this);
+         var stage = new Stage(700, 700);
+         var out = stage.out;
+         out.strokeStyle = "rgba(0, 0, 0, 0.5)";
+         var mouse = new Mouse(stage.canvas);
 
-	  (function() {
-		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-	  })();
-	</script>
-</body>
+         function Line(){
+             this.pts = [];
+             this.nPts = 20;
+             this.segment = 30;
+             this.vx = 0;
+             this.vy = 0;
+
+             for(var i = 0; i < this.nPts; i++){
+                 this.pts[i] = {x:0, y:0};
+             }
+         }
+
+         Line.prototype = {
+             update : function(){
+                 this.vx = 0.8 * this.vx + 0.005 * (mouse.x - this.pts[0].x);
+                 this.vy = 0.8 * this.vy + 0.005 * (mouse.y - this.pts[0].y);
+                 this.vx += 2 * (Math.random() * 2 - 1);
+                 this.vy += 2 * (Math.random() * 2 - 1);
+                 this.pts[0].x += this.vx;
+                 this.pts[0].y += this.vy;
+                 for(var i = 1; i < this.nPts; i++){
+                     var p0 = this.pts[i - 1];
+                     var p1 = this.pts[i];
+                     var dx = p1.x - p0.x;
+                     var dy = p1.y - p0.y;
+                     var dist = dx * dx + dy * dy;
+                     if(dist > this.segment * this.segment){
+                         dist = Math.sqrt(dist);
+                         var r = -(dist - this.segment) / dist;
+                         p1.x += r * dx;
+                         p1.y += r * dy;
+                     }
+                 }
+             },
+
+             draw : function(out){
+                 var x = this.pts[0].x;
+                 var y = this.pts[0].y;
+                 var p0, p1;
+                 for(var i = 2; i < this.nPts - 1; i++){
+                     p0 = this.pts[i - 1];
+                     p1 = this.pts[i];
+                     out.beginPath();
+                     out.moveTo(x, y);
+                     x = 0.5 * (p0.x + p1.x);
+                     y = 0.5 * (p0.y + p1.y);
+                     out.quadraticCurveTo(p0.x, p0.y, x, y);
+                     out.stroke();
+                 }
+                 p0 = this.pts[this.nPts - 2];
+                 p1 = this.pts[this.nPts - 1];
+                 out.beginPath();
+                 out.moveTo(x, y);
+                 out.quadraticCurveTo(p0.x, p0.y, p1.x, p1.y);
+                 out.stroke();
+             },
+
+             initPosition : function(x, y){
+                 for(var i = 0; i < this.nPts; i++){
+                     var p = this.pts[i];
+                     p.x = x;
+                     p.y = y;
+                 }
+             }
+         }
+
+
+         var lines = [];
+         var nLines = 100;
+         for(var i = 0; i < nLines; i++){
+             var line = new Line();
+             line.initPosition(Math.random() * stage.width, Math.random() * stage.height);
+             lines[i] = line;
+         }
+
+         function update(){
+             stage.clear();
+             for(var i = 0; i < nLines; i++){
+                 var line = lines[i];
+                 line.update();
+                 line.draw(out);
+             }
+         }
+
+         new Loop(update);</script>
+    </body>
 </html>

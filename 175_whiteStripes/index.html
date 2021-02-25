@@ -1,118 +1,99 @@
 <html>
-<head>
-	<title>colors</title>
-	<link rel="stylesheet" type="text/css" href="../css/styles.css"/>
-</head>
-<body>
-	<script type="text/javascript" src="../libs/tools.js"></script>
-  <script type="text/javascript">
+    <head>
+        <title>colors</title>
+        <link rel="stylesheet" type="text/css" href="../css/styles.css"/>
+    </head>
+    <body>
+        <script type="text/javascript" src="../libs/tools.js"></script>
+        <script type="text/javascript">
+
+         var w = 700;
+         var h = 700;
+
+         tools.mixin(tools, this);
+         var stage = new Stage(w, h);
+         var out = stage.out;
+
+         function Curve(value, pow, duration, timeBegin){
+             this.value = this.begin = this.end = value;
+
+             this.pow = pow;
+
+             this.maxDuration = duration;
+             this.reset();
+             this.time = timeBegin;
+         }
+
+         Curve.prototype = {
+             update : function(timeChange){
+                 if(timeChange == undefined)timeChange = 1;
+                 var timeRatio = this.time / this.duration;
+                 if(timeRatio < 0.5) timeRatio = 0.5 * Math.pow(timeRatio * 2, this.pow);
+                 else timeRatio = 1 - 0.5 * Math.pow((1 - timeRatio) * 2, this.pow);
+
+                 this.value = this.begin + timeRatio * (this.end - this.begin);
+                 this.time += timeChange;
+                 if(this.time > this.duration) this.reset();
+             },
+
+             reset : function(){
+                 this.begin = this.end;
+                 this.end = Math.random();
+                 this.time = 0;
+                 this.duration = Math.sqrt(Math.abs(this.end - this.begin)) * this.maxDuration;
+
+             }
+         }
 
 
-    var w = 700;
-    var h = 700;
+         function Line(){
+             this.posX = new Curve(Math.random(), 2, 30, 0);
+             this.posY = new Curve(Math.random(), 2, 30, 0);
+             this.pts = [];
+             this.nPts = 30;
+             for(var i = 0; i < this.nPts; i++)
+                 this.pts[i] = {x:this.posX.value * w, y:this.posY.value * h};
+             this.timeChange = 0.2;
+             this.width = Math.floor(Math.random() * 20);
+         }
 
-    tools.mixin(tools, this);
-    var stage = new Stage(w, h);
-    var out = stage.out;
+         Line.prototype = {
+             update:function(){
+                 this.posX.update(this.timeChange);
+                 this.posY.update(this.timeChange);
 
-    function Curve(value, pow, duration, timeBegin)
-    {
-      this.value = this.begin = this.end = value;
-    
-      this.pow = pow;
-    
-      this.maxDuration = duration;
-      this.reset();
-      this.time = timeBegin;
-    }
-    
-    Curve.prototype = {
-      update : function(timeChange)
-      {
-        if(timeChange == undefined)timeChange = 1;
-        var timeRatio = this.time / this.duration;
-        if(timeRatio < 0.5) timeRatio = 0.5 * Math.pow(timeRatio * 2, this.pow);
-        else timeRatio = 1 - 0.5 * Math.pow((1 - timeRatio) * 2, this.pow);
-    
-        this.value = this.begin + timeRatio * (this.end - this.begin);
-        this.time += timeChange;
-        if(this.time > this.duration) this.reset();
-      },
-      
-      reset : function()
-      {
-        this.begin = this.end;
-        this.end = Math.random();
-        this.time = 0;
-        this.duration = Math.sqrt(Math.abs(this.end - this.begin)) * this.maxDuration;
-    
-      }
-    }
+                 var first = this.pts[this.nPts - 1];
+                 this.pts.length--;
+                 first.x = this.posX.value * w;
+                 first.y = this.posY.value * h;
+                 this.pts.unshift(first);
 
+                 out.beginPath();
+                 var p = this.pts[0];
+                 out.moveTo(p.x, p.y);
+                 for(var i = 0; i < this.nPts; i++){
+                     p = this.pts[i];
+                     out.lineTo(p.x, p.y);
+                 }
+                 out.strokeStyle = "white";
+                 out.lineWidth = this.width;
+                 out.stroke();
 
+             }
+         }
 
-    function Line()
-    {
-      this.posX = new Curve(Math.random(), 2, 30, 0); 
-      this.posY = new Curve(Math.random(), 2, 30, 0); 
-      this.pts = [];
-      this.nPts = 30;
-      for(var i = 0; i < this.nPts; i++)
-        this.pts[i] = {x:this.posX.value * w, y:this.posY.value * h};
-      this.timeChange = 0.2;
-      this.width = Math.floor(Math.random() * 20);
-    }
+         out.shadowBlur = 5;
+         out.shadowColor = "rgba(0, 0, 0, 0.5)";
+         var lines = [];
+         var n = 100;
+         for(var i = 0; i < n; i++){
+             lines[i] = new Line();
+         }
+         new Loop(function(){
+                 out.clearRect(0, 0, w, h);
+                 for(var i = 0; i < n; i++)lines[i].update();
+         });
+        </script>
 
-    Line.prototype = {
-      update:function()
-      {
-          this.posX.update(this.timeChange);
-          this.posY.update(this.timeChange);
-
-          var first = this.pts[this.nPts - 1];
-          this.pts.length--;
-          first.x = this.posX.value * w;
-          first.y = this.posY.value * h;
-          this.pts.unshift(first);
-
-          out.beginPath();
-          var p = this.pts[0];
-          out.moveTo(p.x, p.y);
-          for(var i = 0; i < this.nPts; i++)
-          {
-            p = this.pts[i];
-            out.lineTo(p.x, p.y);
-          }
-          out.strokeStyle = "white";
-          out.lineWidth = this.width;
-          out.stroke();
-
-      }
-    }
-
-    out.shadowBlur = 5;
-    out.shadowColor = "rgba(0, 0, 0, 0.5)";
-    var lines = [];
-    var n = 100;
-    for(var i = 0; i < n; i++)
-      lines[i] = new Line();
-    new Loop(function()
-    {
-      out.clearRect(0, 0, w, h);
-      for(var i = 0; i < n; i++)lines[i].update();
-    });
-  </script>
-	
-	<script type="text/javascript">
-	  var _gaq = _gaq || [];
-	  _gaq.push(['_setAccount', 'UA-6101672-1']);
-	  _gaq.push(['_trackPageview']);
-
-	  (function() {
-		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-	  })();
-	</script>
-</body>
+    </body>
 </html>

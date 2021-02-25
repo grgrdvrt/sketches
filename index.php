@@ -6,12 +6,11 @@
 </head>
 <body>
   <div class="header">
-    <p class="header-home"><a href="/">GrgrDvrt</a></p>
-    <ul class="header-menu-list">
-      <li class="header-menu-item"><a href="/works/">Works & experiments</a></li>
-      <li class="header-menu-item"><a href="/sketches/">Sketches</a></li>
-      <li class="header-menu-item"><a href="/about/">About</a></li>
-      <li class="header-menu-item"><a href="/blog/">Blog</a></li>
+    <p class="header-home"><a href="/">GrgrDvrt</a></p><!--
+    --><ul class="header-menu-list"><!--
+      --><li class="header-menu-item"><a href="/works/">Works & experiments</a></li><!--
+      --><li class="header-menu-item"><a href="/sketches/">Sketches</a></li><!--
+      --><li class="header-menu-item"><a href="/about/">About</a></li>
     </ul>
   </div>
 
@@ -20,10 +19,10 @@
 	<?php
 	$reservedNames = array('index.html', 'libs', 'index.php', 'css', 'reset.css', 'styles.css', '.', '..');
 	$myDirectory = opendir(".");
-	while($entryName = readdir($myDirectory))
-	{
-		if(!in_array($entryName, $reservedNames))
+	while($entryName = readdir($myDirectory)) {
+		if(!in_array($entryName, $reservedNames)){
 			$dirArray[] = $entryName;
+        }
 	}
 	closedir($myDirectory);
 	$indexCount	= count($dirArray);

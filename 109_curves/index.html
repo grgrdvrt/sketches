@@ -1,170 +1,142 @@
 <html>
-<head>
-	<title>Curves</title>
-	<link rel="stylesheet" type="text/css" href="../css/styles.css"/>
-</head>
-<body>
-	<script type="text/javascript" src="../libs/tools.js"></script>
-	<script type="text/javascript">
-		tools.mixin(tools, this);
-		
-		
-		var w = 700;
-		var h = 700;
-		
-		var stage = new Stage(w, h);
-		var out = stage.out;
-		out.lineCap = "round";
-		out.fillStyle = "black";
-		out.fillRect(0, 0, w, h);
-		
-		
-		var fr = 0.98;
-		var vr = 0.05;
-		var va = 0.05;
-		
-		
-		function Line()
-		{
-			this.begin = {x:0, y:0};
-			this.end = {x:0, y:0};
-		
-		
-		
-			this.radius = 10;
-			this.vRadius = 0;
-			this.rOffset = Math.random() * 2 * Math.PI;
-			this.rCoef1 = 5 * (Math.random() * 1.5 + 0.5);
-			this.rCoef2 = Math.random() * 1.5 + 0.5;
-		
-		
-		
-			this.angle = 0;
-			this.vAngle = 0;
-			this.aOffset = Math.random() * 2 * Math.PI;
-			this.aCoef1 = Math.pow(Math.random(), 3) * 0.3;
-			this.aCoef2 = Math.random() * 0.1;
-		
-		
-			//this.rCoef1 = 1;
-			//this.rCoef2 = 1;
-			//this.aCoef1 = 0.05;
-			//this.aCoef2 = 0.01;
-		
-			this.pos = {};
-		
-			var l = Math.round(Math.random() * 100);
-			this.color = "hsl(0, 0%, " + l + "%)";
-			this.lineWidth = Math.random() * 20 + 10;
-		
-			this.time = 0;
-		}
-		
-		
-		Line.prototype = {
-			init : function()
-			{
-				this.pos.x = this.begin.x;
-				this.pos.y = this.begin.y;
-			},
-		
-			getPoint : function(t, pt)
-			{
-				if(!pt) pt = {};
-				var posX = this.begin.x + t * (this.end.x - this.begin.x);
-				var posY = this.begin.y + t * (this.end.y - this.begin.y);
-		
-				//this.vRadius = fr * this.vRadius + vr * (Math.random());
-				//this.vAngle = fr * this.vAngle + va * (Math.random() * 2 - 1);
-		
-				this.vRadius = this.rCoef1 * Math.cos(this.aCoef2 * t + this.rOffset);
-				this.vAngle = this.aCoef1 * Math.cos(this.aCoef2 * t + this.aOffset);
-		
-				this.radius += this.vRadius;
-				this.angle += this.vAngle;
-		
-				pt.x = posX + this.radius * Math.cos(this.angle);
-				pt.y = posY + this.radius * Math.sin(this.angle);
-		
-				return pt;
-			},
-		
-			update : function(out)
-			{
-				out.beginPath();
-				out.strokeStyle = this.color;
-				out.lineWidth = this.lineWidth;
-				out.moveTo(this.pos.x, this.pos.y);
-				this.time += 0.1 * (1 - this.time);
-				this.getPoint(this.time, this.pos);
-				out.lineTo(this.pos.x, this.pos.y);
-				out.stroke();
-			},
-		
-			draw : function(out)
-			{
-				var steps = 100;
-		
-				out.beginPath();
-				var pt = this.getPoint(0);
-				out.moveTo(pt.x, pt.y);
-				for(var i = 0; i < steps; i++)
-				{
-					this.getPoint(i / steps, pt);
-					out.lineTo(pt.x, pt.y);
-				}
-		
-				out.stroke();
-			}
-		}
-		
-		
-		function getLine()
-		{
-			var line = new Line();
-			line.begin.x = Math.random() * w;
-			line.begin.y = Math.random() * h;
-			line.end.x = Math.random() * w;
-			line.end.y = Math.random() * h;
-			line.init();
-			//line.draw(out);
-			return line;
-		}
-		
-		
-		var lines = [];
-		
-		
-		new Loop(function(){
-		
-			if(Math.random() < 0.1)lines.push(getLine());
-		
-			var n = lines.length;
-			for(var i = 0; i < n; i++)
-			{
-				var l = lines[i];
-				l.update(out);
-				if(l.time > 0.99)
-				{
-					lines.splice(i, 1);
-					i--;
-					n--;
-				}
-			}
-		})
-		
-	</script>
-	
-	<script type="text/javascript">
-	  var _gaq = _gaq || [];
-	  _gaq.push(['_setAccount', 'UA-6101672-1']);
-	  _gaq.push(['_trackPageview']);
+    <head>
+        <title>Curves</title>
+        <link rel="stylesheet" type="text/css" href="../css/styles.css"/>
+    </head>
+    <body>
+        <script type="text/javascript" src="../libs/tools.js"></script>
+        <script type="text/javascript">
+         tools.mixin(tools, this);
 
-	  (function() {
-		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-	  })();
-	</script>
-</body>
+         var w = 700;
+         var h = 700;
+
+         var stage = new Stage(w, h);
+         var out = stage.out;
+         out.lineCap = "round";
+         out.fillStyle = "black";
+         out.fillRect(0, 0, w, h);
+
+         var fr = 0.98;
+         var vr = 0.05;
+         var va = 0.05;
+
+
+         function Line(){
+             this.begin = {x:0, y:0};
+             this.end = {x:0, y:0};
+
+             this.radius = 10;
+             this.vRadius = 0;
+             this.rOffset = Math.random() * 2 * Math.PI;
+             this.rCoef1 = 5 * (Math.random() * 1.5 + 0.5);
+             this.rCoef2 = Math.random() * 1.5 + 0.5;
+
+
+
+             this.angle = 0;
+             this.vAngle = 0;
+             this.aOffset = Math.random() * 2 * Math.PI;
+             this.aCoef1 = Math.pow(Math.random(), 3) * 0.3;
+             this.aCoef2 = Math.random() * 0.1;
+
+
+             //this.rCoef1 = 1;
+             //this.rCoef2 = 1;
+             //this.aCoef1 = 0.05;
+             //this.aCoef2 = 0.01;
+
+             this.pos = {};
+
+             var l = Math.round(Math.random() * 100);
+             this.color = "hsl(0, 0%, " + l + "%)";
+             this.lineWidth = Math.random() * 20 + 10;
+
+             this.time = 0;
+         }
+
+
+         Line.prototype = {
+             init : function(){
+                 this.pos.x = this.begin.x;
+                 this.pos.y = this.begin.y;
+             },
+
+             getPoint : function(t, pt){
+                 if(!pt) pt = {};
+                 var posX = this.begin.x + t * (this.end.x - this.begin.x);
+                 var posY = this.begin.y + t * (this.end.y - this.begin.y);
+
+                 //this.vRadius = fr * this.vRadius + vr * (Math.random());
+                 //this.vAngle = fr * this.vAngle + va * (Math.random() * 2 - 1);
+
+                 this.vRadius = this.rCoef1 * Math.cos(this.aCoef2 * t + this.rOffset);
+                 this.vAngle = this.aCoef1 * Math.cos(this.aCoef2 * t + this.aOffset);
+
+                 this.radius += this.vRadius;
+                 this.angle += this.vAngle;
+
+                 pt.x = posX + this.radius * Math.cos(this.angle);
+                 pt.y = posY + this.radius * Math.sin(this.angle);
+
+                 return pt;
+             },
+
+             update : function(out){
+                 out.beginPath();
+                 out.strokeStyle = this.color;
+                 out.lineWidth = this.lineWidth;
+                 out.moveTo(this.pos.x, this.pos.y);
+                 this.time += 0.1 * (1 - this.time);
+                 this.getPoint(this.time, this.pos);
+                 out.lineTo(this.pos.x, this.pos.y);
+                 out.stroke();
+             },
+
+             draw : function(out){
+                 var steps = 100;
+
+                 out.beginPath();
+                 var pt = this.getPoint(0);
+                 out.moveTo(pt.x, pt.y);
+                 for(var i = 0; i < steps; i++){
+                     this.getPoint(i / steps, pt);
+                     out.lineTo(pt.x, pt.y);
+                 }
+
+                 out.stroke();
+             }
+         }
+
+         function getLine(){
+             var line = new Line();
+             line.begin.x = Math.random() * w;
+             line.begin.y = Math.random() * h;
+             line.end.x = Math.random() * w;
+             line.end.y = Math.random() * h;
+             line.init();
+             //line.draw(out);
+             return line;
+         }
+
+         var lines = [];
+
+         new Loop(function(){
+
+             if(Math.random() < 0.1)lines.push(getLine());
+
+             var n = lines.length;
+             for(var i = 0; i < n; i++){
+                 var l = lines[i];
+                 l.update(out);
+                 if(l.time > 0.99){
+                     lines.splice(i, 1);
+                     i--;
+                     n--;
+                 }
+             }
+         })
+
+        </script>
+    </body>
 </html>

@@ -1,60 +1,47 @@
 <html>
-<head>
-	<title>Maze</title>
-	<link rel="stylesheet" type="text/css" href="../css/styles.css"/>
-</head>
-<body>
-	<script type="text/javascript" src="../libs/tools.js"></script>
-  <script type="text/javascript">
+    <head>
+        <title>Maze</title>
+        <link rel="stylesheet" type="text/css" href="../css/styles.css"/>
+    </head>
+    <body>
+        <script type="text/javascript" src="../libs/tools.js"></script>
+        <script type="text/javascript">
 
 
-    var w = 700;
-    var h = 700;
+         var w = 700;
+         var h = 700;
 
-    tools.mixin(tools, this);
-    var stage = new Stage(w, h);
-    var out = stage.out;
-
-
-    var size = 10 + Math.floor(Math.random() * 100);
-    var tileW = size;
-    var tileH = size; 
-    var margin = Math.floor(Math.random() * 0.5 * size);
+         tools.mixin(tools, this);
+         var stage = new Stage(w, h);
+         var out = stage.out;
 
 
-    var nx = w / tileW;
-    var ny = h / tileH;
-
-    out.fillStyle = "black";
-
-    for(var j = 0; j < ny; j++)
-    {
-      for(var i = 0; i < nx; i++)
-      {
-
-        out.save();
-        out.translate(i * tileW, j * tileH);
-        if(i < nx - 1 && Math.random() < 0.5)
-          out.fillRect(margin, margin, 2 * (tileW - margin), tileH - 2 * margin);
-        if(j < ny - 1 && Math.random() < 0.5)
-          out.fillRect(margin, margin, tileW - 2 * margin, 2 * (tileH - margin));
-        out.restore();
-      }
-    }
+         var size = 10 + Math.floor(Math.random() * 100);
+         var tileW = size;
+         var tileH = size;
+         var margin = Math.floor(Math.random() * 0.5 * size);
 
 
-  </script>
-	
-	<script type="text/javascript">
-	  var _gaq = _gaq || [];
-	  _gaq.push(['_setAccount', 'UA-6101672-1']);
-	  _gaq.push(['_trackPageview']);
+         var nx = w / tileW;
+         var ny = h / tileH;
 
-	  (function() {
-		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-	  })();
-	</script>
-</body>
+         out.fillStyle = "black";
+
+         for(var j = 0; j < ny; j++){
+             for(var i = 0; i < nx; i++){
+
+                 out.save();
+                 out.translate(i * tileW, j * tileH);
+                 if(i < nx - 1 && Math.random() < 0.5)
+                     out.fillRect(margin, margin, 2 * (tileW - margin), tileH - 2 * margin);
+                 if(j < ny - 1 && Math.random() < 0.5)
+                     out.fillRect(margin, margin, tileW - 2 * margin, 2 * (tileH - margin));
+                 out.restore();
+             }
+         }
+
+
+        </script>
+
+    </body>
 </html>

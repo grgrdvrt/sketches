@@ -1,57 +1,47 @@
 <html>
-<head>
-	<title>Beziers</title>
-	<link rel="stylesheet" type="text/css" href="../css/styles.css"/>
-</head>
-<body>
-	<script type="text/javascript" src="../libs/tools.js"></script>
-	<script type="text/javascript">
-		tools.mixin(tools, this);
-		
-		var w = 700;
-		var h = 700;
-		var stage = new Stage(w, h);
-		var out = stage.out;
-		
-		function lerp(a, b, t){return a + t * (b - a);}
-		
-		var p = [];
-		var i, j;
-		var nShapes = Math.floor(Math.random() * 4 + 1);
-		out.beginPath();
-		
-		for(j = 0; j < nShapes; j++)
-		{
-		
-			for(i = 0; i < 8; i++)
-				p[i] = {x : Math.random() * w,
-						y : Math.random() * h}
-		
-		
-		
-			var nCurves = Math.floor(80 + Math.random() * 100);
-			for(i = 0; i < nCurves; i++)
-			{
-				var r = i / nCurves;
-				out.moveTo(lerp(p[0].x, p[1].x, r), lerp(p[0].y, p[1].y, r));
-				out.bezierCurveTo(lerp(p[2].x, p[3].x, r), lerp(p[2].y, p[3].y, r),
-							lerp(p[4].x, p[5].x, r), lerp(p[4].y, p[5].y, r),
-							lerp(p[6].x, p[7].x, r), lerp(p[6].y, p[7].y, r));
-			}
-		
-		}
-		out.stroke();</script>
-	
-	<script type="text/javascript">
-	  var _gaq = _gaq || [];
-	  _gaq.push(['_setAccount', 'UA-6101672-1']);
-	  _gaq.push(['_trackPageview']);
+    <head>
+        <title>Beziers</title>
+        <link rel="stylesheet" type="text/css" href="../css/styles.css"/>
+    </head>
+    <body>
+        <script type="text/javascript" src="../libs/tools.js"></script>
+        <script type="text/javascript">
+         tools.mixin(tools, this);
 
-	  (function() {
-		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-	  })();
-	</script>
-</body>
+         var w = 700;
+         var h = 700;
+         var stage = new Stage(w, h);
+         var out = stage.out;
+
+         function lerp(a, b, t){return a + t * (b - a);}
+
+         var p = [];
+         var i, j;
+         var nShapes = Math.floor(Math.random() * 4 + 1);
+         out.beginPath();
+
+         for(j = 0; j < nShapes; j++){
+
+             for(i = 0; i < 8; i++){
+                 p[i] = {
+                     x : Math.random() * w,
+                     y : Math.random() * h
+                 }
+             }
+
+
+             var nCurves = Math.floor(80 + Math.random() * 100);
+             for(i = 0; i < nCurves; i++){
+                 var r = i / nCurves;
+                 out.moveTo(lerp(p[0].x, p[1].x, r), lerp(p[0].y, p[1].y, r));
+                 out.bezierCurveTo(
+                     lerp(p[2].x, p[3].x, r), lerp(p[2].y, p[3].y, r),
+                     lerp(p[4].x, p[5].x, r), lerp(p[4].y, p[5].y, r),
+                     lerp(p[6].x, p[7].x, r), lerp(p[6].y, p[7].y, r)
+                 );
+             }
+
+         }
+         out.stroke();</script>
+    </body>
 </html>

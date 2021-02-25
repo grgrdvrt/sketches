@@ -1,104 +1,88 @@
 <html>
-<head>
-	<title>sphere</title>
-	<link rel="stylesheet" type="text/css" href="../css/styles.css"/>
-</head>
-<body>
-	<script type="text/javascript" src="../libs/tools.js"></script>
-	<script type="text/javascript" src="../libs/geom.js"></script>
-	<script type="text/javascript">
-		var stage = new tools.Stage(700, 700);
-		var mouse = new tools.Mouse(stage.canvas);
-		
-		var radius1 = 200;
-		var center = new geom.Vertex(0.5 * stage.width, 0.5 * stage.height);
-		var begin = new geom.Vertex(center.x - Math.random() * 100 - 20, center.y + Math.random() * 100 + 20);
-		var dx = 2 * (center.x - begin.x);
-		var dy = 2 * (center.y - begin.y);
-		var radius2 = Math.sqrt(dx * dx + dy * dy);
-		var nLines = 30;
-		var maxLines = nLines;
-		var nPts = 50;
-		
-		
-		var lines = [];
-		var pts = [];
-		var sprLine = 0.01;
-		var frLine = 0.85;
-		
-		var i;
-		for(i = 0; i < maxLines; i++)
-			lines.push({angle:i / maxLines * 2 * Math.PI,  vel:0});
-		
-		for(var i = 0; i < nPts; i++)
-		{
-			var r = i / (nPts - 1);
-			pts[i] = {torsion:0,
-					  vel:0,
-					  radius:2 * radius1 * Math.sqrt(r * (1 - r))};
-		}
-		
-		stage.out.strokeStyle = "black";
-		
-		
-		function update()
-		{
-			nLines = Math.floor(Math.min(Math.max(maxLines * mouse.y / stage.height, 0), maxLines));
-			stage.out.clearRect(0, 0, stage.width, stage.height);
-			stage.out.beginPath();
-			var rPt, rLine;
-			var torsionRatio 		= (0.5 - mouse.x / stage.width) * 2 * Math.PI;
-		
-			for(var k = 0; k < nPts; k++)
-			{
-				rPt = k / (nPts - 1);
-				var torsion = torsionRatio * (rPt - 0.5);
-				var pt = pts[k];
-				pt.vel = pt.vel * (0.8 + 0.1 * rPt) + (torsion - pt.torsion) * (0.005 + 0.005 * rPt);
-				//console.log("test", torsion);
-				pt.torsion += pt.vel;
-				//rotation = 0;
-		
-			}
-		
-		
-			for(var j = 0; j < nLines; j++)
-			{
-				rLine = j / nLines;
-				var angle = rLine * Math.PI * 2;
-				
-				var line = lines[j];
-				line.vel = line.vel * (0.8 + 0.1 * rLine) + (angle - line.angle) * (0.005 + 0.005 * rLine);
-				line.angle += line.vel;
-		
-				stage.out.moveTo(begin.x, begin.y);
-				for(var i = 0; i < nPts; i++)
-				{
-					rPt = i / (nPts - 1);
-					var pt = pts[i];
-					var cos = Math.cos(line.angle + pt.torsion);
-					var sin = Math.sin(line.angle + pt.torsion);
-					stage.out.lineTo(begin.x + dx * rPt + pt.radius * cos,
-									 begin.y + dy * rPt + pt.radius * sin);
-				}
-			}
-			stage.out.stroke();	
-			stage.out.closePath();
-		}
-		
-		new tools.Loop(update, this);
-	</script>
-	
-	<script type="text/javascript">
-	  var _gaq = _gaq || [];
-	  _gaq.push(['_setAccount', 'UA-6101672-1']);
-	  _gaq.push(['_trackPageview']);
+    <head>
+        <title>sphere</title>
+        <link rel="stylesheet" type="text/css" href="../css/styles.css"/>
+    </head>
+    <body>
+        <script type="text/javascript" src="../libs/tools.js"></script>
+        <script type="text/javascript" src="../libs/geom.js"></script>
+        <script type="text/javascript">
+         var stage = new tools.Stage(700, 700);
+         var mouse = new tools.Mouse(stage.canvas);
 
-	  (function() {
-		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-	  })();
-	</script>
-</body>
+         var radius1 = 200;
+         var center = new geom.Vertex(0.5 * stage.width, 0.5 * stage.height);
+         var begin = new geom.Vertex(center.x - Math.random() * 100 - 20, center.y + Math.random() * 100 + 20);
+         var dx = 2 * (center.x - begin.x);
+         var dy = 2 * (center.y - begin.y);
+         var radius2 = Math.sqrt(dx * dx + dy * dy);
+         var nLines = 30;
+         var maxLines = nLines;
+         var nPts = 50;
+
+
+         var lines = [];
+         var pts = [];
+         var sprLine = 0.01;
+         var frLine = 0.85;
+
+         var i;
+         for(i = 0; i < maxLines; i++)
+             lines.push({angle:i / maxLines * 2 * Math.PI,  vel:0});
+
+         for(var i = 0; i < nPts; i++){
+             var r = i / (nPts - 1);
+             pts[i] = {
+                 torsion:0,
+                 vel:0,
+                 radius:2 * radius1 * Math.sqrt(r * (1 - r))
+             };
+         }
+
+         stage.out.strokeStyle = "black";
+
+         function update(){
+             nLines = Math.floor(Math.min(Math.max(maxLines * mouse.y / stage.height, 0), maxLines));
+             stage.out.clearRect(0, 0, stage.width, stage.height);
+             stage.out.beginPath();
+             var rPt, rLine;
+             var torsionRatio     = (0.5 - mouse.x / stage.width) * 2 * Math.PI;
+
+             for(var k = 0; k < nPts; k++){
+                 rPt = k / (nPts - 1);
+                 var torsion = torsionRatio * (rPt - 0.5);
+                 var pt = pts[k];
+                 pt.vel = pt.vel * (0.8 + 0.1 * rPt) + (torsion - pt.torsion) * (0.005 + 0.005 * rPt);
+                 //console.log("test", torsion);
+                 pt.torsion += pt.vel;
+                 //rotation = 0;
+
+             }
+
+
+             for(var j = 0; j < nLines; j++){
+                 rLine = j / nLines;
+                 var angle = rLine * Math.PI * 2;
+
+                 var line = lines[j];
+                 line.vel = line.vel * (0.8 + 0.1 * rLine) + (angle - line.angle) * (0.005 + 0.005 * rLine);
+                 line.angle += line.vel;
+
+                 stage.out.moveTo(begin.x, begin.y);
+                 for(var i = 0; i < nPts; i++){
+                     rPt = i / (nPts - 1);
+                     var pt = pts[i];
+                     var cos = Math.cos(line.angle + pt.torsion);
+                     var sin = Math.sin(line.angle + pt.torsion);
+                     stage.out.lineTo(begin.x + dx * rPt + pt.radius * cos,
+                                      begin.y + dy * rPt + pt.radius * sin);
+                 }
+             }
+             stage.out.stroke();
+             stage.out.closePath();
+         }
+
+         new tools.Loop(update, this);
+        </script>
+    </body>
 </html>
